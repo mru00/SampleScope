@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 19 Apr 2012 05:18:36 AM CEST
+EESchema Schematic File Version 2  date Thu 19 Apr 2012 02:34:49 PM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -29,7 +29,8 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-EELAYER 43  0
+LIBS:osci-cache
+EELAYER 25  0
 EELAYER END
 $Descr A4 11700 8267
 encoding utf-8
@@ -43,6 +44,15 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L CONN_6 P10
+U 1 1 4F8FFC2D
+P 7650 3950
+F 0 "P10" V 7600 3950 60  0000 C CNN
+F 1 "CONN_6" V 7700 3950 60  0000 C CNN
+	1    7650 3950
+	1    0    0    -1  
+$EndComp
 Text GLabel 6300 2200 2    60   Output ~ 0
 TriggerSelection
 Text GLabel 6300 2100 2    60   Output ~ 0
@@ -133,10 +143,10 @@ F 1 "DGND" H 4250 4630 40  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VCC #PWR67
+L VCC #PWR045
 U 1 1 4F8F36FA
 P 4250 4600
-F 0 "#PWR67" H 4250 4700 30  0001 C CNN
+F 0 "#PWR045" H 4250 4700 30  0001 C CNN
 F 1 "VCC" H 4250 4700 30  0000 C CNN
 	1    4250 4600
 	1    0    0    -1  
@@ -151,10 +161,10 @@ F 1 "DGND" H 4950 4430 40  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VCC #PWR70
+L VCC #PWR046
 U 1 1 4F8F36ED
 P 4950 4400
-F 0 "#PWR70" H 4950 4500 30  0001 C CNN
+F 0 "#PWR046" H 4950 4500 30  0001 C CNN
 F 1 "VCC" H 4950 4500 30  0000 C CNN
 	1    4950 4400
 	1    0    0    -1  
@@ -177,10 +187,10 @@ F 1 "DGND" H 7450 5280 40  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VCC #PWR74
+L VCC #PWR047
 U 1 1 4F8F368D
 P 7450 5050
-F 0 "#PWR74" H 7450 5150 30  0001 C CNN
+F 0 "#PWR047" H 7450 5150 30  0001 C CNN
 F 1 "VCC" H 7450 5150 30  0000 C CNN
 	1    7450 5050
 	1    0    0    -1  
@@ -208,10 +218,10 @@ F 1 "CRYSTAL" H 3050 4850 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L VCC #PWR72
+L VCC #PWR048
 U 1 1 4F8F3603
 P 5600 1550
-F 0 "#PWR72" H 5600 1650 30  0001 C CNN
+F 0 "#PWR048" H 5600 1650 30  0001 C CNN
 F 1 "VCC" H 5600 1650 30  0000 C CNN
 	1    5600 1550
 	1    0    0    -1  
