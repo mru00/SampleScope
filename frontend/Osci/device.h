@@ -5,7 +5,6 @@
 #include <QObject>
 #include <QPointF>
 #include <QVector>
-#include "Comm.h"
 #include "../HIDAPI/hidapi.h"
 
 #define MAX_STR 65

@@ -153,30 +153,13 @@ static double fit_sin(double t, double p[3]) {
         return p[0] * sin ( p[1] + p[2]*t );
 }
 
-
-
 void lm_evaluate(double par[3], int m_dat, double fvec1[], void* obj, int *)
-/*
- *	par is an input array. At the end of the minimization, it contains
- *        the approximate solution vector.
- *
- *	m_dat is a positive integer input variable set to the number
- *	  of functions.
- *
- *	fvec is an output array of length m_dat which contains the function
- *        values the square sum of which ought to be minimized.
- *
- *	data is a read-only pointer to lm_data_type, as specified by lm_eval.h.
- *
- *      info is an integer output variable. If set to a negative value, the
- *        minimization procedure will stop.
- */
 {
         MainWindow* that = (MainWindow*) obj;
-    for (int i = 0; i < m_dat; i++) {
-        double t = that->fit_y[i] - fit_sin(that->fit_t[i], par);
-        fvec1[i] = t;
-    }
+        for (int i = 0; i < m_dat; i++) {
+                double t = that->fit_y[i] - fit_sin(that->fit_t[i], par);
+                fvec1[i] = t;
+        }
 }
 
 void MainWindow::sample() {
@@ -206,8 +189,8 @@ void MainWindow::sample() {
                                 }
 
                                 // auxiliary settings:
-        lm_control_type control;
-        lm_initialize_control(&control);
+                                lm_control_type control;
+                                lm_initialize_control(&control);
 
                                 control.maxcall = 3000;
                                 control.ftol = 1e-20;

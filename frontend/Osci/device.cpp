@@ -158,13 +158,13 @@ QVector<QPointF> Device::getADCBlock(int delay) {
         comm ( (delay == 0) ? 0x60 : 0x70);
         QVector<QPointF> result;
         for (size_t i = 1; i < 64; i++ ) {
-                result.append(QPointF(i-1, normalizeSample(buf[i])));
+                result.append(QPointF( 6.66e-7 * (i-1), normalizeSample(buf[i])));
         }
         for (int j = 0; j < 2; j++ ) {
 
                 hid_read(device, buf, sizeof(buf)) ;
                 for (size_t i = 0; i < 64; i++ ) {
-                        result.append(QPointF(i + 63 + j*64, normalizeSample(buf[i])));
+                        result.append(QPointF(6.66e-7*(i + 63 + j*64), normalizeSample(buf[i])));
                 }
         }
         return result;
