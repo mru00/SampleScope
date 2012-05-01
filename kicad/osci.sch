@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 19 Apr 2012 02:34:49 PM CEST
+EESchema Schematic File Version 2  date Mon 30 Apr 2012 12:31:37 AM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -29,6 +29,7 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
+LIBS:max532
 LIBS:osci-cache
 EELAYER 25  0
 EELAYER END
@@ -36,7 +37,7 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 1 6
 Title "osci"
-Date "19 apr 2012"
+Date "29 apr 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -45,10 +46,10 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Sheet
-S 2300 2800 1700 1350
-U 4F8F54AE
-F0 "SignalGenerator" 60
-F1 "gen.sch" 60
+S 5500 2950 1500 1200
+U 4F9D3C5C
+F0 "Trigger MAX942" 60
+F1 "trigger_942.sch" 60
 $EndSheet
 $Sheet
 S 3450 850  1450 1100
