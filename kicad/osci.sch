@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Mon 30 Apr 2012 12:31:37 AM CEST
+EESchema Schematic File Version 2  date Thu 03 May 2012 12:50:36 PM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -37,7 +37,7 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 1 6
 Title "osci"
-Date "29 apr 2012"
+Date "3 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""

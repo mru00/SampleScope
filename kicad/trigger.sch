@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Mon 30 Apr 2012 12:31:37 AM CEST
+EESchema Schematic File Version 2  date Thu 03 May 2012 12:50:36 PM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -37,7 +37,7 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 4 6
 Title "Trigger Section"
-Date "29 apr 2012"
+Date "3 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -45,161 +45,41 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-Connection ~ 4050 5350
 Wire Wire Line
-	7350 4300 3400 4300
+	6900 4300 3400 4300
 Wire Wire Line
-	3400 4300 3400 5350
+	4150 5250 3650 5250
 Wire Wire Line
-	3400 5350 4150 5350
+	3650 5250 3650 4650
 Wire Wire Line
-	4050 4650 4050 4850
-Connection ~ 8650 3450
+	3650 4650 4150 4650
+Connection ~ 4050 4650
 Wire Wire Line
-	8650 3450 8650 4200
+	4050 5350 4050 5150
 Wire Wire Line
-	8000 3450 8800 3450
+	4050 5150 4150 5150
 Wire Wire Line
-	6350 3450 3850 3450
-Wire Wire Line
-	9550 3100 9550 3450
-Wire Wire Line
-	4150 4750 4150 4750
-Connection ~ 3950 5000
-Wire Wire Line
-	4150 5050 4150 4950
-Wire Wire Line
-	9150 4200 8350 4200
-Wire Wire Line
-	3850 2300 3000 2300
-Wire Wire Line
-	3850 2600 3000 2600
-Wire Wire Line
-	7350 4100 6950 4100
-Wire Wire Line
-	3850 3450 3850 3000
-Wire Wire Line
-	4700 3300 4700 3000
-Wire Wire Line
-	4700 3000 4550 3000
-Connection ~ 4550 2900
-Wire Wire Line
-	3850 2900 3700 2900
-Wire Wire Line
-	3850 2800 3700 2800
-Wire Wire Line
-	3550 1950 3550 2400
-Connection ~ 4850 2400
-Wire Wire Line
-	4550 2400 4850 2400
-Wire Wire Line
-	4550 2300 4850 2300
-Wire Wire Line
-	7750 3750 7750 3800
-Wire Wire Line
-	7750 4600 7750 4850
-Wire Wire Line
-	4850 2300 4850 3200
-Wire Wire Line
-	4550 2500 4850 2500
-Connection ~ 4850 2500
-Wire Wire Line
-	3850 2500 3550 2500
-Wire Wire Line
-	3550 2500 3550 3250
-Wire Wire Line
-	4550 3000 4550 2700
-Connection ~ 4550 2800
-Wire Wire Line
-	3700 2800 3700 3150
-Wire Wire Line
-	3700 3150 4700 3150
-Connection ~ 4700 3150
-Connection ~ 3700 2900
-Wire Wire Line
-	4550 2600 5050 2600
-Wire Wire Line
-	5050 2600 5050 1950
-Wire Wire Line
-	3850 2700 3000 2700
-Wire Wire Line
-	3550 2400 3850 2400
-Wire Wire Line
-	6900 4300 6900 5000
-Connection ~ 6900 4300
-Wire Wire Line
-	6900 5000 9150 5000
-Wire Wire Line
-	3800 5000 4150 5000
+	4150 4850 4050 4850
 Connection ~ 4150 5000
 Wire Wire Line
-	4050 4850 4150 4850
+	3800 5000 4150 5000
 Wire Wire Line
-	4150 5150 4050 5150
+	9150 5000 6900 5000
+Connection ~ 6900 4300
 Wire Wire Line
-	4050 5150 4050 5350
-Connection ~ 4050 4650
-Connection ~ 8650 4200
+	6900 5000 6900 4300
 Wire Wire Line
-	9550 3450 9300 3450
+	4150 5050 4150 4950
+Connection ~ 3950 5000
 Wire Wire Line
-	6950 4100 6950 3450
+	4150 4750 4150 4750
 Wire Wire Line
-	6850 3450 7500 3450
-Connection ~ 6950 3450
+	4050 4850 4050 4650
 Wire Wire Line
-	4150 4650 3650 4650
+	4150 5350 3400 5350
 Wire Wire Line
-	3650 4650 3650 5250
-Wire Wire Line
-	3650 5250 4150 5250
-$Comp
-L R R14
-U 1 1 4F9059D6
-P 7750 3450
-F 0 "R14" V 7830 3450 50  0000 C CNN
-F 1 "100k" V 7750 3450 50  0000 C CNN
-	1    7750 3450
-	0    1    1    0   
-$EndComp
-$Comp
-L R R13
-U 1 1 4F9059D2
-P 6600 3450
-F 0 "R13" V 6680 3450 50  0000 C CNN
-F 1 "220r" V 6600 3450 50  0000 C CNN
-	1    6600 3450
-	0    1    1    0   
-$EndComp
-NoConn ~ 7950 4600
-NoConn ~ 8350 4300
-$Comp
-L VCC #PWR31
-U 1 1 4F900402
-P 9550 3100
-F 0 "#PWR31" H 9550 3200 30  0001 C CNN
-F 1 "VCC" H 9550 3200 30  0000 C CNN
-	1    9550 3100
-	1    0    0    -1  
-$EndComp
-$Comp
-L R R15
-U 1 1 4F9003FB
-P 9050 3450
-F 0 "R15" V 9130 3450 50  0000 C CNN
-F 1 "10k" V 9050 3450 50  0000 C CNN
-	1    9050 3450
-	0    1    1    0   
-$EndComp
-$Comp
-L DGND #PWR30
-U 1 1 4F9003E5
-P 7850 4600
-F 0 "#PWR30" H 7850 4600 40  0001 C CNN
-F 1 "DGND" H 7850 4530 40  0000 C CNN
-	1    7850 4600
-	1    0    0    -1  
-$EndComp
+	3400 5350 3400 4300
+Connection ~ 4050 5350
 NoConn ~ 4850 5050
 Text GLabel 4850 4850 2    60   Input ~ 0
 DAC_Trigger.CS
@@ -226,19 +106,19 @@ F 1 "DGND" H 5000 5250 40  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L -12V #PWR26
+L -12V #PWR013
 U 1 1 4F8F2E69
 P 4850 5350
-F 0 "#PWR26" H 4850 5480 20  0001 C CNN
+F 0 "#PWR013" H 4850 5480 20  0001 C CNN
 F 1 "-12V" H 4750 5350 30  0000 C CNN
 	1    4850 5350
 	-1   0    0    1   
 $EndComp
 $Comp
-L +12V #PWR23
+L +12V #PWR014
 U 1 1 4F8F2E64
 P 4850 4650
-F 0 "#PWR23" H 4850 4600 20  0001 C CNN
+F 0 "#PWR014" H 4850 4600 20  0001 C CNN
 F 1 "+12V" H 4950 4650 30  0000 C CNN
 	1    4850 4650
 	1    0    0    -1  
@@ -253,10 +133,10 @@ F 1 "VAA" H 4100 4750 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L AGND #PWR19
+L AGND #PWR015
 U 1 1 4F8F2D52
 P 3800 5000
-F 0 "#PWR19" H 3800 5000 40  0001 C CNN
+F 0 "#PWR015" H 3800 5000 40  0001 C CNN
 F 1 "AGND" H 3800 4930 50  0000 C CNN
 	1    3800 5000
 	1    0    0    -1  
@@ -272,93 +152,4 @@ F 1 "MAX532" V 4500 5000 50  0000 C CNN
 $EndComp
 Text GLabel 9150 5000 2    60   Output ~ 0
 TriggerLevel
-Text GLabel 9150 4200 2    60   Output ~ 0
-TriggerOut
-Text GLabel 3000 2700 0    60   Input ~ 0
-TriggerCh2
-Text GLabel 3000 2600 0    60   Input ~ 0
-TriggerCh1
-Text GLabel 3000 2300 0    60   Input ~ 0
-TriggerSelection
-$Comp
-L AGND #PWR21
-U 1 1 4F8F1ED4
-P 4700 3300
-F 0 "#PWR21" H 4700 3300 40  0001 C CNN
-F 1 "AGND" H 4700 3230 50  0000 C CNN
-	1    4700 3300
-	1    0    0    -1  
-$EndComp
-$Comp
-L -12V #PWR18
-U 1 1 4F8F1EAB
-P 3550 3250
-F 0 "#PWR18" H 3550 3380 20  0001 C CNN
-F 1 "-12V" H 3550 3350 30  0000 C CNN
-	1    3550 3250
-	-1   0    0    1   
-$EndComp
-$Comp
-L +12V #PWR27
-U 1 1 4F8F1EA5
-P 5050 1950
-F 0 "#PWR27" H 5050 1900 20  0001 C CNN
-F 1 "+12V" H 5050 2050 30  0000 C CNN
-	1    5050 1950
-	1    0    0    -1  
-$EndComp
-$Comp
-L VCC #PWR17
-U 1 1 4F8F1E7C
-P 3550 1950
-F 0 "#PWR17" H 3550 2050 30  0001 C CNN
-F 1 "VCC" H 3550 2050 30  0000 C CNN
-	1    3550 1950
-	1    0    0    -1  
-$EndComp
-$Comp
-L DGND #PWR22
-U 1 1 4F8F1E6B
-P 4850 3200
-F 0 "#PWR22" H 4850 3200 40  0001 C CNN
-F 1 "DGND" H 4850 3130 40  0000 C CNN
-	1    4850 3200
-	1    0    0    -1  
-$EndComp
-$Comp
-L DIL16 U14
-U 1 1 4F8F1E21
-P 4200 2650
-F 0 "U14" H 4200 3100 60  0000 C CNN
-F 1 "MAX4508" V 4200 2650 50  0000 C CNN
-	1    4200 2650
-	1    0    0    -1  
-$EndComp
-$Comp
-L -12V #PWR29
-U 1 1 4F8F1DA2
-P 7750 4850
-F 0 "#PWR29" H 7750 4980 20  0001 C CNN
-F 1 "-12V" H 7750 4950 30  0000 C CNN
-	1    7750 4850
-	-1   0    0    1   
-$EndComp
-$Comp
-L +12V #PWR28
-U 1 1 4F8F1D98
-P 7750 3750
-F 0 "#PWR28" H 7750 3700 20  0001 C CNN
-F 1 "+12V" H 7750 3850 30  0000 C CNN
-	1    7750 3750
-	1    0    0    -1  
-$EndComp
-$Comp
-L LM311N U4
-U 1 1 4F8F1D7B
-P 7850 4200
-F 0 "U4" H 8050 4500 70  0000 C CNN
-F 1 "LM311N" H 8050 4400 70  0000 C CNN
-	1    7850 4200
-	1    0    0    -1  
-$EndComp
 $EndSCHEMATC

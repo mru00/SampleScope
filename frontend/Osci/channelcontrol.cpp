@@ -7,12 +7,7 @@ ChannelControl::ChannelControl(Device::Channel_t id, QWidget *parent) :
         channel(id)
 {
     ui->setupUi(this);
-    const char* channelNames[] = {
-            "Channel 1",
-            "Channel 2",
-            "Trigger"
-    };
-    ui->groupBox->setTitle(channelNames[id]);
+    ui->groupBox->setTitle(Device::getChannelName(id));
 
     connect(ui->dialGain, SIGNAL(valueChanged(int)), this, SLOT(vdivValueChanged(int)));
     connect(ui->radioButtonAC, SIGNAL(toggled(bool)), this, SLOT(acdcValueChanged(bool)));
@@ -52,5 +47,5 @@ bool ChannelControl::fitSin() {
 }
 
 void ChannelControl::setFitData(double a0, double a1, double a2) {
-        ui->labelFit->setText(QString("%1 * sin (%2 + %3*t)").arg(a0).arg(a1).arg(a2));
+        //ui->labelFit->setText(QString("%1 * sin (%2 + %3*t)").arg(a0).arg(a1).arg(a2));
 }

@@ -1,4 +1,4 @@
-update=Fri 20 Apr 2012 07:41:19 PM CEST
+update=Thu 03 May 2012 12:45:55 PM CEST
 version=1
 last_client=pcbnew
 [general]
@@ -100,4 +100,3 @@ LibName7=display
 LibName8=valves
 LibName9=led
 LibName10=dip_sockets
-LibName11=R2

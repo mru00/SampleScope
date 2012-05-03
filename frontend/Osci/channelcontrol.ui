@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>257</width>
-    <height>214</height>
+    <height>270</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -54,13 +54,6 @@
          <widget class="QCheckBox" name="checkBoxFitSin">
           <property name="text">
            <string>Fit Sin(t)</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="labelFit">
-          <property name="text">
-           <string>TextLabel</string>
           </property>
          </widget>
         </item>
