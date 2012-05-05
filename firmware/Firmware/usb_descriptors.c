@@ -191,7 +191,7 @@ ROM BYTE configDescriptor1[]={
     1,                      // Index value of this configuration
     0,                      // Configuration string index
     _DEFAULT | _SELF,               // Attributes, see usb_device.h
-    50,                     // Max power consumption (2X mA)
+    250,                     // Max power consumption (2X mA)
 							
     /* Interface Descriptor */
     0x09,//sizeof(USB_INTF_DSC),   // Size of this descriptor in bytes
@@ -236,13 +236,13 @@ sizeof(sd000),USB_DESCRIPTOR_STRING,{0x0409
 }};
 
 //Manufacturer string descriptor
-ROM struct{BYTE bLength;BYTE bDscType;WORD string[25];}sd001={
+ROM struct{BYTE bLength;BYTE bDscType;WORD string[3];}sd001={
 sizeof(sd001),USB_DESCRIPTOR_STRING,
 {'m','r','u'
 }};
 
 //Product string descriptor
-ROM struct{BYTE bLength;BYTE bDscType;WORD string[22];}sd002={
+ROM struct{BYTE bLength;BYTE bDscType;WORD string[10];}sd002={
 sizeof(sd002),USB_DESCRIPTOR_STRING,
 {'m', 'r', 'u', '\'', 's', ' ', 'o', 's', 'c', 'i'
 }};

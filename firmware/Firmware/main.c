@@ -48,6 +48,8 @@
 #include "./USB/usb.h"
 #include "./HardwareProfile.h"
 #include "./USB/usb_function_hid.h"
+#include <timers.h>
+#include <compare.h>
 
 /** CONFIGURATION **************************************************/
 
@@ -102,10 +104,8 @@ unsigned char ToSendDataBuffer[64];
 extern unsigned char ADC_DATA1[];
 extern unsigned char ADC_DATA2[];
 
-
 unsigned char ADC_DATA1[64];
 unsigned char ADC_DATA2[64];
-//unsigned char ADC_DATA2[64];
 
 USB_HANDLE USBOutHandle = 0;
 USB_HANDLE USBInHandle = 0;
@@ -114,17 +114,39 @@ USB_HANDLE USBInHandle = 0;
 static void InitializeSystem(void);
 static void ProcessIO(void);
 static void UserInit(void);
+
+void USBCBSendResume(void);
+static BYTE ReadSingleADC(void);
+static void DAC_Write(WORD_VAL daca, WORD_VAL dacb);
+static void BlinkUSBStatus(void);
+
+/** externals defined in ASM */
+extern void SampleNoDelaySingleChannel(void);
+
+
+
+
+
+
+
+
+
+
+
 void YourHighPriorityISRCode();
 void YourLowPriorityISRCode();
-void USBCBSendResume(void);
-static BYTE ReadPOT(void);
-static void DAC_Write(WORD_VAL daca, WORD_VAL dacb);
+extern void USBDeviceTasks(void);
+
+
+
+
+
 
 /** VECTOR REMAPPING ***********************************************/
 #if defined(__18CXX)
 //On PIC18 devices, addresses 0x00, 0x08, and 0x18 are used for
 //the reset, high priority interrupt, and low priority interrupt
-//vectors.  However, the current Microchip USB bootloader 
+//vectors.  However, the current Microchip USB bootloader
 //examples are intended to occupy addresses 0x00-0x7FF or
 //0x00-0xFFF depending on which bootloader is used.  Therefore,
 //the bootloader code remaps these vectors to new locations
@@ -139,11 +161,11 @@ static void DAC_Write(WORD_VAL daca, WORD_VAL dacb);
 #define REMAPPED_RESET_VECTOR_ADDRESS			0x1000
 #define REMAPPED_HIGH_INTERRUPT_VECTOR_ADDRESS	0x1008
 #define REMAPPED_LOW_INTERRUPT_VECTOR_ADDRESS	0x1018
-#elif defined(PROGRAMMABLE_WITH_USB_MCHPUSB_BOOTLOADER)	
+#elif defined(PROGRAMMABLE_WITH_USB_MCHPUSB_BOOTLOADER)
 #define REMAPPED_RESET_VECTOR_ADDRESS			0x800
 #define REMAPPED_HIGH_INTERRUPT_VECTOR_ADDRESS	0x808
 #define REMAPPED_LOW_INTERRUPT_VECTOR_ADDRESS	0x818
-#else	
+#else
 #define REMAPPED_RESET_VECTOR_ADDRESS			0x00
 #define REMAPPED_HIGH_INTERRUPT_VECTOR_ADDRESS	0x08
 #define REMAPPED_LOW_INTERRUPT_VECTOR_ADDRESS	0x18
@@ -178,7 +200,7 @@ void Remapped_Low_ISR(void) {
 //(0x1000 or 0x800, depending upon bootloader), and would execute the "goto _startup".  This
 //would effective reset the application.
 
-//To fix this situation, we should always deliberately place a 
+//To fix this situation, we should always deliberately place a
 //"goto REMAPPED_HIGH_INTERRUPT_VECTOR_ADDRESS" at address 0x08, and a
 //"goto REMAPPED_LOW_INTERRUPT_VECTOR_ADDRESS" at address 0x18.  When the output
 //hex file of this project is programmed with the bootloader, these sections do not
@@ -224,6 +246,14 @@ void YourLowPriorityISRCode() {
 
 } //This return will be a "retfie", since this is in a #pragma interruptlow section
 #endif
+
+
+
+
+
+
+
+
 
 
 
@@ -291,40 +321,6 @@ void main(void) {
  *******************************************************************/
 static void InitializeSystem(void) {
     ADCON1 |= 0x0F; // Default all pins to digital
-#if (defined(__18CXX) & !defined(PIC18F87J50_PIM))
-    ADCON1 |= 0x0F; // Default all pins to digital
-#elif defined(__C30__)
-#if defined(__PIC24FJ256DA210__) || defined(__PIC24FJ256GB210__)
-    ANSA = 0x0000;
-    ANSB = 0x0000;
-    ANSC = 0x0000;
-    ANSD = 0x0000;
-    ANSE = 0x0000;
-    ANSF = 0x0000;
-    ANSG = 0x0000;
-#elif defined(__dsPIC33EP512MU810__) || defined (__PIC24EP512GU810__)
-    ANSELA = 0x0000;
-    ANSELB = 0x0000;
-    ANSELC = 0x0000;
-    ANSELD = 0x0000;
-    ANSELE = 0x0000;
-    ANSELG = 0x0000;
-
-    // The dsPIC33EP512MU810 features Peripheral Pin
-    // select. The following statements map UART2 to
-    // device pins which would connect to the the
-    // RX232 transciever on the Explorer 16 board.
-
-    RPINR19 = 0;
-    RPINR19 = 0x64;
-    RPOR9bits.RP101R = 0x3;
-
-#else
-    AD1PCFGL = 0xFFFF;
-#endif
-#elif defined(__C32__)
-    AD1PCFG = 0xFFFF;
-#endif
 
 #if defined(PIC18F87J50_PIM) || defined(PIC18F46J50_PIM) || defined(PIC18F_STARTER_KIT_1) || defined(PIC18F47J53_PIM)
     //On the PIC18F87J50 Family of USB microcontrollers, the PLL will not power up and be enabled
@@ -349,72 +345,6 @@ static void InitializeSystem(void) {
     ANCON0 = 0xFF; // Default all pins to digital
     ANCON1 = 0xFF; // Default all pins to digital
     WDTCONbits.ADSHR = 0; // Select normal SFR locations
-#endif
-
-#if defined(__32MX460F512L__)|| defined(__32MX795F512L__)
-    // Configure the PIC32 core for the best performance
-    // at the operating frequency. The operating frequency is already set to
-    // 60MHz through Device Config Registers
-    SYSTEMConfigPerformance(60000000);
-#endif
-
-#if defined(__dsPIC33EP512MU810__) || defined (__PIC24EP512GU810__)
-
-    // Configure the device PLL to obtain 60 MIPS operation. The crystal
-    // frequency is 8MHz. Divide 8MHz by 2, multiply by 60 and divide by
-    // 2. This results in Fosc of 120MHz. The CPU clock frequency is
-    // Fcy = Fosc/2 = 60MHz. Wait for the Primary PLL to lock and then
-    // configure the auxilliary PLL to provide 48MHz needed for USB
-    // Operation.
-
-    PLLFBD = 38; /* M  = 60	*/
-    CLKDIVbits.PLLPOST = 0; /* N1 = 2	*/
-    CLKDIVbits.PLLPRE = 0; /* N2 = 2	*/
-    OSCTUN = 0;
-
-    /*	Initiate Clock Switch to Primary
-     *	Oscillator with PLL (NOSC= 0x3)*/
-
-    __builtin_write_OSCCONH(0x03);
-    __builtin_write_OSCCONL(0x01);
-    while (OSCCONbits.COSC != 0x3);
-
-    // Configuring the auxiliary PLL, since the primary
-    // oscillator provides the source clock to the auxiliary
-    // PLL, the auxiliary oscillator is disabled. Note that
-    // the AUX PLL is enabled. The input 8MHz clock is divided
-    // by 2, multiplied by 24 and then divided by 2. Wait till
-    // the AUX PLL locks.
-
-    ACLKCON3 = 0x24C1;
-    ACLKDIV3 = 0x7;
-    ACLKCON3bits.ENAPLL = 1;
-    while (ACLKCON3bits.APLLCK != 1);
-
-#endif
-
-#if defined(PIC18F46J50_PIM) || defined(PIC18F_STARTER_KIT_1) || defined(PIC18F47J53_PIM)
-    //Configure all I/O pins to use digital input buffers.  The PIC18F87J50 Family devices
-    //use the ANCONx registers to control this, which is different from other devices which
-    //use the ADCON1 register for this purpose.
-    ANCON0 = 0xFF; // Default all pins to digital
-    ANCON1 = 0xFF; // Default all pins to digital
-#endif
-
-#if defined(PIC24FJ64GB004_PIM) || defined(PIC24FJ256DA210_DEV_BOARD)
-    //On the PIC24FJ64GB004 Family of USB microcontrollers, the PLL will not power up and be enabled
-    //by default, even if a PLL enabled oscillator configuration is selected (such as HS+PLL).
-    //This allows the device to power up at a lower initial operating frequency, which can be
-    //advantageous when powered from a source which is not gauranteed to be adequate for 32MHz
-    //operation.  On these devices, user firmware needs to manually set the CLKDIV<PLLEN> bit to
-    //power up the PLL.
-    {
-        unsigned int pll_startup_counter = 600;
-        CLKDIVbits.PLLEN = 1;
-        while (pll_startup_counter--);
-    }
-
-    //Device switches over automatically to PLL output after PLL is locked and ready.
 #endif
 
 
@@ -474,10 +404,10 @@ enum {
     TRIGGER_FREE_RUN
 } currentTrigger;
 
-#define LedBlink2() { CCP1CONbits.CCP1M = 0b0010; CCPR1 = 0x8000; }
+#define LedBlink2(s) OpenCompare1(COM_INT_OFF & COM_TOGG_MATCH, (s))
 #define LedBlink() { CCP1CONbits.CCP1M = 0b0010; CCPR1 = 0xffff; }
-#define LedOn() { CCP1CONbits.CCP1M = 0b0000; LED = 1; }
-#define LedOff()  { CCP1CONbits.CCP1M = 0b0000; LED = 0; }
+#define LedOn() { CloseCompare1(); LED = 1; }
+#define LedOff()  { CloseCompare1(); LED = 0; }
 
 #define SetTriggerLevel(level) { \
     DAC_Trigger_CS = 0; \
@@ -497,7 +427,6 @@ enum {
 
 
 
-extern void SampleNoDelay(void);
 
 void UserInit(void) {
     LATB &= ~((1 << 2) | 1 << 3 | 1 << 4);
@@ -524,17 +453,12 @@ void UserInit(void) {
     ACDC_Ch1 = 0;
     ACDC_Ch2 = 0;
 
-    //Setup Timer0
-    T1CONbits.T1OSCEN = 0;
-
-    T1CONbits.T1CKPS = 0b11;
-    T1CONbits.TMR1CS = 0;
-    T1CONbits.TMR1ON = 1;
+    OpenTimer1(T1_OSC1EN_OFF & T1_PS_1_8 & T1_SOURCE_INT);
 
     SelectTrigger(TRIGGER_FREE_RUN);
     SetTriggerLevel(triggerLevelInit);
     SetGain(gain_max, gain_max);
-    LedBlink2();
+    LedBlink();
 
     //    INTCON2bits.RBPU = 0;
 
@@ -579,6 +503,7 @@ void ProcessIO(void) {
     WORD_VAL wa;
     WORD_VAL wb;
 
+    BlinkUSBStatus();
     // User Application USB tasks
     if ((USBDeviceState < CONFIGURED_STATE) || (USBSuspendControl == 1)) return;
 
@@ -623,7 +548,7 @@ void ProcessIO(void) {
                 break;
 
             case 0x40:
-                ToSendDataBuffer[1] = ReadPOT();
+                ToSendDataBuffer[1] = ReadSingleADC();
                 break;
 
             case 0x50:
@@ -641,7 +566,9 @@ void ProcessIO(void) {
                 //sample without delay
 
 
+                // store acknoledge
                 BYTE_VAL w = ReceivedDataBuffer[0] + 1;
+
                 WORD timeout = 0xffff;
                 int i;
                 state = STATE_TRANS_ADC;
@@ -660,7 +587,7 @@ void ProcessIO(void) {
                 INTCONbits.GIE = 0;
                 mADC_CS = 0;
 
-                SampleNoDelay();
+                SampleNoDelaySingleChannel();
 
                 mADC_CS = 1;
                 INTCONbits.GIE = 1;
@@ -725,7 +652,7 @@ void ProcessIO(void) {
                 break;
 
             case 0x80:
-                SelectTrigger(ReceivedDataBuffer[1]);
+                //SelectTrigger(ReceivedDataBuffer[1]);
                 break;
 
             case 0x90:
@@ -737,11 +664,7 @@ void ProcessIO(void) {
                 break;
             default:
                 ToSendDataBuffer[0] = 0xff;
-
         }
-
-
-
     }
 
     switch (state) {
@@ -794,30 +717,16 @@ void ProcessIO(void) {
 
 }//end ProcessIO
 
-/******************************************************************************
- * Function:        WORD_VAL ReadPOT(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          WORD_VAL - the 10-bit right justified POT value
- *
- * Side Effects:    ADC buffer value updated
- *
- * Overview:        This function reads the POT and leaves the value in the 
- *                  ADC buffer register
- *
- * Note:            None
- *****************************************************************************/
-BYTE ReadPOT(void) {
+
+BYTE ReadSingleADC(void) {
     BYTE w;
     mADC_CS = mADC_RD = 0;
     //while (PORTBbits.RB1);
     w = PORTD;
     mADC_CS = mADC_RD = 1;
     return w;
-}//end ReadPOT
+}
+
 
 /********************************************************************
  * Function:        void BlinkUSBStatus(void)
@@ -839,19 +748,28 @@ BYTE ReadPOT(void) {
  *******************************************************************/
 void BlinkUSBStatus(void) {
 
+    BYTE b;
     // No need to clear UIRbits.SOFIF to 0 here.
     // Callback caller is already doing that.
 
     if (USBSuspendControl == 1) {
+        b = 9;
     } else {
         if (USBDeviceState == DETACHED_STATE) {
+            b = 1;
         } else if (USBDeviceState == ATTACHED_STATE) {
+            b = 2;
         } else if (USBDeviceState == POWERED_STATE) {
+            b = 3;
         } else if (USBDeviceState == DEFAULT_STATE) {
+            b = 4;
         } else if (USBDeviceState == ADDRESS_STATE) {
+            b = 5;
         } else if (USBDeviceState == CONFIGURED_STATE) {
+            b = 6;
         }
     }
+
 }//end BlinkUSBStatus
 
 

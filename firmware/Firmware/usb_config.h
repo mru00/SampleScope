@@ -162,8 +162,8 @@
 /* HID */
 #define HID_INTF_ID             0x00
 #define HID_EP 					1
-#define HID_INT_OUT_EP_SIZE     1
-#define HID_INT_IN_EP_SIZE      1
+#define HID_INT_OUT_EP_SIZE     3
+#define HID_INT_IN_EP_SIZE      3
 #define HID_NUM_OF_DSC          1
 #define HID_RPT01_SIZE          28
 

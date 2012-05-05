@@ -39,6 +39,14 @@ void Device::connect() {
         cout << "connecting to device" << endl;
         device = hid_open(VENDOR_ID, PRODUCT_ID, NULL);
         cout << (isConnected() ? "connection successful" : "connection failed") << endl;
+        if (isConnected()) {
+
+                wchar_t manu[100], prod[100];
+                hid_get_manufacturer_string(device, manu, 100);
+                hid_get_product_string(device, prod, 100);
+                std::wcout << manu << endl;
+                std::wcout << prod << endl;
+        }
         emit connected(isConnected());
 }
 
@@ -59,11 +67,11 @@ void Device::comm(const unsigned char command) {
         int nread;
         buf[0] = 0x00;
         buf[1] = command;
-        if (hid_write(device, buf, sizeof(buf)) == -1) {
-                cerr << "hid_write failed" << endl;
+        nread = hid_write(device, buf, sizeof(buf));
+        if (nread < 0) {
+                cerr << "hid_write failed, retcode: " << nread << endl;
                 disConnect();
-                perror("hid_write");
-                emit fatal(tr("Error communicating with device (hid_write failed)"));
+                emit fatal(tr("Error communicating with device (hid_write failed); disconnected device"));
                 return;
         }
 
@@ -86,6 +94,29 @@ void Device::comm(const unsigned char command) {
 
 void Device::ping() {
         comm(0x90);
+}
+
+QString Device::getTdivUnit(TdivValues_t val) {
+        return (val < Tdiv_1 ? "usec/div" : "msec/div");
+}
+QString Device::getTdivLabel(TdivValues_t val) {
+        const char* labels[] = {
+                "12.8",
+                "30",
+                "100",
+                "300",
+                "1",
+                "3",
+                "10",
+                "30",
+                "100",
+                "300",
+                "1000",
+                "3000"
+        };
+        Q_ASSERT ( val >= 0 && val < sizeof(labels) );
+
+        return labels[val];
 }
 
 QString Device::getVdivLabel(VdivValues_t val) {
@@ -153,18 +184,20 @@ Device::sample_t Device::getADCSingle() {
 }
 
 QVector<QPointF> Device::getADCBlock(int delay) {
+        delay = 0;
         buf[2] = delay;
         cout << "sampling with delay: " << delay << endl;
         comm ( (delay == 0) ? 0x60 : 0x70);
         QVector<QPointF> result;
+        const double timestretch = 1.0/19.2;
         for (size_t i = 1; i < 64; i++ ) {
-                result.append(QPointF( 6.66e-7 * (i-1), normalizeSample(buf[i])));
+                result.append(QPointF( timestretch * (i-1), normalizeSample(buf[i])));
         }
         for (int j = 0; j < 2; j++ ) {
 
                 hid_read(device, buf, sizeof(buf)) ;
                 for (size_t i = 0; i < 64; i++ ) {
-                        result.append(QPointF(6.66e-7*(i + 63 + j*64), normalizeSample(buf[i])));
+                        result.append(QPointF(timestretch*(i + 63 + j*64), normalizeSample(buf[i])));
                 }
         }
         return result;
@@ -179,8 +212,8 @@ void Device::setACDC(ACDC_t ch1, ACDC_t ch2) {
 }
 
 void Device::selectTriggerSource(TriggerSource_t trigger_source) {
-        cout << "selecting trigger source " << trigger_source << endl;
-        this->triggerSource = trigger_source;
-        buf[2] = trigger_source;
-        comm(0x80);
+    cout << "selecting trigger source " << trigger_source << endl;
+    this->triggerSource = trigger_source;
+    buf[2] = trigger_source;
+    comm(0x80);
 }

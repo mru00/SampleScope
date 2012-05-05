@@ -42,7 +42,7 @@ private slots:
     void ACDCCh1Adjusted(Device::ACDC_t value);
     void ACDCCh2Adjusted(Device::ACDC_t value);
     void triggerSourceSelected(Device::TriggerSource_t);
-    void delayAdjusted(int delay);
+    void delayAdjusted(QString, Device::TdivValues_t delay);
 
 private:
     Ui::MainWindow *ui;
@@ -56,14 +56,9 @@ private:
 
     Device::ACDC_t acdc_ch1, acdc_ch2;
     Device::VdivValues_t vdiv_ch1, vdiv_ch2;
-    int delay;
+    Device::TdivValues_t delay;
 
     double p_ch1[3];
-    public:
-double fit_t[192];
-double fit_y[192];
-
-
 };
 
 #endif // MAINWINDOW_H

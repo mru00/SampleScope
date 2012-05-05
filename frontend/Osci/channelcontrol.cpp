@@ -9,10 +9,14 @@ ChannelControl::ChannelControl(Device::Channel_t id, QWidget *parent) :
     ui->setupUi(this);
     ui->groupBox->setTitle(Device::getChannelName(id));
 
+    ui->checkBoxActive->setChecked(id == Device::ADC_ch1);
+
     connect(ui->dialGain, SIGNAL(valueChanged(int)), this, SLOT(vdivValueChanged(int)));
     connect(ui->radioButtonAC, SIGNAL(toggled(bool)), this, SLOT(acdcValueChanged(bool)));
     ui->radioButtonAC->setChecked(false);
     ui->dialGain->setRange(0, Device::Vdiv_LAST);
+
+
 }
 
 ChannelControl::~ChannelControl()

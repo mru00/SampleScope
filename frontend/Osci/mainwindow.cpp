@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
         , curveFitSinCh1(new QwtPlotCurve("Fit Ch1"))
         , plotGrid(new QwtPlotGrid())
         , vdiv_ch1(Device::Vdiv_10), vdiv_ch2(Device::Vdiv_10)
-        , delay(0)
+        , delay(Device::Tdiv_01)
 {
         p_ch1[0] = 1000;
         p_ch1[1] = 17;
@@ -71,11 +71,12 @@ MainWindow::MainWindow(QWidget *parent)
         connect(&triggerControl, SIGNAL(triggerSourceSelected(Device::TriggerSource_t)), this, SLOT(triggerSourceSelected(Device::TriggerSource_t)));
 
         connect(ui->dialTriggerLevel, SIGNAL(valueChanged(int)), this, SLOT(TriggerLevelAdjusted(int)));
-        connect(&timeControl, SIGNAL(delayValueChanged(int)), this, SLOT(delayAdjusted(int)));
+        connect(&timeControl, SIGNAL(delayValueChanged(QString, Device::TdivValues_t)), this, SLOT(delayAdjusted(QString, Device::TdivValues_t)));
 
         connect(ui->actionExport_Data, SIGNAL(triggered()), this, SLOT(exportData()));
 
         statusBar()->showMessage("searching for device");
+        centralWidget()->setEnabled(false);
         updateTimer.start(500);
 }
 
@@ -88,16 +89,16 @@ void MainWindow::triggerSourceSelected(Device::TriggerSource_t triggerSource) {
         curveTriggerLevel->setAxes(QwtPlot::xBottom, (triggerSource == Device::Trigger_Ch1) ? QwtPlot::yLeft : QwtPlot::yRight);
 }
 
-void MainWindow::delayAdjusted(int delay) {
+void MainWindow::delayAdjusted(QString, Device::TdivValues_t delay) {
         this->delay = delay;
 }
 
 void MainWindow::deviceConnected(bool connected) {
-        statusBar()->showMessage(connected ? "connected" : "device not found");
+        statusBar()->showMessage(connected ? "Connected" : "Device not connected");
         centralWidget()->setEnabled(connected);
 
         if (connected) {
-                triggerControl.initialEmit();
+             //   triggerControl.initialEmit();
                 channelControl1.initialEmit();
                 channelControl2.initialEmit();
                 timeControl.initialEmit();
@@ -150,21 +151,26 @@ void MainWindow::TriggerLevelAdjusted(int value) {
         device.setTriggerLevel(value);
 }
 
+struct fit_data_t {
+        double* t;
+        double* y;
+};
+
 static double fit_sin(double t, double p[3]) {
         return p[0] * sin ( p[1] + p[2]*t );
 }
 
-void lm_evaluate(double par[3], int m_dat, double fvec1[], void* obj, int *)
+static void lm_evaluate(double par[3], int m_dat, double fvec1[], void* obj, int *)
 {
-        MainWindow* that = (MainWindow*) obj;
+        fit_data_t* that = (fit_data_t*) obj;
         for (int i = 0; i < m_dat; i++) {
-                double t = that->fit_y[i] - fit_sin(that->fit_t[i], par);
-                fvec1[i] = t;
+                fvec1[i] = that->y[i] - fit_sin(that->t[i], par);
         }
 }
 
 void MainWindow::sample() {
 
+        return;
         if (!device.isConnected()) return;
 
 
@@ -184,30 +190,45 @@ void MainWindow::sample() {
 
                         if (channelControl1.fitSin()) {
 
+                                double fit_t[data.size()];
+                                double fit_y[data.size()];
+
                                 for (int i = 0; i< data.size(); i ++ ) {
                                         fit_t[i] = data.at(i).x();
-                                        fit_y[i] = data.at(i).y()*100000.0;
+                                        fit_y[i] = data.at(i).y();
                                 }
 
                                 // auxiliary settings:
                                 lm_control_type control;
                                 lm_initialize_control(&control);
 
+                                fit_data_t fit_data;
+                                fit_data.t = fit_t;
+                                fit_data.y = fit_y;
+
                                 control.maxcall = 3000;
-                                control.ftol = 1e-20;
-                                control.xtol = 1e-20;
+                                //control.ftol = 1e-20;
+                                //control.xtol = 1e-20;
 
                                 lm_minimize(data.size(), 3, p_ch1,
                                             lm_evaluate, lm_print_default,
-                                            (void*)this, &control);
+                                            &fit_data, &control);
 
-                                //printf("values: %f  %f  %f\n", p_ch1[0],p_ch1[1],p_ch1[2]);
-                                //channelControl1.setFitData( p_ch1[0],p_ch1[1],p_ch1[2]);
-                                QVector<QPointF> dataFit;
-                                for (int i = 0; i<data.size(); i ++ ) {
-                                        dataFit.append(QPointF(fit_t[i], fit_sin(fit_t[i], p_ch1) / 100000.0));
+                                if (control.info == 1 || control.info == 2 || control.info == 3) {
+                                        QVector<QPointF> dataFit;
+                                        for (int i = 0; i<data.size(); i ++ ) {
+                                                dataFit.append(QPointF(fit_t[i], fit_sin(fit_t[i], p_ch1) ));
+                                        }
+                                        curveFitSinCh1->setSamples(dataFit);
+                                        curveFitSinCh1->setVisible(true);
                                 }
-                                curveFitSinCh1->setSamples(dataFit);
+                                else {
+
+                                        p_ch1[0] = 1.0;
+                                        p_ch1[1] = 0.0;
+                                        p_ch1[2] = 200;
+                                        curveFitSinCh1->setVisible(false);
+                                }
                         }
                 }
                 else {

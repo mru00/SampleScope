@@ -86,6 +86,9 @@
             <property name="maximum">
              <number>9</number>
             </property>
+            <property name="pageStep">
+             <number>1</number>
+            </property>
             <property name="value">
              <number>1</number>
             </property>

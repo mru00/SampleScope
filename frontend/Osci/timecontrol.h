@@ -2,6 +2,7 @@
 #define TIMECONTROL_H
 
 #include <QWidget>
+#include "device.h"
 
 namespace Ui {
     class TimeControl;
@@ -17,7 +18,7 @@ public:
 
         void initialEmit();
 signals:
-        void delayValueChanged(int delay);
+        void delayValueChanged(QString label, Device::TdivValues_t delay);
 private slots:
         void delayvc(int value);
 private:

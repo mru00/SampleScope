@@ -41,6 +41,16 @@ public:
                 Vdiv_005,
                 Vdiv_LAST = Vdiv_005
         };
+        enum TdivValues_t {
+                Tdiv_max, // = 0.0128
+                Tdiv_003,
+                Tdiv_01, Tdiv_03,
+                Tdiv_1, Tdiv_3,
+                Tdiv_10, Tdiv_30,
+                Tdiv_100, Tdiv_300,
+                Tdiv_1000, Tdiv_3000,
+                Tdiv_LAST = Tdiv_3000
+        };
 
         enum {
                 RX_SIZE = 10
@@ -65,6 +75,9 @@ public:
         void selectTriggerSource(TriggerSource_t trigger_source);
         TriggerSource_t getTriggerSource() { return triggerSource; }
 
+
+        static QString getTdivUnit(TdivValues_t);
+        static QString getTdivLabel(TdivValues_t);
         static QString getVdivLabel(VdivValues_t);
         static QString getChannelName(Channel_t);
 signals:

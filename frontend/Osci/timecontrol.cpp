@@ -7,6 +7,7 @@ TimeControl::TimeControl(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->dialDelay, SIGNAL(valueChanged(int)), this, SLOT(delayvc(int)));
+    ui->dialDelay->setRange(0, Device::Tdiv_LAST);
 }
 
 TimeControl::~TimeControl()
@@ -15,9 +16,14 @@ TimeControl::~TimeControl()
 }
 
 void TimeControl::initialEmit() {
-        emit delayValueChanged(ui->dialDelay->value());
+        emit delayvc(ui->dialDelay->value());
 }
 
-void TimeControl::delayvc(int value) {
-        emit delayValueChanged(value);
+void TimeControl::delayvc(int value_) {
+        const Device::TdivValues_t val = (Device::TdivValues_t)value_;
+        const QString label = Device::getTdivLabel(val);
+        const QString unit = Device::getTdivUnit(val);
+        ui->labelUnit->setText(unit);
+        ui->labelTdiv->setText(label);
+        emit delayValueChanged(label, val);
 }
