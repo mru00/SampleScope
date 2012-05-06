@@ -104,24 +104,24 @@
     /** LED ************************************************************/
 
 
-#define TriggerCh1 PORTBbits.RB0
-#define TriggerCh2 PORTAbits.RA5
+#define I_TriggerCh1 PORTBbits.RB0
+#define I_TriggerCh2 PORTAbits.RA5
 
-#define mADC_INT  PORTBbits.RB1
-#define mADC_RD   LATBbits.LATB2
-#define mADC_A0   LATEbits.LATE0
-#define mADC_A1   LATEbits.LATE1
-#define mADC_CS   LATEbits.LATE2
-#define mADC_PORT PORTD
+#define I_ADC_INT  PORTBbits.RB1
+#define O_ADC_RD   LATBbits.LATB2
+#define O_ADC_A0   LATEbits.LATE0
+#define O_ADC_A1   LATEbits.LATE1
+#define O_ADC_CS   LATEbits.LATE2
+#define I_ADC_PORT PORTD
 
-#define DAC_Trigger_CS LATAbits.LATA1
-#define DAC_Gain_CS    LATAbits.LATA2
-#define DAC_SCLK       LATAbits.LATA3
-#define DAC_DIN        LATAbits.LATA4
-#define LED LATCbits.LATC2
+#define O_DAC_Trigger_CS LATAbits.LATA1
+#define O_DAC_Gain_CS    LATAbits.LATA2
+#define O_DAC_SCLK       LATAbits.LATA3
+#define O_DAC_DIN        LATAbits.LATA4
+#define O_LED LATCbits.LATC2
 
-#define ACDC_Ch1 LATBbits.LATB3
-#define ACDC_Ch2 LATBbits.LATB4
+#define O_ACDC_Ch1 LATBbits.LATB3
+#define O_ACDC_Ch2 LATBbits.LATB4
 
     /** I/O pin definitions ********************************************/
     #define INPUT_PIN 1

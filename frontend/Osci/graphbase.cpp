@@ -25,6 +25,6 @@ GraphBase::~GraphBase()
 
 void GraphBase::saveImage(QString filename) {
 
-    QwtPlotRenderer ren;
-    ren.renderDocument(ui->qwtPlot, filename, QSize(640,480));
+//    QwtPlotRenderer ren;
+//    ren.renderDocument(ui->qwtPlot, filename, QSize(640,480));
 }

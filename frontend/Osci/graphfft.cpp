@@ -30,7 +30,6 @@ void GraphFFT::modeSelectionChanged(ModeControl::Modes_t mode ) {
     curveFFTCh2->setVisible(ModeControl::showsCh2(mode));
     ui->qwtPlot->replot();
 
-    saveImage("fft.png");
 }
 
 void GraphFFT::setData(const QVector<QPointF>& dataCh1, const QVector<QPointF>& dataCh2) {
@@ -70,4 +69,5 @@ void GraphFFT::setData(const QVector<QPointF>& dataCh1, const QVector<QPointF>& 
     }
 
     ui->qwtPlot->replot();
+    saveImage("fft.png");
 }

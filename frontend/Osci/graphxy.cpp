@@ -26,7 +26,6 @@ void GraphXY::modeSelectionChanged(ModeControl::Modes_t mode) {
         break;
     }
     ui->qwtPlot->replot();
-    saveImage("xy.png");
 }
 void GraphXY::setData(const QVector<QPointF>& dataCh1, const QVector<QPointF>& dataCh2) {
 
@@ -38,4 +37,5 @@ void GraphXY::setData(const QVector<QPointF>& dataCh1, const QVector<QPointF>& d
         dataXY.append(QPointF(dataCh1.at(i).y(), dataCh2.at(i).y()));
     curveXY->setSamples(dataXY);
     ui->qwtPlot->replot();
+    saveImage("xy.png");
 }

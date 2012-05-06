@@ -18,7 +18,7 @@ ChannelControl::~ChannelControl()
     delete ui;
 }
 
-void ChannelControl::setChannel(Device::Channel_t c) {
+void ChannelControl::setChannel(DeviceConstants::Channel_t c) {
         channel = c;
         ui->groupBox->setTitle(Device::getChannelName(channel));
 }
@@ -29,7 +29,7 @@ void ChannelControl::initialEmit() {
 }
 
 void ChannelControl::acdcValueChanged(bool acdc) {
-        emit acdcSelected(acdc ? Device::ACDC_AC : Device::ACDC_DC);
+        emit acdcSelected(acdc ? DeviceConstants::ACDC_AC : DeviceConstants::ACDC_DC);
 }
 
 void ChannelControl::vdivValueChanged(int value_) {

@@ -24,11 +24,11 @@ void TriggerControl::initialEmit() {
 }
 
 void TriggerControl::triggerCh1Toggled(bool checked) {
-        if (checked) emit triggerSourceSelected(Device::Trigger_Ch1);
+        if (checked) emit triggerSourceSelected(DeviceConstants::TRIGGER_CH_1);
 }
 void TriggerControl::triggerCh2Toggled(bool checked) {
-        if (checked) emit triggerSourceSelected(Device::Trigger_Ch2);
+        if (checked) emit triggerSourceSelected(DeviceConstants::TRIGGER_CH_2);
 }
 void TriggerControl::triggerFreeToggled(bool checked) {
-        if (checked) emit triggerSourceSelected(Device::Trigger_Free);
+        if (checked) emit triggerSourceSelected(DeviceConstants::Trigger_Free);
 }

@@ -51,6 +51,10 @@
 #include <timers.h>
 #include <compare.h>
 
+// definitions shared by frontend and backend
+#include "../../shared/common.h"
+
+
 /** CONFIGURATION **************************************************/
 
 #pragma config PLLDIV   = 5         // (20 MHz crystal on PICDEM FS USB board)
@@ -97,7 +101,7 @@
 
 /** VARIABLES ******************************************************/
 #pragma udata USB_VARIABLES=0x480
-unsigned char ReceivedDataBuffer[RX_SIZE];
+unsigned char ReceivedData[RX_SIZE];
 unsigned char ToSendDataBuffer[64];
 #pragma udata
 
@@ -106,6 +110,8 @@ extern unsigned char ADC_DATA2[];
 
 unsigned char ADC_DATA1[64];
 unsigned char ADC_DATA2[64];
+
+#pragma idata
 
 USB_HANDLE USBOutHandle = 0;
 USB_HANDLE USBInHandle = 0;
@@ -117,11 +123,12 @@ static void UserInit(void);
 
 void USBCBSendResume(void);
 static BYTE ReadSingleADC(void);
-static void DAC_Write(WORD_VAL daca, WORD_VAL dacb);
+static void DAC_Write(WORD daca, WORD dacb);
 static void BlinkUSBStatus(void);
 
 /** externals defined in ASM */
 extern void SampleNoDelaySingleChannel(void);
+extern void SampleNoDelayInterleaved(void);
 
 
 
@@ -255,8 +262,21 @@ void YourLowPriorityISRCode() {
 
 
 
+typedef enum  {
+    STATE_READY_RECEIVE,
+            STATE_REARM_RX,
+    STATE_TRANS_ONE,
+    STATE_TRANS_ADC,
+    STATE_TRANS_ADC_LAST = STATE_TRANS_ADC + 4
+} RXTX_STATE;
 
 
+#pragma udata
+volatile osci_config_t config;
+
+#pragma idata
+
+volatile RXTX_STATE state = STATE_READY_RECEIVE;
 
 /** DECLARATIONS ***************************************************/
 #pragma code
@@ -393,40 +413,42 @@ static void InitializeSystem(void) {
 
 
 
-
-static const WORD_VAL gain_max = 0xffff;
-static const WORD_VAL dac_max = 0xffff;
-static const WORD_VAL triggerLevelInit = 2000;
-
-enum {
-    TRIGGER_CH_1,
-    TRIGGER_CH_2,
-    TRIGGER_FREE_RUN
-} currentTrigger;
-
 #define LedBlink2() do { OpenCompare1(COM_INT_OFF & COM_TOGG_MATCH, 0x0000); } while (0)
 #define LedBlink() { CCP1CONbits.CCP1M = 0b0010; CCPR1 = 0xffff; }
-#define LedOn() { CloseCompare1(); LED = 1; }
-#define LedOff()  { CloseCompare1(); LED = 0; }
+#define LedOn() { CloseCompare1(); O_LED = 1; }
+#define LedOff()  { CloseCompare1(); O_LED = 0; }
 
-#define SetTriggerLevel(level) { \
-    DAC_Trigger_CS = 0; \
-    DAC_Write(level, dac_max);\
-    DAC_Trigger_CS = 1;\
+#define ApplyTriggerLevel(level) { \
+    O_DAC_Gain_CS = 1; \
+    O_DAC_Trigger_CS = 0; \
+    DAC_Write(level, 0x0fff);\
+    O_DAC_Trigger_CS = 1;\
 }
 
-#define SetGain(gainA, gainB) { \
-    DAC_Gain_CS = 0; \
-    DAC_Write(gainB, gainA); \
-    DAC_Gain_CS = 1; \
+#define ApplyGain(gainA, gainB) { \
+    O_DAC_Trigger_CS = 1; \
+    O_DAC_Gain_CS = 0; \
+    DAC_Write(gainA, gainB); \
+    O_DAC_Gain_CS = 1; \
 }
 
-#define SelectTrigger(x) { \
-  currentTrigger = (x) ;\
+#define SelectInputChannel1() { O_ADC_A0 = 0; O_ADC_A1 = 0; }
+#define SelectInputChannel2() { O_ADC_A0 = 1; O_ADC_A1 = 0; }
+#define SelectInputChannelT() { O_ADC_A0 = 0; O_ADC_A1 = 1; }
+
+void ApplyOsciConfig(void) {
+    O_ACDC_Ch1 = config.acdcCh1;
+    O_ACDC_Ch2 = config.acdcCh2;
+    ApplyTriggerLevel(config.triggerLevel);
+    ApplyGain(config.gainCh1, config.gainCh2);
+
+    switch (config.inputChannel) {
+        case ADC_ch1: SelectInputChannel1(); break;
+        case ADC_ch2: SelectInputChannel2(); break;
+        case ADC_triggerLevel: SelectInputChannelT(); break;
+    }
+    Nop();
 }
-
-
-
 
 void UserInit(void) {
     LATB &= ~((1 << 2) | 1 << 3 | 1 << 4);
@@ -440,22 +462,24 @@ void UserInit(void) {
 
     TRISA &= ~(1 << 1 | 1 << 2 | 1 << 3 | 1 << 4);
 
-    mADC_A0 = 0;
-    mADC_A1 = 0;
-    mADC_CS = 1;
-    mADC_RD = 1;
 
-    DAC_Trigger_CS = 1;
-    DAC_Gain_CS = 1;
-    DAC_SCLK = 0;
-    DAC_DIN = 0;
+    O_ADC_CS = 1;
+    O_ADC_RD = 1;
 
-    ACDC_Ch1 = 0;
-    ACDC_Ch2 = 0;
+    O_DAC_Trigger_CS = 1;
+    O_DAC_Gain_CS = 1;
+    O_DAC_SCLK = 0;
+    O_DAC_DIN = 0;
+
+
+    InitOsciConfig(config);
+    ApplyOsciConfig();
+
+SampleNoDelayInterleaved();
 
 #if 0
     // this makes the device dysfuntional!
-   OpenTimer1(T1_OSC1EN_OFF & T1_PS_1_8 & T1_SOURCE_INT & T1_SYNC_EXT_OFF);
+    OpenTimer1(T1_OSC1EN_OFF & T1_PS_1_8 & T1_SOURCE_INT & T1_SYNC_EXT_OFF);
 #else
 
     T1CONbits.T1OSCEN = 0;
@@ -465,9 +489,6 @@ void UserInit(void) {
     T1CONbits.TMR1ON = 1;
 #endif
 
-    SelectTrigger(TRIGGER_FREE_RUN);
-    SetTriggerLevel(triggerLevelInit);
-    SetGain(gain_max, gain_max);
     LedBlink();
 
     //    INTCON2bits.RBPU = 0;
@@ -478,17 +499,21 @@ void UserInit(void) {
     USBInHandle = 0;
 }//end UserInit
 
-void DAC_Write(WORD_VAL daca, WORD_VAL dacb) {
+
+/** DAC_Write */
+void DAC_Write(WORD daca, WORD dacb) {
+    WORD_VAL daca_v = daca;
+    WORD_VAL dacb_v = dacb;
     int i;
     for (i = 12 - 1; i >= 0; i--) {
-        DAC_DIN = (dacb.Val >> i) & 1;
-        DAC_SCLK = 0;
-        DAC_SCLK = 1;
+        O_DAC_DIN = (dacb_v.Val >> i) & 1;
+        O_DAC_SCLK = 0;
+        O_DAC_SCLK = 1;
     }
     for (i = 12 - 1; i >= 0; i--) {
-        DAC_DIN = (daca.Val >> i) & 1;
-        DAC_SCLK = 0;
-        DAC_SCLK = 1;
+        O_DAC_DIN = (daca_v.Val >> i) & 1;
+        O_DAC_SCLK = 0;
+        O_DAC_SCLK = 1;
     }
 }
 
@@ -501,193 +526,191 @@ void DAC_Write(WORD_VAL daca, WORD_VAL dacb) {
  *
  * Note:            None
  *******************************************************************/
-enum {
-    STATE_NORM,
-    STATE_TRANS_ONE,
-    STATE_TRANS_ADC,
-    STATE_TRANS_ADC_LAST = STATE_TRANS_ADC + 4
-} state = STATE_NORM;
 
 
-void ProcessIO(void) {
-    WORD_VAL wa;
-    WORD_VAL wb;
+static void WaitForTrigger(void) {
+    WORD timeout = 0xffff;
+    LedBlink();
 
-    BlinkUSBStatus();
-    // User Application USB tasks
-    if ((USBDeviceState < CONFIGURED_STATE) || (USBSuspendControl == 1)) return;
+    if (config.triggerChannel == TRIGGER_CH_1) {
+        if (config.triggerMode == TRIGGER_RISING) {
+            while (I_TriggerCh1 && timeout-- > 0);
+            while (!I_TriggerCh1 && timeout-- > 0);
+        } else {
+            while (!I_TriggerCh1 && timeout-- > 0);
+            while (I_TriggerCh1 && timeout-- > 0);
+        }
+    } else if (config.triggerChannel == TRIGGER_CH_2) {
+        if (config.triggerMode == TRIGGER_RISING) {
+            while (I_TriggerCh2 && timeout-- > 0);
+            while (!I_TriggerCh2 && timeout-- > 0);
+        } else {
+            while (!I_TriggerCh2 && timeout-- > 0);
+            while (I_TriggerCh2 && timeout-- > 0);
+        }
+    }
 
-    if (state == STATE_NORM && !HIDRxHandleBusy(USBOutHandle)) //Check if data was received from the host.
+    LedOff();
+}
+
+#define EnableInterrupts() { INTCONbits.GIE = 1; }
+#define DisableInterrupts() { INTCONbits.GIE = 0; }
+
+
+void HandleRequest(void) {
+
+    ToSendDataBuffer[0] = ReceivedData[0] + 1;
+    state = STATE_TRANS_ONE;
+
+    switch (ReceivedData[0]) //Look at the data the host sent, to see what kind of application specific command it sent.
     {
-        ToSendDataBuffer[0] = ReceivedDataBuffer[0] + 1;
-        state = STATE_TRANS_ONE;
 
-        switch (ReceivedDataBuffer[0]) //Look at the data the host sent, to see what kind of application specific command it sent.
+        case OP_SET_CONFIG:
+            memcpy((void*) &config, (void*) &ReceivedData[1], sizeof (osci_config_t));
+            ToSendDataBuffer[1] = sizeof (osci_config_t);
+            memcpy((void*) &ToSendDataBuffer[2], (void*) &config, sizeof (osci_config_t));
+
+            ApplyOsciConfig();
+
+            break;
+
+
+        case OP_READ_SINGLE:
+            ToSendDataBuffer[1] = ReadSingleADC();
+            break;
+
+
+
+        case OP_SAMPLE_FASTEST_SINGLE:
+        {
+            //sample without delay
+
+            // store acknoledge
+            BYTE w = ReceivedData[0] + 1;
+            state = STATE_TRANS_ADC;
+
+            WaitForTrigger();
+
+            // DisableInterrupts();
+            O_ADC_CS = 0;
+
+            SampleNoDelaySingleChannel();
+
+            O_ADC_CS = 1;
+            // EnableInterrupts();
+
+            // rebuild acknoledge over sampled data
+            ToSendDataBuffer[0] = w;
+
+            LedOn();
+        }
+            break;
+
+        case OP_SAMPLE_FASTEST_INTERLEAVED:
+        {
+            BYTE w = ReceivedData[0] + 1;
+            int i;
+            state = STATE_TRANS_ADC;
+
+            DisableInterrupts();
+
+            WaitForTrigger();
+
+            O_ADC_CS = 0;
+            SampleNoDelayInterleaved();
+            EnableInterrupts();
+            O_ADC_CS = 1;
+            ToSendDataBuffer[0] = w;
+
+            LedOn();
+        }
+
+        
+            break;
+
+        case OP_SAMPLE_DELAYED_SINGLE:
         {
 
-            case 0x10:
-            {
-                BYTE_VAL b = ReceivedDataBuffer[1];
+            BYTE w = ReceivedData[0] + 1;
+            const BYTE del = ReceivedData[1];
+            WORD timeout = 0xffff;
+            BYTE del2;
+            int i;
+            state = STATE_TRANS_ADC;
 
-                ACDC_Ch1 = b.bits.b0;
-                ACDC_Ch2 = b.bits.b1;
+            //DisableInterrupts();
 
-                ToSendDataBuffer[1] = ACDC_Ch1;
-                ToSendDataBuffer[2] = ACDC_Ch2;
+            WaitForTrigger();
 
-            }
-                break;
-
-            case 0x20:
-
-                wa.v[0] = ReceivedDataBuffer[1];
-                wa.v[1] = ReceivedDataBuffer[2];
-
-                SetTriggerLevel(wa);
-                break;
-
-            case 0x30:
-
-                wa.v[0] = ReceivedDataBuffer[1];
-                wa.v[1] = ReceivedDataBuffer[2];
-
-                wb.v[0] = ReceivedDataBuffer[3];
-                wb.v[1] = ReceivedDataBuffer[4];
-
-                SetGain(wa, wb);
-                break;
-
-            case 0x40:
-                ToSendDataBuffer[1] = ReadSingleADC();
-                break;
-
-            case 0x50:
-
-                mADC_A0 = (ReceivedDataBuffer[1]) &1;
-                mADC_A1 = (ReceivedDataBuffer[1] >> 1) &1;
-                ToSendDataBuffer[1] = mADC_A0;
-                ToSendDataBuffer[2] = mADC_A1;
-                break;
-
-
-            case 0x60:
-            {
-
-                //sample without delay
-
-
-                // store acknoledge
-                BYTE_VAL w = ReceivedDataBuffer[0] + 1;
-
-                WORD timeout = 0xffff;
-                int i;
-                state = STATE_TRANS_ADC;
-
-                LedBlink();
-
-                if (currentTrigger == TRIGGER_CH_1) {
-                    while (TriggerCh1 && timeout-- > 0);
-                    while (!TriggerCh1 && timeout-- > 0);
-                } else if (currentTrigger == TRIGGER_CH_2) {
-                    while (TriggerCh2 && timeout-- > 0);
-                    while (!TriggerCh2 && timeout-- > 0);
-                }
-                LedOff();
-
-               // INTCONbits.GIE = 0;
-                mADC_CS = 0;
-
-                SampleNoDelaySingleChannel();
-
-                mADC_CS = 1;
-                //INTCONbits.GIE = 1;
-
-
-                ToSendDataBuffer[0] = w.Val;
-
-                LedOn();
-            }
-                break;
-
-
-            case 0x70:
-            {
-                // sample with delay
-
-
-                BYTE_VAL w = ReceivedDataBuffer[0] + 1;
-                const BYTE del = ReceivedDataBuffer[1];
-                WORD timeout = 0xffff;
-                BYTE del2;
-                int i;
-                state = STATE_TRANS_ADC;
-
-                INTCONbits.GIE = 0;
-
-                LedBlink();
-                if (currentTrigger == TRIGGER_CH_1) {
-                    while (TriggerCh1 && timeout-- > 0);
-                    while (!TriggerCh1 && timeout-- > 0);
-                } else if (currentTrigger == TRIGGER_CH_2) {
-                    while (TriggerCh2 && timeout-- > 0);
-                    while (!TriggerCh2 && timeout-- > 0);
-                }
-                LedOff();
-
-                mADC_CS = 0;
+            O_ADC_CS = 0;
 #define Sample(buffer) {\
                     for (i = 0; i < 64; i++) { \
-                        mADC_RD = 0; \
+                        O_ADC_RD = 0; \
                         del2 = del;\
                         while(del2--);\
                         /*  while (mADC_INT); */\
                         (buffer)[i] = PORTD; \
-                        mADC_RD = 1; \
+                        O_ADC_RD = 1; \
                     } \
 }
 
 
-                Sample(ToSendDataBuffer);
-                Sample(ADC_DATA1);
-                Sample(ADC_DATA2);
+            Sample(ToSendDataBuffer);
+            Sample(ADC_DATA1);
+            Sample(ADC_DATA2);
 
 #undef Sample
 
-                INTCONbits.GIE = 1;
-                mADC_CS = 1;
-                ToSendDataBuffer[0] = w.Val;
+            //EnableInterrupts();
+            O_ADC_CS = 1;
+            ToSendDataBuffer[0] = w;
 
-                LedOn();
-            }
-                break;
-
-            case 0x80:
-                SelectTrigger(ReceivedDataBuffer[1]);
-                break;
-
-            case 0x90:
-                //ping
-                break;
-
-            case 0x81: //Get push button state
-                ToSendDataBuffer[1] = 0x00;
-                break;
-            default:
-                ToSendDataBuffer[0] = 0xff;
+            LedOn();
         }
+            break;
+
+
+        case OP_PING:
+            //ping
+            break;
+
+        default:
+            // not implemented: return some nack
+            ToSendDataBuffer[0] = 0x00;
+            break;
     }
 
+}
+
+void ProcessIO(void) {
+
+
+    //BlinkUSBStatus();
+
+    // User Application USB tasks
+    if ((USBDeviceState < CONFIGURED_STATE) || (USBSuspendControl == 1)) {
+        state = STATE_READY_RECEIVE;
+        return;
+    }
+
+
+
     switch (state) {
-        case STATE_NORM:
+        case STATE_READY_RECEIVE:
+            if (!HIDRxHandleBusy(USBOutHandle))
+                HandleRequest();
+            break;
+        case STATE_REARM_RX:
+            //Re-arm the OUT endpoint for the next packet
+            USBOutHandle = HIDRxPacket(HID_EP, (BYTE*) & ReceivedData, RX_SIZE);
+            state = STATE_READY_RECEIVE;
             break;
         case STATE_TRANS_ONE:
         {
             if (!HIDTxHandleBusy(USBInHandle)) {
                 USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ToSendDataBuffer[0], 64);
-                state = STATE_NORM;
+                state = STATE_REARM_RX;
             }
-            //Re-arm the OUT endpoint for the next packet
-            USBOutHandle = HIDRxPacket(HID_EP, (BYTE*) & ReceivedDataBuffer, RX_SIZE);
 
             break;
         }
@@ -718,25 +741,21 @@ void ProcessIO(void) {
             if (!HIDTxHandleBusy(USBInHandle)) {
                 memcpy((BYTE*) & ToSendDataBuffer[0], (void*) &ADC_DATA2[0], 64);
                 USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ToSendDataBuffer[0], 64);
-                state = STATE_NORM;
+                state = STATE_REARM_RX;
             }
-            //Re-arm the OUT endpoint for the next packet
-            USBOutHandle = HIDRxPacket(HID_EP, (BYTE*) & ReceivedDataBuffer, RX_SIZE);
             break;
     }
 
 }//end ProcessIO
 
-
 BYTE ReadSingleADC(void) {
     BYTE w;
-    mADC_CS = mADC_RD = 0;
+    O_ADC_CS = O_ADC_RD = 0;
     //while (PORTBbits.RB1);
     w = PORTD;
-    mADC_CS = mADC_RD = 1;
+    O_ADC_CS = O_ADC_RD = 1;
     return w;
 }
-
 
 /********************************************************************
  * Function:        void BlinkUSBStatus(void)
@@ -757,26 +776,17 @@ BYTE ReadSingleADC(void) {
  *                  usb_device.c.
  *******************************************************************/
 void BlinkUSBStatus(void) {
-
-    BYTE b;
     // No need to clear UIRbits.SOFIF to 0 here.
     // Callback caller is already doing that.
 
     if (USBSuspendControl == 1) {
-        b = 9;
     } else {
         if (USBDeviceState == DETACHED_STATE) {
-            b = 1;
         } else if (USBDeviceState == ATTACHED_STATE) {
-            b = 2;
         } else if (USBDeviceState == POWERED_STATE) {
-            b = 3;
         } else if (USBDeviceState == DEFAULT_STATE) {
-            b = 4;
         } else if (USBDeviceState == ADDRESS_STATE) {
-            b = 5;
         } else if (USBDeviceState == CONFIGURED_STATE) {
-            b = 6;
         }
     }
 
@@ -970,6 +980,7 @@ void USBCBErrorHandler(void) {
     // automatically, without the need for application firmware
     // intervention.
 
+    state = STATE_READY_RECEIVE;
     // Nevertheless, this callback function is provided, such as
     // for debugging purposes.
 }
@@ -1053,7 +1064,7 @@ void USBCBInitEP(void) {
     //enable the HID endpoint
     USBEnableEndpoint(HID_EP, USB_IN_ENABLED | USB_OUT_ENABLED | USB_HANDSHAKE_ENABLED | USB_DISALLOW_SETUP);
     //Re-arm the OUT endpoint for the next packet
-    USBOutHandle = HIDRxPacket(HID_EP, (BYTE*) & ReceivedDataBuffer, RX_SIZE);
+    USBOutHandle = HIDRxPacket(HID_EP, (BYTE*) & ReceivedData, RX_SIZE);
 }
 
 /********************************************************************

@@ -19,7 +19,7 @@ GraphNormal::GraphNormal(QWidget *parent) :
     ui->qwtPlot->setCanvasBackground(QBrush(QColor(55, 143, 94)));
     ch1.attach(ui->qwtPlot);
     ch2.attach(ui->qwtPlot);
-    ch1.data->setPen(QPen(QBrush(QColor(0,255,148)), 3));
+    ch1.data->setPen(QPen(QBrush(QColor(0,255,148)), 4));
     ch2.data->setPen(QPen(QBrush(Qt::blue), 3));
     ch2.data->setAxes(QwtPlot::xBottom, QwtPlot::yRight);
     curveTriggerLevel->attach(ui->qwtPlot);
@@ -116,6 +116,12 @@ double avg(const QVector<QPointF>& data) {
 void GraphNormal::modeSelectionChanged(ModeControl::Modes_t mode) {
     ch1.setVisible(ModeControl::showsCh1(mode));
     ch2.setVisible(ModeControl::showsCh2(mode));
+    if (mode == ModeControl::Mode_Interleaved) {
+        ui->qwtPlot->setAxisScale(QwtPlot::xBottom, 0, 5);
+    }
+    else {
+        ui->qwtPlot->setAxisScale(QwtPlot::xBottom, 0, 10);
+    }
     ui->qwtPlot->replot();
 }
 
@@ -144,18 +150,21 @@ void GraphNormal::Curve::setSamples(const QVector<QPointF>& samples) {
 
     if (!isVisible()) return;
 
+    // this is an error condition and should be reported!
+    if (samples.size() == 0) return;
+
     QVector<QPointF> dataFit;
 
-        data->setSamples(samples);
-        if (fitSin(samples, p, dataFit)) {
-            fittedSine->setSamples(dataFit);
-            fittedSine->setVisible(true);
-        }
-        else {
-            fittedSine->setVisible(false);
-        }
+    data->setSamples(samples);
+    if (fitSin(samples, p, dataFit)) {
+        fittedSine->setSamples(dataFit);
+        fittedSine->setVisible(true);
+    }
+    else {
+        fittedSine->setVisible(false);
+    }
 
-        rms->setSamples(makeConstVector(samples, ::rms(samples)));
-        avg->setSamples(makeConstVector(samples, ::avg(samples)));
+    rms->setSamples(makeConstVector(samples, ::rms(samples)));
+    avg->setSamples(makeConstVector(samples, ::avg(samples)));
 
 }

@@ -18,8 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
 
-    ui->channelControlCh1->setChannel(Device::ADC_ch1);
-    ui->channelControlCh2->setChannel(Device::ADC_ch2);
+    ui->channelControlCh1->setChannel(DeviceConstants::ADC_ch1);
+    ui->channelControlCh2->setChannel(DeviceConstants::ADC_ch2);
 
 
     connect(&updateTimer, SIGNAL(timeout()), &device, SLOT(refresh()));
@@ -28,12 +28,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&device, SIGNAL(fatal(QString)), this, SLOT(fatal(QString)));
 
     connect(ui->channelControlCh1, SIGNAL(vdivSelected(QString, Device::VdivValues_t)), this, SLOT(VdivCh1Adjusted(QString, Device::VdivValues_t)));
-    connect(ui->channelControlCh1, SIGNAL(acdcSelected(Device::ACDC_t)), this, SLOT(ACDCCh1Adjusted(Device::ACDC_t)));
+    connect(ui->channelControlCh1, SIGNAL(acdcSelected(DeviceConstants::ACDC_t)), this, SLOT(ACDCCh1Adjusted(DeviceConstants::ACDC_t)));
 
     connect(ui->channelControlCh2, SIGNAL(vdivSelected(QString, Device::VdivValues_t)), this, SLOT(VdivCh2Adjusted(QString, Device::VdivValues_t)));
-    connect(ui->channelControlCh2, SIGNAL(acdcSelected(Device::ACDC_t)), this, SLOT(ACDCCh2Adjusted(Device::ACDC_t)));
+    connect(ui->channelControlCh2, SIGNAL(acdcSelected(DeviceConstants::ACDC_t)), this, SLOT(ACDCCh2Adjusted(DeviceConstants::ACDC_t)));
 
-    connect(ui->triggerControl, SIGNAL(triggerSourceSelected(Device::TriggerSource_t)), this, SLOT(triggerSourceSelected(Device::TriggerSource_t)));
+    connect(ui->triggerControl, SIGNAL(triggerSourceSelected(DeviceConstants::TriggerSource_t)), this, SLOT(triggerSourceSelected(DeviceConstants::TriggerSource_t)));
 
     connect(ui->dialTriggerLevel, SIGNAL(valueChanged(int)), this, SLOT(TriggerLevelAdjusted(int)));
     connect(ui->timeControl, SIGNAL(delayValueChanged(QString, Device::TdivValues_t)), this, SLOT(delayAdjusted(QString, Device::TdivValues_t)));
@@ -85,7 +85,7 @@ void MainWindow::graphSelectionChanged(QMap<GraphControl::Graphs_t,bool> enabled
     ui->graphXY->setVisible(enabled[GraphControl::Graph_XY]);
 }
 
-void MainWindow::triggerSourceSelected(Device::TriggerSource_t triggerSource) {
+void MainWindow::triggerSourceSelected(DeviceConstants::TriggerSource_t triggerSource) {
     device.selectTriggerSource(triggerSource);
     //curveTriggerLevel->setAxes(QwtPlot::xBottom, (triggerSource == Device::Trigger_Ch1) ? QwtPlot::yLeft : QwtPlot::yRight);
 }
@@ -134,14 +134,12 @@ void MainWindow::fatal(QString message) {
     device.disConnect();
 }
 
-void MainWindow::ACDCCh1Adjusted(Device::ACDC_t value) {
-    acdc_ch1 = value;
-    device.setACDC(acdc_ch1, acdc_ch2);
+void MainWindow::ACDCCh1Adjusted(DeviceConstants::ACDC_t value) {
+    device.setACDC_Ch1(value);
 }
 
-void MainWindow::ACDCCh2Adjusted(Device::ACDC_t value) {
-    acdc_ch2 = value;
-    device.setACDC(acdc_ch1, acdc_ch2);
+void MainWindow::ACDCCh2Adjusted(DeviceConstants::ACDC_t value) {
+    device.setACDC_Ch2(value);
 }
 
 void MainWindow::VdivCh1Adjusted(QString, Device::VdivValues_t value) {
@@ -165,17 +163,22 @@ void MainWindow::sample() {
 
     QVector<QPointF> dataCh1, dataCh2, dataTr;
 
-    device.selectChannel(Device::ADC_triggerLevel);
+    device.selectChannel(DeviceConstants::ADC_triggerLevel);
     dataTr = device.getADCBlock();
 
-    if (ModeControl::showsCh1(currentMode)) {
-        device.selectChannel(Device::ADC_ch1);
-        dataCh1 = device.getADCBlock(delay);
+    if (currentMode == ModeControl::Mode_Interleaved) {
+        device.getADCInterleaved(delay, dataCh1, dataCh2);
     }
+    else {
+        if (ModeControl::showsCh1(currentMode)) {
+            device.selectChannel(DeviceConstants::ADC_ch1);
+            dataCh1 = device.getADCBlock(delay);
+        }
 
-    if (ModeControl::showsCh2(currentMode)) {
-        device.selectChannel(Device::ADC_ch2);
-        dataCh2 = device.getADCBlock(delay);
+        if (ModeControl::showsCh2(currentMode)) {
+            device.selectChannel(DeviceConstants::ADC_ch2);
+            dataCh2 = device.getADCBlock(delay);
+        }
     }
 
 

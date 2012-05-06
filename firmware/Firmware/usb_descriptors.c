@@ -157,10 +157,16 @@ state according to the definition in the USB specification.
 #include "./USB/usb.h"
 #include "./USB/usb_function_hid.h"
 
+
+// for VENDOR_ID, PRODUCT_ID
+#include "../../shared/common.h"
+
 /** CONSTANTS ******************************************************/
 #if defined(__18CXX)
 #pragma romdata
 #endif
+
+
 
 /* Device Descriptor */
 ROM USB_DEVICE_DESCRIPTOR device_dsc=
@@ -172,8 +178,8 @@ ROM USB_DEVICE_DESCRIPTOR device_dsc=
     0x00,                   // Subclass code
     0x00,                   // Protocol code
     USB_EP0_BUFF_SIZE,          // Max packet size for EP0, see usb_config.h
-    0x04D8,                 // Vendor ID
-    0x003F,                 // Product ID: Custom HID device demo
+    VENDOR_ID,                 // Vendor ID
+    PRODUCT_ID,                 // Product ID: Custom HID device demo
     0x0002,                 // Device release number in BCD format
     0x01,                   // Manufacturer string index
     0x02,                   // Product string index

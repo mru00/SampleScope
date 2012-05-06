@@ -38,7 +38,8 @@ HEADERS  += mainwindow.h channelcontrol.h \
     graphbase.h \
     graphfft.h \
     graphnormal.h \
-    graphxy.h
+    graphxy.h \
+    ../../shared/common.h
 
 FORMS    += mainwindow.ui channelcontrol.ui \
     triggercontrol.ui \

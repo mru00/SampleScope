@@ -42,9 +42,9 @@ private slots:
 
     void VdivCh1Adjusted(QString hr, Device::VdivValues_t value);
     void VdivCh2Adjusted(QString hr, Device::VdivValues_t value);
-    void ACDCCh1Adjusted(Device::ACDC_t value);
-    void ACDCCh2Adjusted(Device::ACDC_t value);
-    void triggerSourceSelected(Device::TriggerSource_t);
+    void ACDCCh1Adjusted(DeviceConstants::ACDC_t value);
+    void ACDCCh2Adjusted(DeviceConstants::ACDC_t value);
+    void triggerSourceSelected(DeviceConstants::TriggerSource_t);
     void delayAdjusted(QString, Device::TdivValues_t delay);
     void modeSelectionChanged(ModeControl::Modes_t);
 
@@ -54,7 +54,6 @@ private:
     QTimer updateTimer;
     Device device;
 
-    Device::ACDC_t acdc_ch1, acdc_ch2;
     Device::VdivValues_t vdiv_ch1, vdiv_ch2;
     Device::TdivValues_t delay;
 

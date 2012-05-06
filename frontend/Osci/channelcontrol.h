@@ -17,7 +17,7 @@ public:
         explicit ChannelControl(QWidget *parent = 0);
         ~ChannelControl();
 
-        void setChannel(Device::Channel_t c);
+        void setChannel(DeviceConstants::Channel_t c);
         void initialEmit();
         bool isActive();
         bool fitSin();
@@ -28,10 +28,10 @@ private slots:
         void acdcValueChanged(bool acdc);
 signals:
         void vdivSelected(QString hr, Device::VdivValues_t code);
-        void acdcSelected(Device::ACDC_t acdc);
+        void acdcSelected(DeviceConstants::ACDC_t acdc);
 private:
         Ui::ChannelControl *ui;
-        Device::Channel_t channel;
+        DeviceConstants::Channel_t channel;
 };
 
 #endif // CHANNELCONTROL_H

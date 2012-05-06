@@ -19,9 +19,9 @@ public:
         bool vis;
         Curve(int num)
             : data(new QwtPlotCurve(QString("Ch %1").arg(num)))
-            , fittedSine(new QwtPlotCurve(QString("").arg(num)))
-            , rms(new QwtPlotCurve(QString("").arg(num)))
-            , avg(new QwtPlotCurve(QString("").arg(num)))
+            , fittedSine(new QwtPlotCurve(QString("Sin %1").arg(num)))
+            , rms(new QwtPlotCurve(QString("RMS %1").arg(num)))
+            , avg(new QwtPlotCurve(QString("AVG %1").arg(num)))
             , vis(true)
         {
             p[0] = p[1] = p[2] = 1000.0;

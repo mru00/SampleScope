@@ -22,7 +22,7 @@ private slots:
         void triggerCh2Toggled(bool);
         void triggerFreeToggled(bool);
 signals:
-        void triggerSourceSelected(Device::TriggerSource_t triggerSource);
+        void triggerSourceSelected(DeviceConstants::TriggerSource_t triggerSource);
 private:
         Ui::TriggerControl *ui;
 };
