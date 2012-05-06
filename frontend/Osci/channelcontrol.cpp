@@ -1,27 +1,26 @@
 #include "channelcontrol.h"
 #include "ui_channelcontrol.h"
 
-ChannelControl::ChannelControl(Device::Channel_t id, QWidget *parent) :
+ChannelControl::ChannelControl(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ChannelControl),
-        channel(id)
+    ui(new Ui::ChannelControl)
 {
     ui->setupUi(this);
-    ui->groupBox->setTitle(Device::getChannelName(id));
-
-    ui->checkBoxActive->setChecked(id == Device::ADC_ch1);
 
     connect(ui->dialGain, SIGNAL(valueChanged(int)), this, SLOT(vdivValueChanged(int)));
     connect(ui->radioButtonAC, SIGNAL(toggled(bool)), this, SLOT(acdcValueChanged(bool)));
     ui->radioButtonAC->setChecked(false);
     ui->dialGain->setRange(0, Device::Vdiv_LAST);
-
-
 }
 
 ChannelControl::~ChannelControl()
 {
     delete ui;
+}
+
+void ChannelControl::setChannel(Device::Channel_t c) {
+        channel = c;
+        ui->groupBox->setTitle(Device::getChannelName(channel));
 }
 
 void ChannelControl::initialEmit() {
@@ -42,9 +41,6 @@ void ChannelControl::vdivValueChanged(int value_) {
         emit vdivSelected(label, value);
 }
 
-bool ChannelControl::isActive() {
-        return ui->checkBoxActive->isChecked();
-}
 
 bool ChannelControl::fitSin() {
         return ui->checkBoxFitSin->isChecked();

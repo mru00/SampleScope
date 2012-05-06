@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>725</width>
-    <height>508</height>
+    <width>1066</width>
+    <height>668</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,22 +29,97 @@
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMinimumSize</enum>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="checkBoxActive">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>180</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Redraw</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ModeControl" name="modeControl" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="GraphControl" name="graphControl" native="true">
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="sizeConstraint">
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>
         <item>
-         <widget class="QwtPlot" name="qwtPlot">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <widget class="GraphNormal" name="graphNorm" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="GraphFFT" name="graphFFT" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="GraphXY" name="graphXY" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -72,26 +147,31 @@
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>
         <item>
-         <widget class="QCheckBox" name="checkBoxActive">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
+         <widget class="ChannelControl" name="channelControlCh1" native="true">
           <property name="minimumSize">
            <size>
-            <width>180</width>
+            <width>20</width>
             <height>0</height>
            </size>
           </property>
-          <property name="text">
-           <string>Active</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
+          <zorder>checkBoxActive</zorder>
+         </widget>
+        </item>
+        <item>
+         <widget class="ChannelControl" name="channelControlCh2" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>0</height>
+           </size>
           </property>
          </widget>
+        </item>
+        <item>
+         <widget class="TriggerControl" name="triggerControl" native="true"/>
+        </item>
+        <item>
+         <widget class="TimeControl" name="timeControl" native="true"/>
         </item>
        </layout>
       </item>
@@ -104,7 +184,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>725</width>
+     <width>1066</width>
      <height>25</height>
     </rect>
    </property>
@@ -141,9 +221,52 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
+   <class>ModeControl</class>
+   <extends>QWidget</extends>
+   <header>modecontrol.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ChannelControl</class>
+   <extends>QWidget</extends>
+   <header>channelcontrol.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TriggerControl</class>
+   <extends>QWidget</extends>
+   <header>triggercontrol.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TimeControl</class>
+   <extends>QWidget</extends>
+   <header>timecontrol.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GraphFFT</class>
+   <extends>QWidget</extends>
+   <header>graphfft.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GraphNormal</class>
+   <extends>QWidget</extends>
+   <header>graphnormal.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GraphXY</class>
+   <extends>QWidget</extends>
+   <header>graphxy.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GraphControl</class>
+   <extends>QWidget</extends>
+   <header>graphcontrol.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

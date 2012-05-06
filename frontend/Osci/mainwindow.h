@@ -3,11 +3,14 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QMap>
 
 #include "device.h"
 #include "channelcontrol.h"
 #include "triggercontrol.h"
 #include "timecontrol.h"
+#include "modecontrol.h"
+#include "graphcontrol.h"
 #include <qwt/qwt_plot.h>
 #include <qwt/qwt_plot_curve.h>
 #include <qwt/qwt_plot_grid.h>
@@ -43,22 +46,20 @@ private slots:
     void ACDCCh2Adjusted(Device::ACDC_t value);
     void triggerSourceSelected(Device::TriggerSource_t);
     void delayAdjusted(QString, Device::TdivValues_t delay);
+    void modeSelectionChanged(ModeControl::Modes_t);
 
+    void graphSelectionChanged(QMap<GraphControl::Graphs_t,bool> enabled);
 private:
     Ui::MainWindow *ui;
     QTimer updateTimer;
     Device device;
-    ChannelControl channelControl1, channelControl2;
-    TriggerControl triggerControl;
-    TimeControl timeControl;
-    QwtPlotCurve *curveCh1, *curveCh2, *curveTriggerLevel, *curveFitSinCh1;
-    QwtPlotGrid *plotGrid;
 
     Device::ACDC_t acdc_ch1, acdc_ch2;
     Device::VdivValues_t vdiv_ch1, vdiv_ch2;
     Device::TdivValues_t delay;
 
-    double p_ch1[3];
+    ModeControl::Modes_t currentMode;
+
 };
 
 #endif // MAINWINDOW_H

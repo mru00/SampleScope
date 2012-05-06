@@ -189,7 +189,10 @@ QVector<QPointF> Device::getADCBlock(int delay) {
         cout << "sampling with delay: " << delay << endl;
         comm ( (delay == 0) ? 0x60 : 0x70);
         QVector<QPointF> result;
-        const double timestretch = 1.0/19.2;
+
+        // 10 divs for 191 samples
+        const double timestretch = 10.0/191.0;
+
         for (size_t i = 1; i < 64; i++ ) {
                 result.append(QPointF( timestretch * (i-1), normalizeSample(buf[i])));
         }

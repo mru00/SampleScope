@@ -43,7 +43,7 @@
 #include "libusb-1.0/libusb.h"
 #include "iconv.h"
 
-#include "hidapi.h"
+#include "../HIDAPI/hidapi.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -1381,3 +1381,4 @@ uint16_t get_usb_code_for_current_locale(void)
 #ifdef __cplusplus
 }
 #endif
+          

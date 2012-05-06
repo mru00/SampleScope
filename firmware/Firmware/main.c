@@ -404,7 +404,7 @@ enum {
     TRIGGER_FREE_RUN
 } currentTrigger;
 
-#define LedBlink2(s) OpenCompare1(COM_INT_OFF & COM_TOGG_MATCH, (s))
+#define LedBlink2() do { OpenCompare1(COM_INT_OFF & COM_TOGG_MATCH, 0x0000); } while (0)
 #define LedBlink() { CCP1CONbits.CCP1M = 0b0010; CCPR1 = 0xffff; }
 #define LedOn() { CloseCompare1(); LED = 1; }
 #define LedOff()  { CloseCompare1(); LED = 0; }
@@ -453,7 +453,17 @@ void UserInit(void) {
     ACDC_Ch1 = 0;
     ACDC_Ch2 = 0;
 
-    OpenTimer1(T1_OSC1EN_OFF & T1_PS_1_8 & T1_SOURCE_INT);
+#if 0
+    // this makes the device dysfuntional!
+   OpenTimer1(T1_OSC1EN_OFF & T1_PS_1_8 & T1_SOURCE_INT & T1_SYNC_EXT_OFF);
+#else
+
+    T1CONbits.T1OSCEN = 0;
+
+    T1CONbits.T1CKPS = 0b11;
+    T1CONbits.TMR1CS = 0;
+    T1CONbits.TMR1ON = 1;
+#endif
 
     SelectTrigger(TRIGGER_FREE_RUN);
     SetTriggerLevel(triggerLevelInit);
@@ -584,13 +594,13 @@ void ProcessIO(void) {
                 }
                 LedOff();
 
-                INTCONbits.GIE = 0;
+               // INTCONbits.GIE = 0;
                 mADC_CS = 0;
 
                 SampleNoDelaySingleChannel();
 
                 mADC_CS = 1;
-                INTCONbits.GIE = 1;
+                //INTCONbits.GIE = 1;
 
 
                 ToSendDataBuffer[0] = w.Val;
@@ -652,7 +662,7 @@ void ProcessIO(void) {
                 break;
 
             case 0x80:
-                //SelectTrigger(ReceivedDataBuffer[1]);
+                SelectTrigger(ReceivedDataBuffer[1]);
                 break;
 
             case 0x90:

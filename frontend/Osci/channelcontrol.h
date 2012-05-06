@@ -14,9 +14,10 @@ class ChannelControl : public QWidget
         Q_OBJECT
 
 public:
-        explicit ChannelControl(Device::Channel_t channel, QWidget *parent = 0);
+        explicit ChannelControl(QWidget *parent = 0);
         ~ChannelControl();
 
+        void setChannel(Device::Channel_t c);
         void initialEmit();
         bool isActive();
         bool fitSin();
