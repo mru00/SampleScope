@@ -23,6 +23,10 @@ GraphBase::~GraphBase()
     delete ui;
 }
 
+QwtPlot* GraphBase::plot() {
+    return ui->qwtPlot;
+}
+
 void GraphBase::saveImage(QString filename) {
 
 //    QwtPlotRenderer ren;

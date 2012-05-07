@@ -23,6 +23,7 @@ public:
     void saveImage(QString filename);
 protected:
     Ui::GraphBase *ui;
+    QwtPlot* plot();
 
 protected:
     QwtPlotGrid *plotGrid;

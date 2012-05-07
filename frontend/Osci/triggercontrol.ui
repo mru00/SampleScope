@@ -57,14 +57,14 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QRadioButton" name="radioButton">
+       <widget class="QRadioButton" name="radioButtonRising">
         <property name="text">
          <string>Rising edge</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioButton_2">
+       <widget class="QRadioButton" name="radioButtonFalling">
         <property name="text">
          <string>Falling edge</string>
         </property>

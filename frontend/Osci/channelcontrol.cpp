@@ -10,7 +10,7 @@ ChannelControl::ChannelControl(QWidget *parent) :
     connect(ui->dialGain, SIGNAL(valueChanged(int)), this, SLOT(vdivValueChanged(int)));
     connect(ui->radioButtonAC, SIGNAL(toggled(bool)), this, SLOT(acdcValueChanged(bool)));
     ui->radioButtonAC->setChecked(false);
-    ui->dialGain->setRange(0, Device::Vdiv_LAST);
+    ui->dialGain->setRange(0, DeviceConstants::Vdiv_LAST);
 }
 
 ChannelControl::~ChannelControl()
@@ -34,11 +34,11 @@ void ChannelControl::acdcValueChanged(bool acdc) {
 
 void ChannelControl::vdivValueChanged(int value_) {
 
-        Device::VdivValues_t value = (Device::VdivValues_t)value_;
+        DeviceConstants::VdivValues_t value = (DeviceConstants::VdivValues_t)value_;
         QString label = Device::getVdivLabel(value);
 
         ui->labelGain->setText(label);
-        emit vdivSelected(label, value);
+        emit vdivSelected(value);
 }
 
 

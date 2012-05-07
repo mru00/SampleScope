@@ -29,6 +29,30 @@
       <item>
        <widget class="QListWidget" name="listWidgetModes"/>
       </item>
+      <item>
+       <widget class="QRadioButton" name="radioButtonContinuous">
+        <property name="text">
+         <string>Continuous</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButtonSingleShot">
+        <property name="text">
+         <string>Single Shot</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonSample">
+        <property name="text">
+         <string>Sample!</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="listWidgetDummy"/>
+      </item>
      </layout>
     </widget>
    </item>

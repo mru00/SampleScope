@@ -1,11 +1,32 @@
 #include P18F4450.INC
 
+
+    extern ToSendDataBuffer
+    extern ADC_DATA1
+    extern ADC_DATA2
+    extern ReceivedData
+
+
 SET_RD macro
     bsf LATB,RB2      ; 1
     endm
 
 CLEAR_RD macro
     bcf LATB,RB2      ; 1
+    endm
+
+
+sample3 macro
+    sample 0, ToSendDataBuffer
+    sample 1, ADC_DATA1
+    sample 2, ADC_DATA2
+    endm
+
+sample4 macro
+    sample 0, ToSendDataBuffer
+    sample 1, ReceivedData
+    sample 2, ADC_DATA1
+    sample 3, ADC_DATA2
     endm
 
 LedBlink_i macro

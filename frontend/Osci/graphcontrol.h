@@ -17,7 +17,9 @@ public:
         Graph_Normal,
         Graph_XY,
         Graph_FFT,
-        Graph_LAST = Graph_FFT
+        Graph_AutoCorr,
+        Graph_Measurements,
+        Graph_LAST = Graph_Measurements
     };
 
 public:

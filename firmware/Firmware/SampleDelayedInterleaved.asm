@@ -1,31 +1,28 @@
 
 #include Common_xx.s
 
+
     extern ToSendDataBuffer
     extern ADC_DATA1
     extern ADC_DATA2
 
+    extern DelayLSB
+    extern DelayMSB
+    extern Delay
+
+    global SampleDelayedInterleaved
 
 
     udata
 
 cnt RES 1
-
-
+del_msb RES 1
+del_lsb RES 1
 
 
 
 
     code
-
-; LATE.1 (ADC_A1) will never be set - only switch ADC_A0 (ch1/ch2)
-ch1 macro
-    bcf LATE,0
-    endm
-
-ch2 macro
-    bsf LATE,0
-    endm
 
 
 sample macro nr, b
@@ -41,7 +38,7 @@ loop_sample#v(nr)
     SET_RD            ; 1
     CLEAR_RD          ; 1
     movwf POSTINC0           ; 1
-    ch1
+    bcf LATE,0
     nop               ; 1
     nop               ; 1
     nop               ; 1
@@ -52,12 +49,19 @@ loop_sample#v(nr)
     SET_RD            ; 1
     CLEAR_RD          ; 1
     movwf POSTINC0    ; 1
-    ch2
+    bsf LATE,0
     nop               ; 1
     nop               ; 1
     nop               ; 1
     nop               ; 1
     nop               ; 1
+
+
+
+    movff del_msb,DelayMSB
+    movff del_lsb,DelayLSB
+
+    call Delay
 
     decfsz cnt,1
     goto loop_sample#v(nr)
@@ -66,11 +70,17 @@ loop_sample#v(nr)
 
 
 
+SampleDelayedInterleaved
 
 
 
-SampleNoDelayInterleaved
-    global SampleNoDelayInterleaved
+    ; get parameters from stack
+    MOVLW 0xff
+    movff PLUSW1, del_msb
+    MOVLW 0xfe
+    movff PLUSW1, del_lsb
+
+
 
     ; channel select; both clear -> ch1
     bcf LATE,0
@@ -83,10 +93,9 @@ SampleNoDelayInterleaved
     nop
     nop
 
-    ; sample 3x64
-    sample 0, ToSendDataBuffer
-    sample 1, ADC_DATA1
-    sample 2, ADC_DATA2
+    banksel cnt
+
+    sample4
 
     ; stop adc
     SET_RD

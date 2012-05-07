@@ -27,7 +27,7 @@ private slots:
         void vdivValueChanged(int gain);
         void acdcValueChanged(bool acdc);
 signals:
-        void vdivSelected(QString hr, Device::VdivValues_t code);
+        void vdivSelected(DeviceConstants::VdivValues_t code);
         void acdcSelected(DeviceConstants::ACDC_t acdc);
 private:
         Ui::ChannelControl *ui;

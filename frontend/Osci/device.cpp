@@ -7,17 +7,43 @@
 
 using namespace std;
 
-
-union WORD_VAL {
-    unsigned char b[2];
-    unsigned short val;
-    WORD_VAL(unsigned short v) : val(v) {}
-} __attribute__((packed));
-
 Device::Device(QObject *parent) :
     QObject(parent),
-    device(NULL)
+    device(NULL),
+    dummy(DeviceConstants::Dummy_Tri)
 {
+
+        //"12.8", "30", "100", "300",
+        //"1", "3", "10", "30", "100", "300", "1000", "3000"
+    unsigned short delays[] = {
+
+       0,// fastest
+        6,// 100 u
+        37,// 300 u
+        147,// 1m
+        454,// 3m
+        1549,// 10m
+        4600,// 30m
+        15000,// 100m
+
+        (187500-16)/9,
+        (625000-16)/9,
+        (1875000-16)/9,
+    };
+    unsigned short dacvals[] = {
+        4095, // 0xfff
+        2048, // 0x800
+        819,  // 0x333
+        410,  // 0x19a
+        205,  // 0xcd
+        82,   // 0x52
+        41,   // 0x29
+        20    // 0x14
+    };
+
+    for ( int i = 0; i <= DeviceConstants::Vdiv_LAST; i ++ ) gain_ch1_cal[i] = dacvals[i];
+    for ( int i = 0; i <= DeviceConstants::Vdiv_LAST; i ++ ) gain_ch2_cal[i] = dacvals[i];
+    for ( int i = 0; i <= DeviceConstants::Tdiv_LAST; i ++ ) delay_cal[i] = delays[i];
     InitOsciConfig(config);
 }
 
@@ -53,6 +79,10 @@ void Device::disConnect() {
     emit connected(false);
 }
 
+void Device::setDummy(DeviceConstants::Dummy_t dummy) {
+    this->dummy = dummy;
+}
+
 void Device::comm(const unsigned char command) {
     cerr << "sending command " << hex << showbase << (int)command << endl;
     if (!isConnected()) {
@@ -79,11 +109,13 @@ void Device::comm(const unsigned char command) {
         return;
     }
 
-    if (buf[0] != command+1) {
-        cout << "device sent unexpected answer, expected = " << command+1 << " received = " << buf[0] << endl;
+    const unsigned char check = command + 1;
+    const unsigned char ack = buf[0];
+    if (ack != check) {
+        cout << "device sent unexpected answer, expected = " << check << " received = " << ack << endl;
         disConnect();
         //printf("sent: 0x%02x, received: 0x%02x\n", command, buf[0]);
-        emit fatal(tr("Unexpected Answer from device"));
+        emit fatal(QString(tr("Unexpected Answer from device: expected: %1, received:%1")).arg(check).arg(ack));
         return;
     }
 }
@@ -92,36 +124,45 @@ void Device::ping() {
     comm(DeviceConstants::OP_PING);
 }
 
-QString Device::getTdivUnit(TdivValues_t val) {
-    return (val < Tdiv_1 ? "usec/div" : "msec/div");
+QString Device::getTdivUnit(DeviceConstants::TdivValues_t val) {
+    return (val < DeviceConstants::Tdiv_1 ? "usec/div" : "msec/div");
 }
-QString Device::getTdivLabel(TdivValues_t val) {
+
+#define ARRSIZE(x) ( sizeof(x)/sizeof(x[0]) )
+QString Device::getTdivLabel(DeviceConstants::TdivValues_t val) {
     const char* labels[] = {
-        "12.8",
-        "30",
-        "100",
-        "300",
-        "1",
-        "3",
-        "10",
-        "30",
-        "100",
-        "300",
-        "1000",
-        "3000"
+        "17.5", "100", "300",
+        "1", "3", "10", "30", "100", "300", "1000", "3000"
     };
-    Q_ASSERT ( val >= 0 && val < sizeof(labels) );
+    Q_ASSERT ( val >= 0 && val < ARRSIZE(labels) );
 
     return labels[val];
 }
 
-QString Device::getVdivLabel(VdivValues_t val) {
+double Device::getTdivTime(DeviceConstants::TdivValues_t tdiv, double val) {
+
+    const double mult[] = {
+        17.5e-6, 100e-6, 300e-6,
+        1e-3, 3e-3, 10e-3, 30e-3, 100e-3, 300e-3, 1000e-3, 3000e-3
+    };
+    Q_ASSERT ( tdiv >= 0 && tdiv < ARRSIZE(mult) );
+    return val * mult[tdiv];
+}
+QString Device::getVdivLabel(DeviceConstants::VdivValues_t vdiv) {
 
     const char* labels[] = {
         "10", "5", "2", "1", "0.5", "0.2", "0.1", "0.05"
     };
-    Q_ASSERT ( val >= 0 && val < sizeof(labels) );
-    return labels[val];
+    Q_ASSERT ( vdiv >= 0 && vdiv < ARRSIZE(labels) );
+    return labels[vdiv];
+}
+
+double Device::getVdivVoltate(DeviceConstants::VdivValues_t vdiv, double val) {
+    const double mult[] = {
+        10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05
+    };
+    Q_ASSERT ( vdiv >= 0 && vdiv < ARRSIZE(mult) );
+    return val * mult[vdiv];
 }
 
 
@@ -131,29 +172,30 @@ QString Device::getChannelName(DeviceConstants::Channel_t val) {
         "Channel 2",
         "Trigger Level"
     };
-    Q_ASSERT ( val >= 0 && val < sizeof(names) );
+    Q_ASSERT ( val >= 0 && val < ARRSIZE(names) );
     return names[val];
 }
 
-void Device::setVdiv(VdivValues_t gaina, VdivValues_t gainb) {
-    cout << "setting gain to " << gaina << " / " << gainb << endl;
+void Device::setVdiv_Ch1(DeviceConstants::VdivValues_t vdiv) {
+    config.gainCh1 = gain_ch1_cal[vdiv];
+    transmitConfig();
+}
 
-    unsigned short dacvals[] = {
-        4095, // 0xfff
-        2048, // 0x800
-        819,  // 0x333
-        410,  // 0x19a
-        205,  // 0xcd
-        82,   // 0x52
-        41,   // 0x29
-        20    // 0x14
-    };
+void Device::setVdiv_Ch2(DeviceConstants::VdivValues_t vdiv) {
+    config.gainCh2 = gain_ch2_cal[vdiv];
+    transmitConfig();
+}
 
-    Q_ASSERT (gaina >=0 && gaina < sizeof(dacvals));
-    Q_ASSERT (gainb >=0 && gainb < sizeof(dacvals));
+void Device::setTdiv(DeviceConstants::TdivValues_t div) {
+        //"12.8", "30", "100", "300",
+        //"1", "3", "10", "30", "100", "300", "1000", "3000"
+    unsigned short delay = delay_cal[div];
+    //calibDlg.setDelay(delay);
+    setDelay(delay);
+}
 
-    config.gainCh1 = dacvals[gaina];
-    config.gainCh2 = dacvals[gainb];
+void Device::setDelay(unsigned short val) {
+    config.sampleDelay = val;
     transmitConfig();
 }
 
@@ -172,25 +214,30 @@ Device::sample_t Device::getADCSingle() {
     return normalizeSample(buf[1]);
 }
 
-QVector<QPointF> Device::getADCBlock(int delay) {
-    delay = 0;
-    buf[2] = delay;
-    cout << "sampling with delay: " << delay << endl;
-    comm ( (delay == 0) ? DeviceConstants::OP_SAMPLE_FASTEST_SINGLE : DeviceConstants::OP_SAMPLE_DELAYED_SINGLE);
+void Device::getADCBlock(QVector<QPointF>& result) {
 
-    QVector<QPointF> result;
+    DeviceConstants::opcodes_t ops[] = {
+        DeviceConstants::OP_SAMPLE_SINGLE,
+        DeviceConstants::OP_SAMPLE_DUMMY_TRI,
+        DeviceConstants::OP_SAMPLE_DUMMY_ZERO,
+        DeviceConstants::OP_SAMPLE_DUMMY_MID
+    };
+
+    comm ( ops[dummy] );
+
+    result.clear();
     // comm might have failed and closed the device
-    if (!isConnected()) return result ;
+    if (!isConnected()) return;
 
 
 
     // 10 divs for 191 samples
-    const double timestretch = 10.0/191.0;
+    const double timestretch = 10.0/(191.0+64);
 
     for (size_t i = 1; i < 64; i++ ) {
         result.append(QPointF( timestretch * (i-1), normalizeSample(buf[i])));
     }
-    for (int j = 0; j < 2; j++ ) {
+    for (int j = 0; j < 3; j++ ) {
 
         hid_read(device, buf, sizeof(buf)) ;
         for (size_t i = 0; i < 64; i++ ) {
@@ -198,23 +245,17 @@ QVector<QPointF> Device::getADCBlock(int delay) {
         }
     }
     cout << "read data from ADC" << endl;
-    return result;
+    return;
 }
 
-void Device::getADCInterleaved(int delay, QVector<QPointF>& ch1, QVector<QPointF>& ch2) {
-    delay = 0;
-    buf[2] = delay;
-    cout << "sampling with delay: " << delay << endl;
-    comm ( DeviceConstants::OP_SAMPLE_FASTEST_INTERLEAVED);
+void Device::getADCInterleaved(QVector<QPointF>& ch1, QVector<QPointF>& ch2) {
+    comm ( DeviceConstants::OP_SAMPLE_INTERLEAVED);
 
-    QVector<QPointF> result;
     // comm might have failed and closed the device
     if (!isConnected()) return;
 
-
-
     // 10 divs for 191 samples
-    const double timestretch = 10.0/191.0;
+    const double timestretch = 10.0/(191.0+64);
 
     ch1.clear();
     ch2.clear();
@@ -224,7 +265,7 @@ void Device::getADCInterleaved(int delay, QVector<QPointF>& ch1, QVector<QPointF
         if (i&1) ch2.append(point);
         else ch1.append(point);
     }
-    for (int j = 0; j < 2; j++ ) {
+    for (int j = 0; j < 3; j++ ) {
 
         hid_read(device, buf, sizeof(buf)) ;
         for (size_t i = 0; i < 64; i++ ) {
@@ -254,11 +295,20 @@ void Device::selectTriggerSource(DeviceConstants::TriggerSource_t trigger_source
     transmitConfig();
 }
 
+void Device::selectTriggerMode(DeviceConstants::TriggerMode_t mode) {
+    cout << "selecting trigger mode " << mode << endl;
+   config.triggerMode = mode;
+   transmitConfig();
+}
+
 void Device::transmitConfig() {
     cout << "transmitting new config" << endl;
     memcpy(&buf[2], &config, sizeof(DeviceConstants::osci_config_t));
     comm(DeviceConstants::OP_SET_CONFIG);
-    /*
+
+    // if comm failed, an error has been reported; quit nagging
+    if (!isConnected()) return;
+
     DeviceConstants::osci_config_t newconf;
     int sizefw = buf[1];
     if (sizefw != sizeof(DeviceConstants::osci_config_t)) {
@@ -269,5 +319,5 @@ void Device::transmitConfig() {
     if (cmp != 0 ) {
         emit fatal("wrong answer on transmit config");
     }
-    */
+
 }

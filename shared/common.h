@@ -33,10 +33,12 @@ public:
 
 typedef enum {
     OP_SET_CONFIG = 0x00,
+            OP_SAMPLE_DUMMY_TRI = 0x10,
+            OP_SAMPLE_DUMMY_ZERO = 0x20,
+            OP_SAMPLE_DUMMY_MID = 0x22,
     OP_READ_SINGLE = 0x40,
-    OP_SAMPLE_FASTEST_SINGLE = 0x60,
-    OP_SAMPLE_DELAYED_SINGLE = 0x70,
-            OP_SAMPLE_FASTEST_INTERLEAVED = 0x30,
+    OP_SAMPLE_SINGLE = 0x60,
+    OP_SAMPLE_INTERLEAVED = 0x30,
     OP_PING = 0x90
 } opcodes_t;
 
@@ -76,7 +78,6 @@ enum VdivValues_t {
 
 enum TdivValues_t {
     Tdiv_max, // = 0.0128
-    Tdiv_003,
     Tdiv_01, Tdiv_03,
     Tdiv_1, Tdiv_3,
     Tdiv_10, Tdiv_30,
@@ -85,6 +86,14 @@ enum TdivValues_t {
     Tdiv_LAST = Tdiv_3000
 };
 
+typedef enum {
+   Dummy_Off,
+    Dummy_Tri,
+    Dummy_Zero,
+    Dummy_Mid,
+    Dummy_LAST = Dummy_Mid
+} Dummy_t;
+
 typedef struct __PACKED {
 
     /* MPLAB won't have bitfields in WORDS, no 12 bit for gain, triggerLevel */
@@ -92,6 +101,7 @@ typedef struct __PACKED {
     WORD triggerLevel;
     WORD gainCh1;
     WORD gainCh2;
+    WORD sampleDelay;
 
     Channel_t inputChannel : 3;
     ACDC_t acdcCh1: 1;

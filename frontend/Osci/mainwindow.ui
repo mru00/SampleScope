@@ -123,6 +123,12 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="GraphAutoCorr" name="graphAutoCorr" native="true"/>
+        </item>
+        <item>
+         <widget class="MeasurementWidget" name="widgetMeasurements" native="true"/>
+        </item>
        </layout>
       </item>
       <item>
@@ -154,7 +160,6 @@
             <height>0</height>
            </size>
           </property>
-          <zorder>checkBoxActive</zorder>
          </widget>
         </item>
         <item>
@@ -192,6 +197,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionCalibration_Dialog"/>
     <addaction name="actionExport_Data"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
@@ -215,6 +221,11 @@
   <action name="actionExport_Data">
    <property name="text">
     <string>Export Data</string>
+   </property>
+  </action>
+  <action name="actionCalibration_Dialog">
+   <property name="text">
+    <string>Calibration Dialog</string>
    </property>
   </action>
  </widget>
@@ -266,6 +277,18 @@
    <class>GraphControl</class>
    <extends>QWidget</extends>
    <header>graphcontrol.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MeasurementWidget</class>
+   <extends>QWidget</extends>
+   <header>measurementwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GraphAutoCorr</class>
+   <extends>QWidget</extends>
+   <header>graphautocorr.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

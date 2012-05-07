@@ -3,8 +3,6 @@
 
 #include "qwt/qwt_plot_renderer.h"
 
-#include <fftw3.h>
-
 GraphFFT::GraphFFT(QWidget *parent) :
     GraphBase(parent)
   , curveFFTCh1(new QwtPlotCurve("FFT Ch1"))
@@ -34,39 +32,9 @@ void GraphFFT::modeSelectionChanged(ModeControl::Modes_t mode ) {
 
 void GraphFFT::setData(const QVector<QPointF>& dataCh1, const QVector<QPointF>& dataCh2) {
 
+    curveFFTCh1->setSamples(dataCh1);
+    curveFFTCh2->setSamples(dataCh2);
     if (!isVisible()) return;
-#define NORM(x,y) sqrt( (x)*(x) + (y)*(y) )
-
-    QVector<QPointF> dataFFT;
-    int count = std::max(dataCh1.size(), dataCh2.size());
-    double vals[count];
-    fftw_complex out[count];
-
-
-    if (dataCh1.size() > 0) {
-    fftw_plan plan = fftw_plan_dft_r2c_1d(dataCh1.size(), vals, out, 0);
-        for (int i = 0; i < dataCh1.size(); i ++ )
-            vals[i] = dataCh1.at(i).y();
-        fftw_execute(plan);
-
-        for (int i = 0; i < dataCh1.size()/2; i ++ )
-            dataFFT.append(QPointF(i, NORM(out[i][0], out[i][1])));
-        curveFFTCh1->setSamples(dataFFT);
-
-        dataFFT.clear();
-    }
-
-
-    if (dataCh2.size() > 0) {
-    fftw_plan plan = fftw_plan_dft_r2c_1d(dataCh2.size(), vals, out, 0);
-        for (int i = 0; i < dataCh2.size(); i ++ )
-            vals[i] = dataCh2.at(i).y();
-        fftw_execute(plan);
-        for (int i = 0; i < dataCh2.size()/2; i ++ )
-            dataFFT.append(QPointF(i, NORM(out[i][0], out[i][1])));
-        curveFFTCh2->setSamples(dataFFT);
-        fftw_destroy_plan(plan);
-    }
 
     ui->qwtPlot->replot();
     saveImage("fft.png");

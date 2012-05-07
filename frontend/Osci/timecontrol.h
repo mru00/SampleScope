@@ -18,7 +18,7 @@ public:
 
         void initialEmit();
 signals:
-        void delayValueChanged(QString label, Device::TdivValues_t delay);
+        void TdivChanged(DeviceConstants::TdivValues_t delay);
 private slots:
         void delayvc(int value);
 private:

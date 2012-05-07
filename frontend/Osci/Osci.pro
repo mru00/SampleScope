@@ -23,7 +23,11 @@ SOURCES += main.cpp channelcontrol.cpp \
     graphbase.cpp \
     graphfft.cpp \
     graphnormal.cpp \
-    graphxy.cpp
+    graphxy.cpp \
+    measurementwidget.cpp \
+    measurementtablemodel.cpp \
+    graphautocorr.cpp \
+    calibdialog.cpp
 
 HEADERS  += mainwindow.h channelcontrol.h \
     device.h \
@@ -39,11 +43,17 @@ HEADERS  += mainwindow.h channelcontrol.h \
     graphfft.h \
     graphnormal.h \
     graphxy.h \
-    ../../shared/common.h
+    ../../shared/common.h \
+    measurementwidget.h \
+    measurementtablemodel.h \
+    graphautocorr.h \
+    calibdialog.h
 
 FORMS    += mainwindow.ui channelcontrol.ui \
     triggercontrol.ui \
     timecontrol.ui \
     modecontrol.ui \
     graphcontrol.ui \
-    graphbase.ui
+    graphbase.ui \
+    measurementwidget.ui \
+    calibdialog.ui

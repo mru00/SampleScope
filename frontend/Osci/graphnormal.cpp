@@ -92,7 +92,7 @@ bool fitSin(const QVector<QPointF>& samples, double p[], QVector<QPointF>& resul
     return true;
 }
 
-double rms(const QVector<QPointF>& data) {
+static double rms(const QVector<QPointF>& data) {
     double sum = 0;
     for (int i = 0; i < data.size(); i++ ) {
         double t = data.at(i).y();
@@ -117,7 +117,8 @@ void GraphNormal::modeSelectionChanged(ModeControl::Modes_t mode) {
     ch1.setVisible(ModeControl::showsCh1(mode));
     ch2.setVisible(ModeControl::showsCh2(mode));
     if (mode == ModeControl::Mode_Interleaved) {
-        ui->qwtPlot->setAxisScale(QwtPlot::xBottom, 0, 5);
+        //ui->qwtPlot->setAxisScale(QwtPlot::xBottom, 0, 5);
+        ui->qwtPlot->setAxisAutoScale(QwtPlot::xBottom);
     }
     else {
         ui->qwtPlot->setAxisScale(QwtPlot::xBottom, 0, 10);

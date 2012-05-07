@@ -9,7 +9,11 @@ TriggerControl::TriggerControl(QWidget *parent) :
     connect(ui->radioButtonCh1, SIGNAL(toggled(bool)), this, SLOT(triggerCh1Toggled(bool)));
     connect(ui->radioButtonCh2, SIGNAL(toggled(bool)), this, SLOT(triggerCh2Toggled(bool)));
     connect(ui->radioButtonFree, SIGNAL(toggled(bool)), this, SLOT(triggerFreeToggled(bool)));
+
+    connect(ui->radioButtonRising, SIGNAL(toggled(bool)), this, SLOT(triggerRisingToggled(bool)));
+    connect(ui->radioButtonFalling, SIGNAL(toggled(bool)), this, SLOT(triggerFallingToggled(bool)));
     ui->radioButtonFree->setChecked(true);
+    ui->radioButtonRising->setChecked(true);
 }
 
 TriggerControl::~TriggerControl()
@@ -18,17 +22,31 @@ TriggerControl::~TriggerControl()
 }
 
 void TriggerControl::initialEmit() {
-        if (ui->radioButtonCh1->isChecked()) triggerCh1Toggled(true);
-        else if (ui->radioButtonCh2->isChecked()) triggerCh2Toggled(true);
-        triggerFreeToggled(true);
+    if (ui->radioButtonCh1->isChecked()) triggerCh1Toggled(true);
+    else if (ui->radioButtonCh2->isChecked()) triggerCh2Toggled(true);
+    else triggerFreeToggled(true);
+
+
+    if (ui->radioButtonRising->isChecked()) triggerRisingToggled(true);
+    else triggerFallingToggled(true);
+
 }
 
 void TriggerControl::triggerCh1Toggled(bool checked) {
-        if (checked) emit triggerSourceSelected(DeviceConstants::TRIGGER_CH_1);
+    if (checked) emit triggerSourceSelected(DeviceConstants::TRIGGER_CH_1);
 }
 void TriggerControl::triggerCh2Toggled(bool checked) {
-        if (checked) emit triggerSourceSelected(DeviceConstants::TRIGGER_CH_2);
+    if (checked) emit triggerSourceSelected(DeviceConstants::TRIGGER_CH_2);
 }
 void TriggerControl::triggerFreeToggled(bool checked) {
-        if (checked) emit triggerSourceSelected(DeviceConstants::Trigger_Free);
+    if (checked) emit triggerSourceSelected(DeviceConstants::Trigger_Free);
+}
+
+
+void TriggerControl::triggerRisingToggled(bool val) {
+    if(val) emit triggerModeSelected(DeviceConstants::TRIGGER_RISING);
+}
+
+void TriggerControl::triggerFallingToggled(bool val) {
+    if(val) emit triggerModeSelected(DeviceConstants::TRIGGER_FALLING);
 }
