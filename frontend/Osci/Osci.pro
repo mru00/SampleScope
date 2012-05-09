@@ -27,7 +27,10 @@ SOURCES += main.cpp channelcontrol.cpp \
     measurementwidget.cpp \
     measurementtablemodel.cpp \
     graphautocorr.cpp \
-    calibdialog.cpp
+    calibdialog.cpp \
+    abstracthardware.cpp \
+    realhardware.cpp \
+    dummyhardware.cpp
 
 HEADERS  += mainwindow.h channelcontrol.h \
     device.h \
@@ -47,7 +50,10 @@ HEADERS  += mainwindow.h channelcontrol.h \
     measurementwidget.h \
     measurementtablemodel.h \
     graphautocorr.h \
-    calibdialog.h
+    calibdialog.h \
+    abstracthardware.h \
+    realhardware.h \
+    dummyhardware.h
 
 FORMS    += mainwindow.ui channelcontrol.ui \
     triggercontrol.ui \

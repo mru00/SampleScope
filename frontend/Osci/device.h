@@ -7,6 +7,7 @@
 #include <QVector>
 #include "../HIDAPI/hidapi.h"
 #include "../../shared/common.h"
+#include "abstracthardware.h"
 
 #define MAX_STR 65
 
@@ -25,7 +26,7 @@ public:
         explicit Device(QObject *parent = 0);
         ~Device();
 
-        bool isConnected() { return device != NULL; }
+        bool isConnected() { return device->isOpen(); }
         void connect();
         void disConnect();
 
@@ -66,13 +67,13 @@ public slots:
         void refresh();
 
 private:
-        hid_device* device;
+        AbstractHardware* device;
         unsigned char buf[MAX_STR];
 
         sample_t normalizeSample(unsigned char val) {
                 return 2.05 * (val - 128) / 128.0;
         }
-        void comm(const unsigned char command);
+        void comm(const DeviceConstants::opcodes_t command);
         DeviceConstants::osci_config_t config;
         void transmitConfig();
         DeviceConstants::Dummy_t dummy;

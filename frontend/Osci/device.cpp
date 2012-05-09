@@ -9,7 +9,7 @@ using namespace std;
 
 Device::Device(QObject *parent) :
     QObject(parent),
-    device(NULL),
+    device(AbstractHardware::create(AbstractHardware::Impl_Dummy)),
     dummy(DeviceConstants::Dummy_Tri)
 {
 
@@ -48,8 +48,8 @@ Device::Device(QObject *parent) :
 }
 
 Device::~Device() {
-    hid_close(device);
-    device = NULL;
+    device->close();
+    delete device;
 }
 
 void Device::refresh() {
@@ -59,13 +59,13 @@ void Device::refresh() {
 
 void Device::connect() {
     cout << "connecting to device" << endl;
-    device = hid_open(VENDOR_ID, PRODUCT_ID, NULL);
+    device->open();
     cout << (isConnected() ? "connection successful" : "connection failed") << endl;
     if (isConnected()) {
 
         wchar_t manu[100], prod[100];
-        hid_get_manufacturer_string(device, manu, 100);
-        hid_get_product_string(device, prod, 100);
+        device->get_manufacturer_string(manu, 100);
+        device->get_product_string(prod, 100);
         std::wcout << manu << endl;
         std::wcout << prod << endl;
     }
@@ -74,8 +74,7 @@ void Device::connect() {
 
 void Device::disConnect() {
     cout << "disconnecting from device" << endl;
-    hid_close(device);
-    device = NULL;
+    device->close();
     emit connected(false);
 }
 
@@ -83,7 +82,7 @@ void Device::setDummy(DeviceConstants::Dummy_t dummy) {
     this->dummy = dummy;
 }
 
-void Device::comm(const unsigned char command) {
+void Device::comm(const DeviceConstants::opcodes_t command) {
     cerr << "sending command " << hex << showbase << (int)command << endl;
     if (!isConnected()) {
         cerr << "tying to communicate with the device, but it is not connected" << endl;
@@ -93,7 +92,7 @@ void Device::comm(const unsigned char command) {
     int nread;
     buf[0] = 0x00;
     buf[1] = command;
-    nread = hid_write(device, buf, sizeof(buf));
+    nread = device->write(buf, sizeof(buf));
     if (nread < 0) {
         cerr << "hid_write failed, retcode: " << nread << endl;
         disConnect();
@@ -101,7 +100,7 @@ void Device::comm(const unsigned char command) {
         return;
     }
 
-    nread = hid_read_timeout(device, buf, sizeof(buf), 10000) ;
+    nread = device->read(buf, 64);
     if( nread != 64) {
         cerr << "hid_read failed, return size = " << nread << endl;
         disConnect();
@@ -239,7 +238,7 @@ void Device::getADCBlock(QVector<QPointF>& result) {
     }
     for (int j = 0; j < 3; j++ ) {
 
-        hid_read(device, buf, sizeof(buf)) ;
+        device->read(buf, sizeof(buf)) ;
         for (size_t i = 0; i < 64; i++ ) {
             result.append(QPointF(timestretch*(i + 63 + j*64), normalizeSample(buf[i])));
         }
@@ -267,7 +266,7 @@ void Device::getADCInterleaved(QVector<QPointF>& ch1, QVector<QPointF>& ch2) {
     }
     for (int j = 0; j < 3; j++ ) {
 
-        hid_read(device, buf, sizeof(buf)) ;
+        device->read(buf, sizeof(buf)) ;
         for (size_t i = 0; i < 64; i++ ) {
             const QPointF point(timestretch * (i/2 + 31 + j*32), normalizeSample(buf[i]));
             if (i&1) ch2.append(point);
