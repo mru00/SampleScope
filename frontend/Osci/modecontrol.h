@@ -36,13 +36,13 @@ public:
     static bool showsCh2(Modes_t t) { return t == Mode_Ch2 || t == Mode_Interleaved || t == Mode_Sequential; }
 private slots:
     void itemSelectionChanged();
-    void dummySelectionChanged();
+    void testSignalSelectionChanged();
     void continuousToggled(bool);
     void singleToggled(bool);
     void singleShotClicked();
 
 signals:
-    void dummySelected(DeviceConstants::Dummy_t);
+    void testSignalSelected(DeviceConstants::TestSignal_t);
     void modeSelected(ModeControl::Modes_t);
     void updateSelected(ModeControl::Update_t);
     void singleShot();

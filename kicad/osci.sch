@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 03 May 2012 12:50:36 PM CEST
+EESchema Schematic File Version 2  date Thu 10 May 2012 10:40:59 AM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -35,9 +35,9 @@ EELAYER 25  0
 EELAYER END
 $Descr A4 11700 8267
 encoding utf-8
-Sheet 1 6
-Title "osci"
-Date "3 may 2012"
+Sheet 1 5
+Title "SampleScope"
+Date "10 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -45,12 +45,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Sheet
-S 5500 2950 1500 1200
-U 4F9D3C5C
-F0 "Trigger MAX942" 60
-F1 "trigger_942.sch" 60
-$EndSheet
 $Sheet
 S 3450 850  1450 1100
 U 4F8F21C9

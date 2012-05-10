@@ -50,7 +50,16 @@
         </property>
        </widget>
       </item>
-      <item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Test Signals</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
        <widget class="QListWidget" name="listWidgetDummy"/>
       </item>
      </layout>

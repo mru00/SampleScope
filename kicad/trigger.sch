@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 03 May 2012 12:50:36 PM CEST
+EESchema Schematic File Version 2  date Thu 10 May 2012 10:40:59 AM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -35,9 +35,9 @@ EELAYER 25  0
 EELAYER END
 $Descr A4 11700 8267
 encoding utf-8
-Sheet 4 6
-Title "Trigger Section"
-Date "3 may 2012"
+Sheet 3 5
+Title "SampleScope"
+Date "10 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -45,17 +45,77 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L DIL8 P13
+U 1 1 4FAB7D53
+P 7600 3500
+F 0 "P13" H 7600 3750 60  0000 C CNN
+F 1 "DIL8" V 7600 3500 50  0000 C CNN
+	1    7600 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L VCC #PWR012
+U 1 1 4FAB7D52
+P 8350 3050
+F 0 "#PWR012" H 8350 3150 30  0001 C CNN
+F 1 "VCC" H 8350 3150 30  0000 C CNN
+	1    8350 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L DGND #PWR21
+U 1 1 4FAB7D51
+P 7100 3850
+F 0 "#PWR21" H 7100 3850 40  0001 C CNN
+F 1 "DGND" H 7100 3780 40  0000 C CNN
+	1    7100 3850
+	1    0    0    -1  
+$EndComp
+Text GLabel 9200 3450 2    60   Output ~ 0
+TriggerOutCh2
 Wire Wire Line
-	6900 4300 3400 4300
+	7950 3450 9200 3450
+Wire Wire Line
+	8350 3050 8350 3350
+Wire Wire Line
+	8350 3350 7950 3350
+Wire Wire Line
+	6900 3450 6900 5000
+Wire Wire Line
+	6900 3450 7250 3450
+Wire Wire Line
+	7950 3550 8350 3550
+Wire Wire Line
+	8350 4300 8350 3550
+Wire Wire Line
+	8350 4300 3400 4300
+Connection ~ 6900 4300
+Wire Wire Line
+	7250 3650 7100 3650
+Wire Wire Line
+	7100 3650 7100 3850
+Wire Wire Line
+	7250 3350 6900 3350
+Wire Wire Line
+	6900 3350 6900 3200
+Wire Wire Line
+	6900 3200 9200 3200
+Text GLabel 9200 3200 2    60   Output ~ 0
+TriggerOutCh1
+Text GLabel 7250 3550 0    60   Input ~ 0
+TriggerCh1
+Text GLabel 7950 3650 2    60   Input ~ 0
+TriggerCh2
 Wire Wire Line
 	4150 5250 3650 5250
 Wire Wire Line
-	3650 5250 3650 4650
+	3650 4650 3650 5250
 Wire Wire Line
-	3650 4650 4150 4650
+	4150 4650 3650 4650
 Connection ~ 4050 4650
 Wire Wire Line
-	4050 5350 4050 5150
+	4050 5150 4050 5350
 Wire Wire Line
 	4050 5150 4150 5150
 Wire Wire Line
@@ -64,13 +124,9 @@ Connection ~ 4150 5000
 Wire Wire Line
 	3800 5000 4150 5000
 Wire Wire Line
-	9150 5000 6900 5000
-Connection ~ 6900 4300
-Wire Wire Line
-	6900 5000 6900 4300
+	6900 5000 9150 5000
 Wire Wire Line
 	4150 5050 4150 4950
-Connection ~ 3950 5000
 Wire Wire Line
 	4150 4750 4150 4750
 Wire Wire Line
@@ -88,19 +144,19 @@ DAC.DIN
 Text GLabel 4850 5150 2    60   Input ~ 0
 DAC.SCLK
 $Comp
-L DGND #PWR24
+L DGND #PWR18
 U 1 1 4F8F2E74
 P 4850 4750
-F 0 "#PWR24" H 4850 4750 40  0001 C CNN
+F 0 "#PWR18" H 4850 4750 40  0001 C CNN
 F 1 "DGND" H 5000 4750 40  0000 C CNN
 	1    4850 4750
 	1    0    0    -1  
 $EndComp
 $Comp
-L DGND #PWR25
+L DGND #PWR19
 U 1 1 4F8F2E6E
 P 4850 5250
-F 0 "#PWR25" H 4850 5250 40  0001 C CNN
+F 0 "#PWR19" H 4850 5250 40  0001 C CNN
 F 1 "DGND" H 5000 5250 40  0000 C CNN
 	1    4850 5250
 	1    0    0    -1  
@@ -124,10 +180,10 @@ F 1 "+12V" H 4950 4650 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VAA #PWR20
+L VAA #PWR16
 U 1 1 4F8F2DC3
 P 4150 4750
-F 0 "#PWR20" H 4150 4810 30  0001 C CNN
+F 0 "#PWR16" H 4150 4810 30  0001 C CNN
 F 1 "VAA" H 4100 4750 30  0000 C CNN
 	1    4150 4750
 	1    0    0    -1  

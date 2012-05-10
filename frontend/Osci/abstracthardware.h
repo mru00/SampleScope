@@ -24,6 +24,8 @@ public:
 
     static AbstractHardware* create(AbstractHardware::Impl_t);
 
+    virtual Impl_t getImpl() = 0;
+
     virtual void open() = 0;
     virtual void close() = 0;
     virtual int read(unsigned char *data, size_t length) = 0;

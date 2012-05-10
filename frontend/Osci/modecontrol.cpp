@@ -12,7 +12,7 @@ ModeControl::ModeControl(QWidget *parent) :
     connect(ui->radioButtonSingleShot, SIGNAL(toggled(bool)), this, SLOT(singleToggled(bool)));
     connect(ui->pushButtonSample, SIGNAL(clicked()), this, SLOT(singleShotClicked()));
 
-    connect(ui->listWidgetDummy, SIGNAL(itemSelectionChanged()), this, SLOT(dummySelectionChanged()));
+    connect(ui->listWidgetDummy, SIGNAL(itemSelectionChanged()), this, SLOT(testSignalSelectionChanged()));
 
     const char *modes[] = {
         "Ch 1",
@@ -28,16 +28,17 @@ ModeControl::ModeControl(QWidget *parent) :
 
     const char* dummies[] = {
         "normal",
-        "dummy tri",
-        "dummy zero",
-        "dummy mid"
+        "test tri",
+        "test zero",
+        "test mid"
     };
 
-    for (int i = 0; i <= DeviceConstants::Dummy_LAST; i++ ) {
+    for (int i = 0; i <= DeviceConstants::TestSignal_LAST; i++ ) {
         ui->listWidgetDummy->insertItem(i, dummies[i]);
     }
 
     ui->listWidgetModes->setCurrentRow(0);
+    ui->listWidgetDummy->setCurrentRow(0);
     ui->radioButtonContinuous->setChecked(true);
 }
 
@@ -49,6 +50,7 @@ ModeControl::~ModeControl()
 void ModeControl::initialEmit() {
 
     itemSelectionChanged();
+    testSignalSelectionChanged();
 
     bool single = ui->radioButtonSingleShot->isChecked();
 
@@ -61,9 +63,9 @@ void ModeControl::itemSelectionChanged() {
     emit modeSelected((ModeControl::Modes_t) mode);
 }
 
-void ModeControl::dummySelectionChanged() {
+void ModeControl::testSignalSelectionChanged() {
     int mode = ui->listWidgetDummy->currentRow();
-    emit dummySelected((DeviceConstants::Dummy_t) mode);
+    emit testSignalSelected((DeviceConstants::TestSignal_t) mode);
 }
 
 void ModeControl::continuousToggled(bool val) {

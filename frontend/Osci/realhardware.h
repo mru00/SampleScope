@@ -10,6 +10,8 @@ class RealHardware : public AbstractHardware
 public:
     explicit RealHardware(QObject *parent = 0);
 
+    virtual Impl_t getImpl() { return AbstractHardware::Impl_Real; }
+
     virtual void open();
     virtual void close();
     virtual int read(unsigned char *data, size_t length);

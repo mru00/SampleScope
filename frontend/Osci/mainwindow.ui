@@ -12,7 +12,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>mru's Osci</string>
+   <string>SampleScope</string>
   </property>
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>true</bool>
@@ -38,28 +38,6 @@
         <property name="sizeConstraint">
          <enum>QLayout::SetMinimumSize</enum>
         </property>
-        <item>
-         <widget class="QCheckBox" name="checkBoxActive">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>180</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Redraw</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="ModeControl" name="modeControl" native="true">
           <property name="minimumSize">
@@ -197,12 +175,27 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuHardware">
+     <property name="title">
+      <string>Hardware</string>
+     </property>
+     <addaction name="actionUse_real_hardware"/>
+     <addaction name="actionUse_software_emulation"/>
+    </widget>
     <addaction name="actionCalibration_Dialog"/>
     <addaction name="actionExport_Data"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
+    <addaction name="menuHardware"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -226,6 +219,21 @@
   <action name="actionCalibration_Dialog">
    <property name="text">
     <string>Calibration Dialog</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionUse_real_hardware">
+   <property name="text">
+    <string>Use real hardware</string>
+   </property>
+  </action>
+  <action name="actionUse_software_emulation">
+   <property name="text">
+    <string>Use software emulation</string>
    </property>
   </action>
  </widget>

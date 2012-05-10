@@ -87,12 +87,12 @@ enum TdivValues_t {
 };
 
 typedef enum {
-   Dummy_Off,
-    Dummy_Tri,
-    Dummy_Zero,
-    Dummy_Mid,
-    Dummy_LAST = Dummy_Mid
-} Dummy_t;
+   TestSignal_Off,
+    TestSignal_Tri,
+    TestSignal_Zero,
+    TestSignal_Mid,
+    TestSignal_LAST = TestSignal_Mid
+} TestSignal_t;
 
 typedef struct __PACKED {
 

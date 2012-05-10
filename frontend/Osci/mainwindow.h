@@ -36,7 +36,8 @@ public slots:
 
 private slots:
 
-    void deviceConnected(bool connected);
+    void deviceConnected(QString, QString);
+    void deviceDisconnected();
     void fatal(QString message);
 
     void sample();
@@ -50,20 +51,26 @@ private slots:
     void triggerModeSelected(DeviceConstants::TriggerMode_t);
     void TdivAdjusted(DeviceConstants::TdivValues_t delay);
     void modeSelectionChanged(ModeControl::Modes_t);
-    void dummySelectionChanged(DeviceConstants::Dummy_t);
+    void TestSignalSelectionChanged(DeviceConstants::TestSignal_t);
     void updateSelectionChanged(ModeControl::Update_t);
     void singleShot();
 
     void graphSelectionChanged(QMap<GraphControl::Graphs_t,bool> enabled);
     void closeEvent(QCloseEvent *);
+    void on_actionAbout_triggered();
+
+    void on_actionUse_real_hardware_triggered();
+
+    void on_actionUse_software_emulation_triggered();
+
 private:
     Ui::MainWindow *ui;
     QTimer updateTimer, sampleTimer;
     Device device;
 
-    CalibDialog calibDlg;
     MeasurementTableModel model;
     ModeControl::Modes_t currentMode;
+    CalibDialog calibDlg;
 
 };
 

@@ -19,6 +19,12 @@ void DummyHardware::close() {
     state = State_Closed;
 }
 
+
+static void gen_data(unsigned char* target, int count, unsigned char(*gen)(int i)) {
+    for (int i = 0; i < count; i++ ) {
+        target[i] = gen(i);
+    }
+}
 static void make_noise(unsigned char* target, int count, int level) {
 
     for (int i = 0; i < count; i ++ ) {
@@ -37,6 +43,19 @@ static void make_sin_2(unsigned char* target, int count, int start) {
         target[i] = 126*sin( 0.14*(i+start) ) - 127;
     }
 }
+
+static void make_const(unsigned char* target, int count, unsigned char val) {
+    for (int i = 0; i < count; i ++ ) {
+        target[i] = val;
+    }
+}
+
+static void make_square(unsigned char* target, int count, unsigned period) {
+    for (int i = 0; i < count; i ++ ) {
+        target[i] = ( i / period ) & 1 ? 20: 235;
+    }
+}
+
 int DummyHardware::read(unsigned char *data, size_t length) {
 
     switch(state) {
@@ -71,7 +90,48 @@ int DummyHardware::get_manufacturer_string(wchar_t *string, size_t maxlen) {
 }
 
 int DummyHardware::get_product_string(wchar_t *string, size_t maxlen) {
-    return mbstowcs(string, "SampleScope", maxlen);
+    return mbstowcs(string, "SampleScope Software Emulation", maxlen);
+}
+
+
+void DummyHardware::makeSignal(DeviceConstants::opcodes_t op) {
+
+    switch (config.inputChannel) {
+    case DeviceConstants::ADC_triggerLevel:
+        make_const(buffer, 256, 255.0 * config.triggerLevel / 4096.0);
+        make_noise(buffer, 256, 10);
+        break;
+
+    case DeviceConstants::ADC_ch1:
+    case DeviceConstants::ADC_ch2:
+
+        switch(op) {
+        case DeviceConstants::OP_SAMPLE_DUMMY_TRI:
+            for (int i = 0; i < 256; i ++ ) {
+                buffer[i] = i;
+            }
+            break;
+        case DeviceConstants::OP_SAMPLE_DUMMY_ZERO:
+            make_const(buffer, 256, 0x00);
+            break;
+        case DeviceConstants::OP_SAMPLE_DUMMY_MID:
+            make_const(buffer, 256, 0x80);
+            break;
+
+        case DeviceConstants::OP_SAMPLE_SINGLE:
+        case DeviceConstants::OP_SAMPLE_INTERLEAVED:
+            if (config.inputChannel == DeviceConstants::ADC_ch1) {
+                make_sin(buffer, 256, 0);
+                make_noise(buffer, 256, 20);
+            }
+            else if (config.inputChannel == DeviceConstants::ADC_ch2) {
+            //    make_sin(buffer, 256, 90);
+                make_square(buffer, 256, 20);
+                make_noise(buffer, 256, 20);
+            }
+            break;
+        }
+    }
 }
 
 int DummyHardware::write(const unsigned char *data, size_t length) {
@@ -98,52 +158,14 @@ int DummyHardware::write(const unsigned char *data, size_t length) {
         break;
 
     case DeviceConstants::OP_SAMPLE_DUMMY_TRI:
-            for (int i = 0; i < 256; i ++ ) {
-                buffer[i] = i;
-            }
-            ACK();
-            state = State_Tx_ADC;
-            break;
     case DeviceConstants::OP_SAMPLE_DUMMY_ZERO:
-            for (int i = 0; i < 256; i ++ ) {
-                buffer[i] = 0x00;
-            }
-            ACK();
-            state = State_Tx_ADC;
-            break;
     case DeviceConstants::OP_SAMPLE_DUMMY_MID:
-            for (int i = 0; i < 256; i ++ ) {
-                buffer[i] = 0x80;
-            }
-            ACK();
-            state = State_Tx_ADC;
-            break;
     case DeviceConstants::OP_SAMPLE_SINGLE:
     case DeviceConstants::OP_SAMPLE_INTERLEAVED:
-        if (config.inputChannel == DeviceConstants::ADC_ch1) {
-            make_sin(buffer, 256, 0);
-            make_noise(buffer, 256, 20);
-
-        }
-        else if (config.inputChannel == DeviceConstants::ADC_ch2) {
-            //make_sin(buffer, 256, 64);
-           for (int i = 0; i < 256; i ++ ) {
-               buffer[i] = ( i / 16 ) & 1 ? 20: 235;
-           }
-            make_sin(buffer, 256, 0);
-            make_noise(buffer, 256, 20);
-        }
-        else {
-            double val = 255.0 * config.triggerLevel / 4096.0;
-            for (int i = 0; i < 256; i ++ ) {
-                buffer[i] = val;
-            }
-            make_noise(buffer, 256, 20);
-        }
+        makeSignal(opcode);
         ACK();
         state = State_Tx_ADC;
         break;
-
 
     default:
         NACK();

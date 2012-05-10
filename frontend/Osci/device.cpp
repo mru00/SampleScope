@@ -10,7 +10,7 @@ using namespace std;
 Device::Device(QObject *parent) :
     QObject(parent),
     device(AbstractHardware::create(AbstractHardware::Impl_Dummy)),
-    dummy(DeviceConstants::Dummy_Tri)
+    dummy(DeviceConstants::TestSignal_Tri)
 {
 
         //"12.8", "30", "100", "300",
@@ -52,6 +52,18 @@ Device::~Device() {
     delete device;
 }
 
+
+
+void Device::selectHardwareImplementation(AbstractHardware::Impl_t impl) {
+
+    if (impl == device->getImpl()) return;
+
+    if (device->isOpen()) disConnect();
+    delete device;
+    device = AbstractHardware::create(impl);
+}
+
+
 void Device::refresh() {
     if (!isConnected()) connect();
     if (isConnected()) ping();
@@ -68,17 +80,20 @@ void Device::connect() {
         device->get_product_string(prod, 100);
         std::wcout << manu << endl;
         std::wcout << prod << endl;
+        QString qmanu = QString::fromStdWString(manu);
+        QString qprod = QString::fromStdWString(prod);
+
+        emit connected(qmanu, qprod);
     }
-    emit connected(isConnected());
 }
 
 void Device::disConnect() {
     cout << "disconnecting from device" << endl;
     device->close();
-    emit connected(false);
+    emit disconnected();
 }
 
-void Device::setDummy(DeviceConstants::Dummy_t dummy) {
+void Device::setTestSignal(DeviceConstants::TestSignal_t dummy) {
     this->dummy = dummy;
 }
 

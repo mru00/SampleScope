@@ -5,6 +5,9 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+#include "aboutdialog.h"
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -25,7 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&updateTimer, SIGNAL(timeout()), &device, SLOT(refresh()));
     connect(&sampleTimer, SIGNAL(timeout()), this, SLOT(sample()));
-    connect(&device, SIGNAL(connected(bool)), this, SLOT(deviceConnected(bool)));
+    connect(&device, SIGNAL(connected(QString, QString)), this, SLOT(deviceConnected(QString, QString)));
+    connect(&device, SIGNAL(disconnected()), this, SLOT(deviceDisconnected()));
     connect(&device, SIGNAL(fatal(QString)), this, SLOT(fatal(QString)));
 
     connect(ui->channelControlCh1, SIGNAL(vdivSelected(DeviceConstants::VdivValues_t)), this, SLOT(VdivCh1Adjusted(DeviceConstants::VdivValues_t)));
@@ -51,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->modeControl, SIGNAL(modeSelected(ModeControl::Modes_t)), ui->graphAutoCorr, SLOT(modeSelectionChanged(ModeControl::Modes_t)));
     connect(ui->modeControl, SIGNAL(updateSelected(ModeControl::Update_t)), this, SLOT(updateSelectionChanged(ModeControl::Update_t)));
     connect(ui->modeControl, SIGNAL(singleShot()), this, SLOT(singleShot()));
-    connect(ui->modeControl, SIGNAL(dummySelected(DeviceConstants::Dummy_t)), this, SLOT(dummySelectionChanged(DeviceConstants::Dummy_t)));
+    connect(ui->modeControl, SIGNAL(testSignalSelected(DeviceConstants::TestSignal_t)), this, SLOT(TestSignalSelectionChanged(DeviceConstants::TestSignal_t)));
 
     connect(ui->graphControl, SIGNAL(graphSelected(QMap<GraphControl::Graphs_t,bool>)), this, SLOT(graphSelectionChanged(QMap<GraphControl::Graphs_t,bool>)));
     connect(ui->actionCalibration_Dialog, SIGNAL(triggered()), &calibDlg, SLOT(show()));
@@ -71,8 +75,8 @@ void MainWindow::closeEvent(QCloseEvent *) {
     calibDlg.close();
 }
 
-void MainWindow::dummySelectionChanged(DeviceConstants::Dummy_t dummy) {
-    device.setDummy(dummy);
+void MainWindow::TestSignalSelectionChanged(DeviceConstants::TestSignal_t dummy) {
+    device.setTestSignal(dummy);
 }
 
 void MainWindow::modeSelectionChanged(ModeControl::Modes_t mode) {
@@ -136,11 +140,10 @@ void MainWindow::TdivAdjusted(DeviceConstants::TdivValues_t delay) {
     device.setTdiv(delay);
 }
 
-void MainWindow::deviceConnected(bool connected) {
-    statusBar()->showMessage(connected ? "Connected" : "Device not connected");
-    centralWidget()->setEnabled(connected);
+void MainWindow::deviceConnected(QString manu, QString prod) {
+    statusBar()->showMessage(QString ("Connected to %1 (%2)").arg(prod).arg(manu));
+    centralWidget()->setEnabled(true);
 
-    if (connected) {
         ui->modeControl->initialEmit();
         ui->triggerControl->initialEmit();
         ui->channelControlCh1->initialEmit();
@@ -148,8 +151,13 @@ void MainWindow::deviceConnected(bool connected) {
         ui->timeControl->initialEmit();
         ui->graphControl->initialEmit();
         TriggerLevelAdjusted(ui->dialTriggerLevel->value());
-    }
 }
+
+void MainWindow::deviceDisconnected() {
+    statusBar()->showMessage("Device not connected");
+    centralWidget()->setEnabled(false);
+}
+
 
 void MainWindow::exportData() {
     QString filename = QFileDialog::getSaveFileName(this, "Save Data as", QString(), "Data files (*.dat)");
@@ -199,8 +207,6 @@ void MainWindow::sample() {
 
     if (!device.isConnected()) return;
 
-    if (!ui->checkBoxActive->isChecked()) return;
-
     QVector<QPointF> dataCh1, dataCh2, dataTr;
 
     device.selectChannel(DeviceConstants::ADC_triggerLevel);
@@ -227,4 +233,20 @@ void MainWindow::sample() {
     ui->graphNorm->setData(dataCh1, dataCh2, dataTr);
     ui->graphXY->setData(dataCh1, dataCh2);
     ui->graphAutoCorr->setData(model.getAutoCorr(DeviceConstants::ADC_ch1), model.getAutoCorr(DeviceConstants::ADC_ch2));
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    AboutDialog dlg;
+    dlg.exec();
+}
+
+void MainWindow::on_actionUse_real_hardware_triggered()
+{
+    device.selectHardwareImplementation(AbstractHardware::Impl_Real);
+}
+
+void MainWindow::on_actionUse_software_emulation_triggered()
+{
+    device.selectHardwareImplementation(AbstractHardware::Impl_Dummy);
 }

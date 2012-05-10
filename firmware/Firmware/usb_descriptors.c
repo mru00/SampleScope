@@ -248,9 +248,9 @@ sizeof(sd001),USB_DESCRIPTOR_STRING,
 }};
 
 //Product string descriptor
-ROM struct{BYTE bLength;BYTE bDscType;WORD string[10];}sd002={
+ROM struct{BYTE bLength;BYTE bDscType;WORD string[11];}sd002={
 sizeof(sd002),USB_DESCRIPTOR_STRING,
-{'m', 'r', 'u', '\'', 's', ' ', 'o', 's', 'c', 'i'
+{'S', 'a', 'm', 'p', 'l', 'e', 'S', 'c', 'o', 'p', 'e'
 }};
 
 //Class specific descriptor - HID 

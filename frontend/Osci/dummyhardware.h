@@ -24,6 +24,8 @@ private:
 public:
     explicit DummyHardware(QObject *parent = 0);
 
+    virtual Impl_t getImpl() { return AbstractHardware::Impl_Dummy; }
+
     virtual void open();
     virtual void close();
     virtual int read(unsigned char *data, size_t length);
@@ -39,6 +41,8 @@ private:
     State_t state;
     unsigned char buffer[4*64];
     DeviceConstants::osci_config_t config;
+
+    void makeSignal(DeviceConstants::opcodes_t);
 };
 
 #endif // DUMMYHARDWARE_H

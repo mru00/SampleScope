@@ -30,7 +30,8 @@ SOURCES += main.cpp channelcontrol.cpp \
     calibdialog.cpp \
     abstracthardware.cpp \
     realhardware.cpp \
-    dummyhardware.cpp
+    dummyhardware.cpp \
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h channelcontrol.h \
     device.h \
@@ -53,7 +54,8 @@ HEADERS  += mainwindow.h channelcontrol.h \
     calibdialog.h \
     abstracthardware.h \
     realhardware.h \
-    dummyhardware.h
+    dummyhardware.h \
+    aboutdialog.h
 
 FORMS    += mainwindow.ui channelcontrol.ui \
     triggercontrol.ui \
@@ -62,4 +64,5 @@ FORMS    += mainwindow.ui channelcontrol.ui \
     graphcontrol.ui \
     graphbase.ui \
     measurementwidget.ui \
-    calibdialog.ui
+    calibdialog.ui \
+    aboutdialog.ui

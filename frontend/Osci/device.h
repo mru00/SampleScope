@@ -30,6 +30,7 @@ public:
         void connect();
         void disConnect();
 
+        void selectHardwareImplementation(AbstractHardware::Impl_t);
 
 
         void setVdiv_Ch1(DeviceConstants::VdivValues_t);
@@ -58,9 +59,10 @@ public:
         static double getVdivVoltate(DeviceConstants::VdivValues_t vdiv, double val);
         static double getTdivTime(DeviceConstants::TdivValues_t tdiv, double val);
 
-        void setDummy(DeviceConstants::Dummy_t);
+        void setTestSignal(DeviceConstants::TestSignal_t);
 signals:
-        void connected(bool connected);
+        void connected(QString manufacturer, QString product);
+        void disconnected();
         void fatal(QString message);
 
 public slots:
@@ -76,7 +78,7 @@ private:
         void comm(const DeviceConstants::opcodes_t command);
         DeviceConstants::osci_config_t config;
         void transmitConfig();
-        DeviceConstants::Dummy_t dummy;
+        DeviceConstants::TestSignal_t dummy;
 
         unsigned short delay_cal[DeviceConstants::Tdiv_LAST+1];
         unsigned short gain_ch1_cal[DeviceConstants::Vdiv_LAST+1];

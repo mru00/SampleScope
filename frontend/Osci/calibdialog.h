@@ -14,7 +14,7 @@ class CalibDialog : public QDialog
 
 public:
     explicit CalibDialog(Device* dev, QWidget *parent = 0);
-    ~CalibDialog();
+    virtual ~CalibDialog();
 
     void setDelay(unsigned short delay);
 
