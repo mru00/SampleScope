@@ -4,6 +4,8 @@
 #include "abstracthardware.h"
 #include "../HIDAPI/hidapi.h"
 
+
+/* Implements the interface to HIDAPI, therefore to the real device */
 class RealHardware : public AbstractHardware
 {
     Q_OBJECT

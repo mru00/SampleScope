@@ -1,3 +1,7 @@
+/**
+  Definitions, constants and data structures shared by UI and firmware.
+  */
+
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -109,7 +113,6 @@ typedef struct __PACKED {
     TriggerSource_t triggerChannel : 2;
     TriggerMode_t triggerMode : 1;
 
-
 } __PACKED2 osci_config_t;
 
 #ifdef __cplusplus
@@ -123,7 +126,7 @@ typedef struct __PACKED {
     instance.acdcCh2 = GET_CONST(ACDC_DC); \
     instance.triggerLevel = 2000; \
     instance.triggerChannel = GET_CONST(Trigger_Free); \
-instance.triggerMode = GET_CONST(TRIGGER_RISING); \
+    instance.triggerMode = GET_CONST(TRIGGER_RISING); \
     instance.gainCh1 = 0xffff; \
     instance.gainCh2 = 0xffff; \
     }

@@ -12,6 +12,7 @@ namespace Ui {
     class GraphBase;
 }
 
+/** base class for the plots */
 class GraphBase : public QWidget
 {
     Q_OBJECT
