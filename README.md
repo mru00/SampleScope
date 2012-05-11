@@ -3,6 +3,8 @@ SampleScope
 
 A cheap, simple, and fun-to-build diy USB oscilloscope
 
+![Screenshot](https://github.com/mru00/SampleScope/raw/master/doc/Screenshot1.png "Screenshot")
+
 
 based on http://jonathanweaver.net/ppmscope.html
 
