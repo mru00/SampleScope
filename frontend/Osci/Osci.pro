@@ -6,7 +6,7 @@
 
 QT       += core gui sql
 
-TARGET = Osci
+TARGET = SampleScope
 TEMPLATE = app
 
 
