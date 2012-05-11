@@ -262,6 +262,10 @@ void MeasurementTableModel::setChannelData(const QVector<QPointF>& dataCh1, cons
 QVector<QPointF> MeasurementTableModel::getAutoCorr(DeviceConstants::Channel_t ch) {
     return getChannel(ch).acorr;
 }
+int MeasurementTableModel::getAutoCorrMaxIdx(DeviceConstants::Channel_t ch) {
+    return getChannel(ch).apeak_pos;
+}
+
 QVector<QPointF> MeasurementTableModel::getFFT(DeviceConstants::Channel_t ch) {
     return getChannel(ch).fft;
 }

@@ -3,6 +3,7 @@
 
 #include "graphbase.h"
 #include <qwt/qwt_plot_curve.h>
+#include <qwt/qwt_plot_marker.h>
 
 class GraphAutoCorr : public GraphBase
 {
@@ -10,7 +11,7 @@ class GraphAutoCorr : public GraphBase
 public:
     explicit GraphAutoCorr(QWidget *parent = 0);
 
-    void setData(const QVector<QPointF>& ch1, const QVector<QPointF>& ch2);
+    void setData(const QVector<QPointF>& ch1, const QVector<QPointF>& ch2, int max_idx);
 signals:
 
 public slots:
@@ -18,6 +19,7 @@ public slots:
 private:
 
     QwtPlotCurve *curveCh1, *curveCh2;
+    QwtPlotMarker * markerMax1;
 };
 
 #endif // GRAPHAUTOCORR_H

@@ -5,7 +5,6 @@
 #include <QObject>
 #include <QPointF>
 #include <QVector>
-#include "../HIDAPI/hidapi.h"
 #include "../../shared/common.h"
 #include "abstracthardware.h"
 

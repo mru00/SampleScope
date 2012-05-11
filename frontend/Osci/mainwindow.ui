@@ -182,11 +182,11 @@
      <addaction name="actionUse_real_hardware"/>
      <addaction name="actionUse_software_emulation"/>
     </widget>
+    <addaction name="menuHardware"/>
     <addaction name="actionCalibration_Dialog"/>
     <addaction name="actionExport_Data"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
-    <addaction name="menuHardware"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">

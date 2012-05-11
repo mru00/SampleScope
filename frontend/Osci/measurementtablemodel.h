@@ -49,6 +49,7 @@ public:
 
     QVector<QPointF> getFFT(DeviceConstants::Channel_t);
     QVector<QPointF> getAutoCorr(DeviceConstants::Channel_t);
+    int getAutoCorrMaxIdx(DeviceConstants::Channel_t);
 
     void setChannelData(const QVector<QPointF>& ch1, const QVector<QPointF>& ch2);
 signals:

@@ -2,6 +2,8 @@
 #include "mainwindow.h"
 #include "../HIDAPI/hidapi.h"
 
+
+
 int main(int argc, char *argv[])
 {
         hid_init();

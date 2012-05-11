@@ -3,6 +3,18 @@
 
 #include <QObject>
 
+/**
+ * AbstractHardware describes the interface to the physical device.
+ *
+ * The class exacly models the api of HIDAPI.
+ *
+ * Two subclasses exists: RealHardware and DummyHardware. RealHardware just forwards all
+ * the calls to HIDAPI, trying to talk to the physical device via USB.
+ *
+ * DummyHardware implements the same behaviour as the physical device, abstracted by the
+ * write/read interface. It allows testing of the GUI without the actual hardware and acts
+ * as an simple signal generator.
+ */
 class AbstractHardware : public QObject
 {
     Q_OBJECT

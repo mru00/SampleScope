@@ -4,6 +4,7 @@
 #include <QDialog>
 
 class Device;
+
 namespace Ui {
     class CalibDialog;
 }

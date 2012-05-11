@@ -9,7 +9,7 @@ using namespace std;
 
 Device::Device(QObject *parent) :
     QObject(parent),
-    device(AbstractHardware::create(AbstractHardware::Impl_Dummy)),
+    device(AbstractHardware::create(AbstractHardware::Impl_Real)),
     dummy(DeviceConstants::TestSignal_Tri)
 {
 

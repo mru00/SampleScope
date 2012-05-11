@@ -2,6 +2,9 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include <QSqlDatabase>
+#include <QSqlError>
+
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -60,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->graphControl, SIGNAL(graphSelected(QMap<GraphControl::Graphs_t,bool>)), this, SLOT(graphSelectionChanged(QMap<GraphControl::Graphs_t,bool>)));
     connect(ui->actionCalibration_Dialog, SIGNAL(triggered()), &calibDlg, SLOT(show()));
 
-    statusBar()->showMessage("searching for device");
+    statusBar()->showMessage("Searching for device. Tip: try software emulation.");
     centralWidget()->setEnabled(false);
     updateTimer.start(500);
     sampleTimer.setInterval(500);
@@ -229,10 +232,14 @@ void MainWindow::sample() {
 
     model.setChannelData(dataCh1, dataCh2);
 
-    ui->graphFFT->setData(model.getFFT(DeviceConstants::ADC_ch1), model.getFFT(DeviceConstants::ADC_ch2));
+    ui->graphFFT->setData(model.getFFT(DeviceConstants::ADC_ch1),
+                          model.getFFT(DeviceConstants::ADC_ch2));
+
     ui->graphNorm->setData(dataCh1, dataCh2, dataTr);
     ui->graphXY->setData(dataCh1, dataCh2);
-    ui->graphAutoCorr->setData(model.getAutoCorr(DeviceConstants::ADC_ch1), model.getAutoCorr(DeviceConstants::ADC_ch2));
+    ui->graphAutoCorr->setData(model.getAutoCorr(DeviceConstants::ADC_ch1),
+                               model.getAutoCorr(DeviceConstants::ADC_ch2),
+                               model.getAutoCorrMaxIdx(DeviceConstants::ADC_ch1));
 }
 
 void MainWindow::on_actionAbout_triggered()
