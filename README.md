@@ -5,7 +5,7 @@ A cheap, simple, and fun-to-build diy USB oscilloscope
 
 ![Screenshot](https://github.com/mru00/SampleScope/raw/master/doc/Screenshot1.png "Screenshot")
 
-![PCB](https://github.com/mru00/SampleScope/blob/master/doc/P1100868.resized.jpeg "PCB")
+![PCB](https://github.com/mru00/SampleScope/blob/master/doc/P1100868.resized.jpg "PCB")
 
 
 Schematics based on http://jonathanweaver.net/ppmscope.html
