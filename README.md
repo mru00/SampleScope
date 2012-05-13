@@ -5,8 +5,10 @@ A cheap, simple, and fun-to-build diy USB oscilloscope
 
 ![Screenshot](https://github.com/mru00/SampleScope/raw/master/doc/Screenshot1.png "Screenshot")
 
+![PCB](https://github.com/mru00/SampleScope/blob/master/doc/P1100868.resized.jpeg "PCB")
 
-based on http://jonathanweaver.net/ppmscope.html
+
+Schematics based on http://jonathanweaver.net/ppmscope.html
 
 
 * usb oscilloscope
@@ -57,3 +59,16 @@ PC software written in C++ / Qt. OS independence by using libHIDAPI.
  * frequency
  * RMS
  * AVG Voltages
+
+
+To do
+-----
+
+* build better PGA
+* put more effort into PCB layout
+* find cheaper DC-DC converter
+* upgrade MCU to PIC18F4550 (more ram -> more samples!)
+* put some effort into graphical frontend
+* cleanup code a little bit, get build environment better (link with HIDAPI)
+
+Probably I won't do any of those items. ;)
