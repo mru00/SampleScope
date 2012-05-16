@@ -7,8 +7,8 @@
 #pragma config FCMEN    = OFF
 #pragma config IESO     = OFF
 #pragma config PWRT     = ON
-#pragma config BOR      = ON
-#pragma config BORV     = 28
+#pragma config BOR      = OFF
+//#pragma config BORV     = 28
 #pragma config VREGEN   = ON      //USB Voltage Regulator
 #pragma config WDT      = OFF
 #pragma config WDTPS    = 32768

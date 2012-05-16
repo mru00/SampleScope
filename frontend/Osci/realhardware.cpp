@@ -21,6 +21,7 @@ int RealHardware::read(unsigned char *data, size_t length) {
 }
 
 int RealHardware::get_manufacturer_string(wchar_t *string, size_t maxlen) {
+    if(!isOpen()) return -1;
     return hid_get_manufacturer_string(device, string, maxlen);
 }
 

@@ -2,9 +2,9 @@
 #include Common_xx.s
 
 
-    extern ToSendDataBuffer
-    extern ADC_DATA1
-    extern ADC_DATA2
+;    extern ToSendDataBuffer
+;    extern ADC_DATA1
+;    extern ADC_DATA2
 
     extern DelayLSB
     extern DelayMSB
@@ -27,7 +27,7 @@ del_lsb RES 1
 
 sample macro nr, b
 
-    movlw D'32'
+    movlw D'127'
     movwf cnt
 
     lfsr FSR0, b

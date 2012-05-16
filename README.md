@@ -18,13 +18,13 @@ Schematics based on http://jonathanweaver.net/ppmscope.html
 * pcb is really simple an can be done on perfboard
 * input range +- 12V
 * bandwidth about 200kHz, 1MSPS
-* currently 256 byte sample buffer (more to come)
+* 1024 samples 
 
 
 Hardware
 --------
 
-* PIC18F4450 (going to replace it with PIC18F4550)
+* PIC18F4455
 * USB 2.0 Full Speed HID device
 * simple analog part
  * input limiting & buffering
@@ -70,7 +70,6 @@ To do
 * build better PGA
 * put more effort into PCB layout
 * find cheaper DC-DC converter
-* upgrade MCU to PIC18F4550 (more ram -> more samples!)
 * put some effort into graphical frontend
 * cleanup code a little bit, get build environment better (link with HIDAPI)
 * anti aliasing filter

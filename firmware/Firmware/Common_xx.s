@@ -1,10 +1,10 @@
 #include P18F4450.INC
 
 
-    extern ToSendDataBuffer
-    extern ADC_DATA1
-    extern ADC_DATA2
-    extern ReceivedData
+    extern B_ADC_0
+    extern B_ADC_1
+    extern B_ADC_2
+    extern B_ADC_3
 
 
 SET_RD macro
@@ -16,17 +16,11 @@ CLEAR_RD macro
     endm
 
 
-sample3 macro
-    sample 0, ToSendDataBuffer
-    sample 1, ADC_DATA1
-    sample 2, ADC_DATA2
-    endm
-
 sample4 macro
-    sample 0, ToSendDataBuffer
-    sample 1, ReceivedData
-    sample 2, ADC_DATA1
-    sample 3, ADC_DATA2
+    sample 0, B_ADC_0
+    sample 1, B_ADC_1
+    sample 2, B_ADC_2
+    sample 3, B_ADC_3
     endm
 
 LedBlink_i macro

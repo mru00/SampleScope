@@ -190,6 +190,7 @@ void MainWindow::exportData() {
 void MainWindow::fatal(QString message) {
     QMessageBox::critical(this, "Fatal", message);
     device.disConnect();
+    ui->actionAuto_connect->setChecked(false);
 }
 
 void MainWindow::ACDCCh1Adjusted(DeviceConstants::ACDC_t value) {

@@ -20,7 +20,7 @@ private:
         };
 
         enum {
-            SAMPLE_BUFFER_COUNT  = 4,
+            SAMPLE_BUFFER_COUNT  = 8,
             SAMPLE_BUFFER_SIZE  = 64,
             SAMPLE_COUNT = (SAMPLE_BUFFER_COUNT*SAMPLE_BUFFER_SIZE)
         };

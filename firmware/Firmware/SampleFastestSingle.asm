@@ -1,9 +1,9 @@
 
 #include Common_xx.s
 
-    extern ToSendDataBuffer
-    extern ADC_DATA1
-    extern ADC_DATA2
+;    extern ToSendDataBuffer
+;    extern ADC_DATA1
+;    extern ADC_DATA2
 
     global SampleFastestSingle
 
@@ -30,7 +30,7 @@ sample macro nr, b
 
 
     banksel cnt
-    movlw D'64'
+    movlw D'0'
     movwf cnt
 
     ;banksel b
@@ -61,7 +61,7 @@ SampleFastestSingle
     nop
     nop
 
-sample4
+    sample4
 
 
     ; stop adc

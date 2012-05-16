@@ -2,9 +2,9 @@
 #include Common_xx.s
 
 
-    extern ToSendDataBuffer
-    extern ADC_DATA1
-    extern ADC_DATA2
+;    extern ToSendDataBuffer
+;    extern ADC_DATA1
+;    extern ADC_DATA2
 
     global SampleFastestInterleaved
 
@@ -29,7 +29,7 @@ ch2 macro
 
 sample macro nr, b
 
-    movlw D'32'
+    movlw D'128'
     movwf cnt
 
     lfsr FSR0, b

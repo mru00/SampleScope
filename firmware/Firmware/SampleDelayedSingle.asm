@@ -33,7 +33,7 @@ ch2 macro
 sample macro nr, b
 
     banksel cnt
-    movlw D'64'
+    movlw D'0'
     movwf cnt
 
     lfsr FSR0, b

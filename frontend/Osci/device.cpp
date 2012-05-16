@@ -14,11 +14,11 @@ Device::Device(QObject *parent) :
     dummy(DeviceConstants::TestSignal_Tri)
 {
 
-        //"12.8", "30", "100", "300",
-        //"1", "3", "10", "30", "100", "300", "1000", "3000"
+    //"12.8", "30", "100", "300",
+    //"1", "3", "10", "30", "100", "300", "1000", "3000"
     unsigned short delays[] = {
 
-       0,// fastest
+        0,// fastest
         6,// 100 u
         37,// 300 u
         147,// 1m
@@ -62,7 +62,7 @@ void Device::selectHardwareImplementation(AbstractHardware::Impl_t impl) {
 
 
 void Device::refresh() {
-    if (!isConnected()) connect();
+    //if (!isConnected()) connect();
     if (isConnected()) ping();
 }
 
@@ -70,20 +70,22 @@ void Device::connect() {
     cout << "connecting to device" << endl;
     device->open();
     cout << (isConnected() ? "connection successful" : "connection failed") << endl;
-    if (isConnected()) {
+    if (!isConnected()) return;
 
-        receiveInfo();
+    receiveInfo();
 
-        wchar_t manu[100], prod[100];
-        device->get_manufacturer_string(manu, 100);
-        device->get_product_string(prod, 100);
-        std::wcout << manu << endl;
-        std::wcout << prod << endl;
-        QString qmanu = QString::fromStdWString(manu);
-        QString qprod = QString::fromStdWString(prod);
+    // receiveInfo might not have worked.
+    if (!isConnected()) return;
 
-        emit connected(qmanu, qprod);
-    }
+    wchar_t manu[100], prod[100];
+    device->get_manufacturer_string(manu, 100);
+    device->get_product_string(prod, 100);
+    std::wcout << manu << endl;
+    std::wcout << prod << endl;
+    QString qmanu = QString::fromStdWString(manu);
+    QString qprod = QString::fromStdWString(prod);
+
+    emit connected(qmanu, qprod);
 }
 
 void Device::disConnect() {
@@ -126,10 +128,9 @@ void Device::comm(const DeviceConstants::opcodes_t command) {
 
     const unsigned char check = command + 1;
     if (encoder->ack != check) {
-        cout << "device sent unexpected answer, expected = " << check << " received = " << encoder->ack << endl;
+        cerr << "device sent unexpected answer, expected = " << (int)check << " received = " << (int)encoder->ack << endl;
         disConnect();
-        //printf("sent: 0x%02x, received: 0x%02x\n", command, buf[0]);
-        emit fatal(QString(tr("Unexpected Answer from device: expected: %1, received:%2")).arg(check).arg(encoder->ack));
+        emit fatal(QString(tr("Unexpected Answer from device: expected: %1, received:%2, command: %3")).arg(check).arg(encoder->ack).arg(command));
         return;
     }
 }
@@ -212,8 +213,8 @@ void Device::setVdiv_Ch2(DeviceConstants::VdivValues_t vdiv) {
 }
 
 void Device::setTdiv(DeviceConstants::TdivValues_t div) {
-        //"12.8", "30", "100", "300",
-        //"1", "3", "10", "30", "100", "300", "1000", "3000"
+    //"12.8", "30", "100", "300",
+    //"1", "3", "10", "30", "100", "300", "1000", "3000"
     unsigned short delay = delay_cal[div];
     //calibDlg.setDelay(delay);
     setDelay(delay);
