@@ -3,9 +3,9 @@ SampleScope
 
 A cheap, simple, and fun-to-build diy USB oscilloscope
 
-![Screenshot](https://github.com/mru00/SampleScope/raw/master/doc/Screenshot1.png "Screenshot")
+![Screenshot](/mru00/SampleScope/raw/master/doc/Screenshot1.png "Screenshot")
 
-![PCB](https://github.com/mru00/SampleScope/raw/master/doc/P1100868.resized.jpg "PCB")
+![PCB](/mru00/SampleScope/raw/master/doc/P1100869.resized.jpg "PCB")
 
 
 Schematics based on http://jonathanweaver.net/ppmscope.html
@@ -61,7 +61,8 @@ PC software written in C++ / Qt. OS independence by using libHIDAPI.
  * frequency
  * RMS
  * AVG Voltages
-
+* emulation mode
+ * emulates hardware, allows testing without the actual device
 
 To do
 -----
