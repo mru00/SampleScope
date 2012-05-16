@@ -20,8 +20,9 @@ GraphControl::GraphControl(QWidget *parent) :
         ui->listWidget->insertItem(i, graphs[i]);
     }
 
-    ui->listWidget->setCurrentRow(0);
-    ui->listWidget->item(Graph_AutoCorr)->setSelected(true);
+//    ui->listWidget->setCurrentRow(0);
+//    ui->listWidget->item(Graph_AutoCorr)->setSelected(true);
+    ui->listWidget->item(Graph_Normal)->setSelected(true);
     ui->listWidget->item(Graph_Measurements)->setSelected(true);
 }
 

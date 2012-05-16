@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/universe"/>
+    <qresource prefix="/icons">
+        <file>icons/utilities-system-monitor.svg</file>
+    </qresource>
+</RCC>

@@ -70,6 +70,7 @@ extern unsigned char ADC_DATA2[];
 
 unsigned char ADC_DATA1[64];
 unsigned char ADC_DATA2[64];
+unsigned char TransmitBufferCounter;
 
 #pragma idata
 
@@ -94,10 +95,9 @@ extern void SampleDelayedInterleaved(WORD delay);
 
 typedef enum {
     STATE_READY_RECEIVE,
-    STATE_REARM_RX,
     STATE_TRANS_ONE,
     STATE_TRANS_ADC,
-    STATE_TRANS_ADC_LAST = STATE_TRANS_ADC + 4
+    STATE_LAST
 } RXTX_STATE;
 
 
@@ -273,14 +273,6 @@ void ApplyOsciConfig(void) {
     ApplyTriggerLevel(config.triggerLevel);
     ApplyGain(config.gainCh1, config.gainCh2);
 
-    switch (config.inputChannel) {
-        case ADC_ch1: SelectInputChannel1();
-            break;
-        case ADC_ch2: SelectInputChannel2();
-            break;
-        case ADC_triggerLevel: SelectInputChannelT();
-            break;
-    }
     Nop();
 }
 
@@ -313,7 +305,15 @@ void UserInit(void) {
 
     config.sampleDelay = 1;
 
-    CallDelay();
+    SampleFastestSingle();
+    SampleDelayedSingle(6);
+    SampleDelayedSingle(37);
+    SampleDelayedSingle(147);
+    SampleDelayedSingle(454);
+    SampleDelayedSingle(1549);
+    SampleDelayedSingle(4600);
+    SampleDelayedSingle(15000);
+    //CallDelay();
     //    SampleFastestInterleaved();
 
 #if 0
@@ -396,118 +396,123 @@ static void WaitForTrigger(void) {
 
 void HandleRequest(void) {
 
-#define ACKNOLEDGE(x) { ToSendDataBuffer[0] = x; }
-    const BYTE nack = 0x00;
+    // save acknoledge for later
     const BYTE ack = ReceivedData[0] + 1;
+    opcode_decoder_t* decoder = (opcode_decoder_t*) & ReceivedData[0];
+    result_encoder_t* encoder = (result_encoder_t*) & ToSendDataBuffer[0];
+
+#define ACKNOLEDGE(x) { encoder->ack = (x); }
+#define ACK() ACKNOLEDGE(ack)
+#define NACK() ACKNOLEDGE(0x00)
 
     // default: single transfer answer
     state = STATE_TRANS_ONE;
 
-    switch (ReceivedData[0]) //Look at the data the host sent, to see what kind of application specific command it sent.
+    switch (decoder->opcode) //Look at the data the host sent, to see what kind of application specific command it sent.
     {
 
-        case OP_SET_CONFIG:
-            memcpy((void*) &config, (void*) &ReceivedData[1], sizeof (osci_config_t));
+        case OP_GET_INFO:
+        {
+            device_info_t info;
+            info.version = 1;
+            info.sizeInfo = sizeof (device_info_t);
+            info.sizeConfig = sizeof (osci_config_t);
+            info.bufferCount = 4;
+            info.bufferSize = 64;
 
-            ToSendDataBuffer[1] = sizeof (osci_config_t);
-            memcpy((void*) &ToSendDataBuffer[2], (void*) &config, sizeof (osci_config_t));
+            encoder->args.get_info_args = info;
+
+            ACK();
+
+        }
+        case OP_SET_CONFIG:
+            config = decoder->args.set_config_args;
 
             ApplyOsciConfig();
-            ACKNOLEDGE(ack);
+            ACK();
             break;
-
-        case OP_SAMPLE_DUMMY_TRI:
-        {
-            WORD cnt, cnt2 = 0;
-            state = STATE_TRANS_ADC;
-
-            // DisableInterrupts();
-            for (cnt = 0; cnt < 64; cnt++)
-                ToSendDataBuffer[cnt] = cnt2++;
-            for (cnt = 0; cnt < 64; cnt++)
-                ReceivedData[cnt] = cnt2++;
-            for (cnt = 0; cnt < 64; cnt++)
-                ADC_DATA1[cnt] = cnt2++;
-            for (cnt = 0; cnt < 64; cnt++)
-                ADC_DATA2[cnt] = cnt2++;
-
-        }
-            ACKNOLEDGE(ack);
-            break;
-
-
-        case OP_SAMPLE_DUMMY_ZERO:
-        {
-            WORD cnt;
-            state = STATE_TRANS_ADC;
-
-            // DisableInterrupts();
-            for (cnt = 0; cnt < 64; cnt++)
-                ToSendDataBuffer[cnt] = 0;
-            for (cnt = 0; cnt < 64; cnt++)
-                ReceivedData[cnt] = 0;
-            for (cnt = 0; cnt < 64; cnt++)
-                ADC_DATA1[cnt] = 0;
-            for (cnt = 0; cnt < 64; cnt++)
-                ADC_DATA2[cnt] = 0;
-
-        }
-            ACKNOLEDGE(ack);
-            break;
-
-        case OP_SAMPLE_DUMMY_MID:
-        {
-            WORD cnt;
-            state = STATE_TRANS_ADC;
-
-            // DisableInterrupts();
-            for (cnt = 0; cnt < 64; cnt++) 
-                ToSendDataBuffer[cnt] = 0x80;
-            for (cnt = 0; cnt < 64; cnt++)
-                ReceivedData[cnt] = 0x80;
-            for (cnt = 0; cnt < 64; cnt++) 
-                ADC_DATA1[cnt] = 0x80;
-            for (cnt = 0; cnt < 64; cnt++) 
-                ADC_DATA2[cnt] = 0x80;
-
-        }
-            ACKNOLEDGE(ack);
-            break;
-
 
         case OP_READ_SINGLE:
             ToSendDataBuffer[1] = ReadSingleADC();
-            ACKNOLEDGE(ack);
+            ACK();
             break;
 
         case OP_SAMPLE_SINGLE:
         {
-            //sample without delay
-
+            TransmitBufferCounter = 0;
             state = STATE_TRANS_ADC;
 
-            WaitForTrigger();
+            switch (decoder->args.sample_single_args.testSignal) {
 
-            DisableInterrupts();
-            O_ADC_CS = 0;
-            if (config.sampleDelay == 0) {
+                case TestSignal_Off:
 
-                SampleFastestSingle();
-            } else {
-                SampleDelayedSingle(config.sampleDelay);
+                    switch (decoder->args.sample_single_args.inputChannel) {
+                        case ADC_ch1: SelectInputChannel1(); break;
+                        case ADC_ch2: SelectInputChannel2(); break;
+                        case ADC_triggerLevel: SelectInputChannelT(); break;
+                    }
+
+
+                    DisableInterrupts();
+                    O_ADC_CS = 0;
+                    if (config.sampleDelay == 0) {
+                        WaitForTrigger();
+                        SampleFastestSingle();
+                    } else {
+                        WaitForTrigger();
+                        SampleDelayedSingle(config.sampleDelay);
+                    }
+
+                    O_ADC_CS = 1;
+                    EnableInterrupts();
+
+                    break;
+
+                case TestSignal_Tri:
+                {
+                    WORD cnt, cnt2 = 0;
+                    for (cnt = 0; cnt < 64; cnt++) ToSendDataBuffer[cnt] = cnt2++;
+                    for (cnt = 0; cnt < 64; cnt++) ReceivedData[cnt] = cnt2++;
+                    for (cnt = 0; cnt < 64; cnt++) ADC_DATA1[cnt] = cnt2++;
+                    for (cnt = 0; cnt < 64; cnt++) ADC_DATA2[cnt] = cnt2++;
+
+                }
+                    break;
+                case TestSignal_Tri_2:
+                {
+                    WORD cnt;
+                    for (cnt = 0; cnt < 64; cnt++) 
+                        ToSendDataBuffer[cnt] = ReceivedData[cnt] = ADC_DATA1[cnt] = ADC_DATA2[cnt] = cnt;
+                }
+
+                    break;
+                case TestSignal_Zero:
+                {
+                    WORD cnt;
+                    for (cnt = 0; cnt < 64; cnt++) 
+                        ToSendDataBuffer[cnt] = ReceivedData[cnt] = ADC_DATA1[cnt] = ADC_DATA2[cnt] = 0;
+                }
+
+
+                    break;
+                case TestSignal_Mid:
+                {
+                    WORD cnt;
+                    for (cnt = 0; cnt < 64; cnt++) {
+                        ToSendDataBuffer[cnt] = ReceivedData[cnt] = ADC_DATA1[cnt] = ADC_DATA2[cnt] = 0x80;
+                    }
+                }
+                    break;
             }
-
-            O_ADC_CS = 1;
-            EnableInterrupts();
-
 
             LedOn();
         }
-            ACKNOLEDGE(ack);
+            ACK();
             break;
 
         case OP_SAMPLE_INTERLEAVED:
         {
+            TransmitBufferCounter = 0;
             state = STATE_TRANS_ADC;
 
             DisableInterrupts();
@@ -526,18 +531,18 @@ void HandleRequest(void) {
         }
 
 
-            ACKNOLEDGE(ack);
+            ACK();
             break;
 
 
         case OP_PING:
             //ping
-            ACKNOLEDGE(ack);
+            ACK();
             break;
 
         default:
             // not implemented: return some nack
-            ACKNOLEDGE(nack);
+            NACK();
             break;
     }
 
@@ -556,6 +561,7 @@ void ProcessIO(void) {
         return;
     }
 
+#define RearmRX() { USBOutHandle = HIDRxPacket(HID_EP, (BYTE*) & ReceivedData, RX_SIZE); }
 
 
     switch (state) {
@@ -563,45 +569,47 @@ void ProcessIO(void) {
             if (!HIDRxHandleBusy(USBOutHandle))
                 HandleRequest();
             break;
-        case STATE_REARM_RX:
-            //Re-arm the OUT endpoint for the next packet
-            USBOutHandle = HIDRxPacket(HID_EP, (BYTE*) & ReceivedData, RX_SIZE);
-            state = STATE_READY_RECEIVE;
-            break;
+
         case STATE_TRANS_ONE:
             if (!HIDTxHandleBusy(USBInHandle)) {
                 USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ToSendDataBuffer[0], 64);
-                state = STATE_REARM_RX;
+                RearmRX();
+                state = STATE_READY_RECEIVE;
             }
             break;
+
         case STATE_TRANS_ADC:
             if (!HIDTxHandleBusy(USBInHandle)) {
-                USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ToSendDataBuffer[0], 64);
-                state = state + 1;
+
+                switch (TransmitBufferCounter) {
+                    case 0:
+                        USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ToSendDataBuffer[0], 64);
+                        TransmitBufferCounter++;
+                        break;
+
+                    case 1:
+                        USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ReceivedData[0], 64);
+                        TransmitBufferCounter++;
+                        break;
+
+                    case 2:
+                        memcpy((BYTE*) & ToSendDataBuffer[0], (void*) &ADC_DATA1[0], 64);
+                        USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ToSendDataBuffer[0], 64);
+                        TransmitBufferCounter++;
+                        break;
+
+                    case 3:
+                        memcpy((BYTE*) & ToSendDataBuffer[0], (void*) &ADC_DATA2[0], 64);
+                        USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ToSendDataBuffer[0], 64);
+
+                        RearmRX();
+                        TransmitBufferCounter = 0;
+
+                        state = STATE_READY_RECEIVE;
+                }
             }
             break;
 
-        case STATE_TRANS_ADC + 1:
-            if (!HIDTxHandleBusy(USBInHandle)) {
-                USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ReceivedData[0], 64);
-                state = state + 1;
-            }
-            break;
-
-        case STATE_TRANS_ADC + 2:
-            if (!HIDTxHandleBusy(USBInHandle)) {
-                memcpy((BYTE*) & ToSendDataBuffer[0], (void*) &ADC_DATA1[0], 64);
-                USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ToSendDataBuffer[0], 64);
-                state = state + 1;
-            }
-            break;
-        case STATE_TRANS_ADC + 3:
-            if (!HIDTxHandleBusy(USBInHandle)) {
-                memcpy((BYTE*) & ToSendDataBuffer[0], (void*) &ADC_DATA2[0], 64);
-                USBInHandle = HIDTxPacket(HID_EP, (BYTE*) & ToSendDataBuffer[0], 64);
-                state = STATE_REARM_RX;
-            }
-            break;
     }
 
 }//end ProcessIO

@@ -5,6 +5,7 @@
 
 #include "../../shared/common.h"
 
+/** this class implements large parts of the read hardware and emulates it's behaviour */
 class DummyHardware : public AbstractHardware
 {
 
@@ -15,10 +16,13 @@ private:
             State_Init,
             State_TX_One,
             State_Tx_ADC,
-            State_Tx_ADC_2,
-            State_Tx_ADC_3,
-            State_Tx_ADC_4,
-            State_Tx_Last = State_Tx_ADC_4
+            State_Tx_Last = State_Tx_ADC
+        };
+
+        enum {
+            SAMPLE_BUFFER_COUNT  = 4,
+            SAMPLE_BUFFER_SIZE  = 64,
+            SAMPLE_COUNT = (SAMPLE_BUFFER_COUNT*SAMPLE_BUFFER_SIZE)
         };
 
 public:
@@ -39,10 +43,12 @@ public slots:
 
 private:
     State_t state;
-    unsigned char buffer[4*64];
+    unsigned char buffer[SAMPLE_COUNT];
     DeviceConstants::osci_config_t config;
 
-    void makeSignal(DeviceConstants::opcodes_t);
+    int bufferTransmitCounter;
+
+    void makeSignal(DeviceConstants::Channel_t, DeviceConstants::TestSignal_t);
 };
 
 #endif // DUMMYHARDWARE_H

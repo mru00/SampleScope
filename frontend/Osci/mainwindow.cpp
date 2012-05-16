@@ -28,6 +28,19 @@ MainWindow::MainWindow(QWidget *parent)
     ui->channelControlCh2->setChannel(DeviceConstants::ADC_ch2);
     ui->widgetMeasurements->setModel(&model);
 
+    QMap<QAction*, QStyle::StandardPixmap> buttonIcons;
+    QStyle* s = QApplication::style();
+    buttonIcons[ui->actionConnect] = QStyle::SP_MediaPlay;
+    buttonIcons[ui->actionDisconnect] = QStyle::SP_MediaStop;
+    buttonIcons[ui->actionAuto_connect] = QStyle::SP_BrowserReload;
+    buttonIcons[ui->actionUse_real_hardware] = QStyle::SP_DriveHDIcon;
+    buttonIcons[ui->actionUse_software_emulation] = QStyle::SP_ComputerIcon;
+
+    QMapIterator<QAction*, QStyle::StandardPixmap> i(buttonIcons);
+    while (i.hasNext()) {
+        i.next();
+        i.key()->setIcon(s->standardIcon(i.value()));
+    }
 
     connect(&updateTimer, SIGNAL(timeout()), &device, SLOT(refresh()));
     connect(&sampleTimer, SIGNAL(timeout()), this, SLOT(sample()));
@@ -36,11 +49,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&device, SIGNAL(fatal(QString)), this, SLOT(fatal(QString)));
 
     connect(ui->channelControlCh1, SIGNAL(vdivSelected(DeviceConstants::VdivValues_t)), this, SLOT(VdivCh1Adjusted(DeviceConstants::VdivValues_t)));
-    connect(ui->channelControlCh1, SIGNAL(vdivSelected(DeviceConstants::VdivValues_t)), &model, SLOT(setVdiv_Ch1(DeviceConstants::VdivValues_t)));
+    connect(ui->channelControlCh1, SIGNAL(vdivSelected(DeviceConstants::VdivValues_t)), &meas, SLOT(setVdiv_Ch1(DeviceConstants::VdivValues_t)));
     connect(ui->channelControlCh1, SIGNAL(acdcSelected(DeviceConstants::ACDC_t)), this, SLOT(ACDCCh1Adjusted(DeviceConstants::ACDC_t)));
 
     connect(ui->channelControlCh2, SIGNAL(vdivSelected(DeviceConstants::VdivValues_t)), this, SLOT(VdivCh2Adjusted(DeviceConstants::VdivValues_t)));
-    connect(ui->channelControlCh2, SIGNAL(vdivSelected(DeviceConstants::VdivValues_t)), &model, SLOT(setVdiv_Ch2(DeviceConstants::VdivValues_t)));
+    connect(ui->channelControlCh2, SIGNAL(vdivSelected(DeviceConstants::VdivValues_t)), &meas, SLOT(setVdiv_Ch2(DeviceConstants::VdivValues_t)));
     connect(ui->channelControlCh2, SIGNAL(acdcSelected(DeviceConstants::ACDC_t)), this, SLOT(ACDCCh2Adjusted(DeviceConstants::ACDC_t)));
 
     connect(ui->triggerControl, SIGNAL(triggerSourceSelected(DeviceConstants::TriggerSource_t)), this, SLOT(triggerSourceSelected(DeviceConstants::TriggerSource_t)));
@@ -48,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->dialTriggerLevel, SIGNAL(valueChanged(int)), this, SLOT(TriggerLevelAdjusted(int)));
     connect(ui->timeControl, SIGNAL(TdivChanged(DeviceConstants::TdivValues_t)), this, SLOT(TdivAdjusted(DeviceConstants::TdivValues_t)));
-    connect(ui->timeControl, SIGNAL(TdivChanged(DeviceConstants::TdivValues_t)), &model, SLOT(setTdiv(DeviceConstants::TdivValues_t)));
+    connect(ui->timeControl, SIGNAL(TdivChanged(DeviceConstants::TdivValues_t)), &meas, SLOT(setTdiv(DeviceConstants::TdivValues_t)));
 
     connect(ui->actionExport_Data, SIGNAL(triggered()), this, SLOT(exportData()));
     connect(ui->modeControl, SIGNAL(modeSelected(ModeControl::Modes_t)), this, SLOT(modeSelectionChanged(ModeControl::Modes_t)));
@@ -65,8 +78,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     statusBar()->showMessage("Searching for device. Tip: try software emulation.");
     centralWidget()->setEnabled(false);
-    updateTimer.start(500);
+    updateTimer.start(2500);
     sampleTimer.setInterval(500);
+
+//    QSqlDatabase
 }
 
 MainWindow::~MainWindow()
@@ -75,6 +90,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::closeEvent(QCloseEvent *) {
+    device.disConnect();
     calibDlg.close();
 }
 
@@ -163,27 +179,16 @@ void MainWindow::deviceDisconnected() {
 
 
 void MainWindow::exportData() {
-    QString filename = QFileDialog::getSaveFileName(this, "Save Data as", QString(), "Data files (*.dat)");
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save Data as"), QString(), tr("Matlab Script (*.m);;Any File (*.*)"));
     cout << "selected file: " << filename.constData() << endl;
     QFile file(filename);
     file.open(QIODevice::WriteOnly | QIODevice::Text);
-    QTextStream out(&file);
-
-    /*
-        for ( int i = 0; i < 191; i ++ ) {
-                out << i
-                    << " " << curveTriggerLevel->sample(i).y()
-                    << " " << curveCh1->sample(i).y()
-                    << " " << curveCh2->sample(i).y()
-                    << "\n";
-
-}
-*/
+    meas.writeMatlab(file);
     file.close();
 }
 
 void MainWindow::fatal(QString message) {
-        QMessageBox::critical(this, "Fatal", message);
+    QMessageBox::critical(this, "Fatal", message);
     device.disConnect();
 }
 
@@ -212,34 +217,28 @@ void MainWindow::sample() {
 
     QVector<QPointF> dataCh1, dataCh2, dataTr;
 
-    device.selectChannel(DeviceConstants::ADC_triggerLevel);
-    device.getADCBlock(dataTr);
+    device.getADCBlock(DeviceConstants::ADC_triggerLevel, dataTr);
 
     if (currentMode == ModeControl::Mode_Interleaved) {
         device.getADCInterleaved(dataCh1, dataCh2);
     }
     else {
         if (ModeControl::showsCh1(currentMode)) {
-            device.selectChannel(DeviceConstants::ADC_ch1);
-            device.getADCBlock(dataCh1);
+            device.getADCBlock(DeviceConstants::ADC_ch1, dataCh1);
         }
 
         if (ModeControl::showsCh2(currentMode)) {
-            device.selectChannel(DeviceConstants::ADC_ch2);
-            device.getADCBlock(dataCh2);
+            device.getADCBlock(DeviceConstants::ADC_ch2, dataCh2);
         }
     }
 
-    model.setChannelData(dataCh1, dataCh2);
+    meas.setChannelData(dataCh1, dataCh2);
+    model.setData(meas);
 
-    ui->graphFFT->setData(model.getFFT(DeviceConstants::ADC_ch1),
-                          model.getFFT(DeviceConstants::ADC_ch2));
-
-    ui->graphNorm->setData(dataCh1, dataCh2, dataTr);
+    ui->graphFFT->setData(meas);
+    ui->graphNorm->setData(meas, dataTr);
     ui->graphXY->setData(dataCh1, dataCh2);
-    ui->graphAutoCorr->setData(model.getAutoCorr(DeviceConstants::ADC_ch1),
-                               model.getAutoCorr(DeviceConstants::ADC_ch2),
-                               model.getAutoCorrMaxIdx(DeviceConstants::ADC_ch1));
+    ui->graphAutoCorr->setData(meas);
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -250,10 +249,32 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionUse_real_hardware_triggered()
 {
+    device.disConnect();
     device.selectHardwareImplementation(AbstractHardware::Impl_Real);
+    device.connect();
 }
 
 void MainWindow::on_actionUse_software_emulation_triggered()
 {
+    device.disConnect();
     device.selectHardwareImplementation(AbstractHardware::Impl_Dummy);
+    device.connect();
+}
+
+void MainWindow::on_actionDisconnect_triggered()
+{
+    ui->actionAuto_connect->setChecked(false);
+    device.disConnect();
+}
+
+
+void MainWindow::on_actionConnect_triggered()
+{
+    device.connect();
+}
+
+void MainWindow::on_actionAuto_connect_toggled(bool arg1)
+{
+    if (arg1) updateTimer.start();
+    else updateTimer.stop();
 }

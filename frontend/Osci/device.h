@@ -38,9 +38,8 @@ public:
         void setDelay(unsigned short);
         void ping();
         void setTriggerLevel(triggerLevel_t level);
-        void selectChannel(DeviceConstants::Channel_t ch);
         sample_t getADCSingle();
-        void getADCBlock(QVector<QPointF>&);
+        void getADCBlock(DeviceConstants::Channel_t ch, QVector<QPointF>&);
 
         void getADCInterleaved(QVector<QPointF>& ch1, QVector<QPointF>& ch2);
         void setACDC_Ch1(DeviceConstants::ACDC_t ch1);
@@ -76,7 +75,9 @@ private:
         }
         void comm(const DeviceConstants::opcodes_t command);
         DeviceConstants::osci_config_t config;
+        DeviceConstants::device_info_t deviceInfo;
         void transmitConfig();
+        void receiveInfo();
         DeviceConstants::TestSignal_t dummy;
 
         unsigned short delay_cal[DeviceConstants::Tdiv_LAST+1];

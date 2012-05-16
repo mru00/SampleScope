@@ -1,14 +1,10 @@
 #include "measurementtablemodel.h"
-#include "device.h"
-#include <cmath>
-
-#include <fftw3.h>
 
 MeasurementTableModel::MeasurementTableModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
     for (int i = 0; i <2; i ++ ) {
-        for ( int j = 0; j < 20; j++ ) {
+        for ( int j = 0; j < Meas_END; j++ ) {
             createIndex(i,j, i*100+j);
         }
     }
@@ -16,29 +12,14 @@ MeasurementTableModel::MeasurementTableModel(QObject *parent) :
 
 static QVariant checkNaN(double n) {
     if (n == std::numeric_limits<double>::quiet_NaN())
-        return QVariant::Invalid;
+        return "n/a";
     return n;
 }
 
 QVariant MeasurementTableModel::data(const QModelIndex &index, int role) const {
     switch (role) {
     case Qt::DisplayRole: {
-
-        const Data& currentChannel = channelData[index.column()];
-        switch (index.row()) {
-        case Meas_RMS_div:
-            return checkNaN(currentChannel.rms);
-        case Meas_RMS_Volt:
-            return checkNaN(Device::getVdivVoltate( currentChannel.vdiv, currentChannel.rms));
-        case Meas_AVG_div:
-            return checkNaN(currentChannel.avg);
-        case Meas_AVG_Volt:
-            return checkNaN(Device::getVdivVoltate(currentChannel.vdiv, currentChannel.avg));
-        case Meas_Freq_FFT:
-            return checkNaN(currentChannel.fpeak);
-        case Meas_Freq_ACORR:
-            return checkNaN(currentChannel.apeak);
-        }
+        return items[index.column()][index.row()];
     }
     break;
     case Qt::DecorationRole:
@@ -60,14 +41,14 @@ QVariant MeasurementTableModel::data(const QModelIndex &index, int role) const {
     return QVariant::Invalid;
 }
 int MeasurementTableModel::rowCount(const QModelIndex &parent) const {
-    return 6;
+    return Meas_END;
 }
 
 int MeasurementTableModel::columnCount(const QModelIndex &parent) const {
     return 2;
 }
 QVariant MeasurementTableModel::headerData ( int section, Qt::Orientation orientation, int role) const {
-    QVariant data;
+    QVariant data = QVariant::Invalid;
 
     const char* horiz[] = {
         "Ch1", "Ch2"
@@ -78,26 +59,60 @@ QVariant MeasurementTableModel::headerData ( int section, Qt::Orientation orient
         "rms [V]",
         "avg [div]",
         "avg [V]",
-        "f [fft_idx]",
-        "f [acorr]"
+        //"f fft [Hz]",
+        //"f acorr [Hz]",
+        "F sin [Hz]"
+    };
+
+    const char* tooltip[] = {
+        "RMS Value [div]",
+        "RMS Value [Volt]",
+        "Average value [div]",
+        "Average value [Volt]",
+        //"Frequency [Hz], calculated with FFT",
+        //"Frequency [Hz], calculated with auto correlation",
+        "Frequency [Hz], calculated with fitted Sine"
     };
 
     switch (orientation) {
     case Qt::Vertical:
-        data = QString(vert[section]);
+        switch (role) {
+        case Qt::DisplayRole:
+            data = vert[section];
+            break;
+        case Qt::ToolTipRole:
+            data = tooltip[section];
+            break;
+        default:
+            data = QVariant::Invalid;
+            break;
+        }
         break;
     case Qt::Horizontal:
-        data = QString(horiz[section]);
+        switch (role) {
+        case Qt::DisplayRole:
+            data = horiz[section];
+            break;
+        default:
+            data = QVariant::Invalid;
+        }
         break;
+    default:
+        data = QVariant::Invalid;
     }
 
+    return data;
+
+#if 0
     switch (role) {
     case Qt::DisplayRole:
         return data;
         break;
+    case Qt::ToolTipRole:
+        return tooltip[section];
+        break;
     case Qt::DecorationRole:
     case Qt::EditRole:
-    case Qt::ToolTipRole:
     case Qt::StatusTipRole:
     case Qt::WhatsThisRole:
     case Qt::SizeHintRole:
@@ -112,177 +127,24 @@ QVariant MeasurementTableModel::headerData ( int section, Qt::Orientation orient
         return QVariant::Invalid;
     }
     return QVariant::Invalid;
-}
-
-static double rms(const QVector<QPointF>& data) {
-    double sum = 0;
-    for (int i = 0; i < data.size(); i++ ) {
-        double t = data.at(i).y();
-        sum += t*t;
-    }
-    sum /= data.size();
-    return sqrt(sum);
-}
-
-static double avg(const QVector<QPointF>& data) {
-    double sum = 0;
-    for (int i = 0; i < data.size(); i++ ) {
-        double t = data.at(i).y();
-        sum += t;
-    }
-    sum /= data.size();
-    return sum;
-}
-
-void autocorrelation(
-    int   n, double const x[],   /*  in: [0...n-1] samples x   */
-    int lag, double       ac[])  /* out: [0...lag-1] ac values */
-{
-    double d; int i;
-    while (lag--) {
-        for (i = lag, d = 0; i < n; i++) {
-            Q_ASSERT(i>=0 && i< 256);
-            Q_ASSERT(i-lag >= 0 && i-lag < 256);
-            d += x[i] * x[i-lag];
-        }
-        ac[lag] = d;
-    }
+#endif
 }
 
 
-int findGlobalPeak(int count, double values[]) {
-    double peak = std::numeric_limits<double>::min();
-    int peak_pos = -1;
-    for (int i = 0; i < count; i ++ ) {
-        if (values[i] > peak) {
-            peak = values[i];
-            peak_pos = i;
-        }
-    }
-    return peak_pos;
-}
-
-int findSecondPeak(int count, double values[]) {
-
-    const int win = 3;
-    for (int i = win; i < count-win; i++ ) {
-        double& current = values[i];
-        bool foundABiggerOne = false;
-        for (int k = i-win; k < i &&  !foundABiggerOne; k++ ) {
-           if (values[k] > current) foundABiggerOne = foundABiggerOne || true;
-        }
-         for (int k = i+1; k < i+win &&  !foundABiggerOne; k++ ) {
-           if (values[k] > current) foundABiggerOne = foundABiggerOne || true;
-        }
-         if (!foundABiggerOne) return i;
-
-    }
-    return -1;
-}
-
-static void ArrToQVector(int count, double data[], QVector<QPointF>& result) {
-    result.clear();
-    for ( int i = 0; i < count; i ++ ) {
-        result.append(QPointF(i, data[i]));
-    }
-}
-
-static void fftToMagnitude(fftw_complex input[], double output[], int count) {
-#define NORM(x,y) sqrt( (x)*(x) + (y)*(y) )
-    for (int i = 0; i < count; i ++ ) {
-        output[i] = NORM(input[i][0], input[i][1]);
-    }
-}
-
-void MeasurementTableModel::setChannelData(const QVector<QPointF>& dataCh1, const QVector<QPointF>& dataCh2) {
-
-
-    // should be array of references...
-    const QVector<QPointF> input [] = { dataCh1, dataCh2 };
-
-
-
-    for ( int ch = 0; ch < 2; ch ++ ) {
-
-        Data& currentChannel = channelData[ch];
-        currentChannel.clear();
-
-        const int inputSize = input[ch].size();
-
-        if (inputSize > 0) {
-
-
-            double acorr[inputSize*2];
-
-            double vals[inputSize];
-            double fftMag[inputSize];
-            fftw_complex out[inputSize];
-
-            fftw_plan plan = fftw_plan_dft_r2c_1d(inputSize, vals, out, 0);
-
-            int i;
-            // prepare input
-            for (i = 0; i < inputSize; i ++ )
-                vals[i] = input[ch].at(i).y();
-
-            autocorrelation(inputSize, vals, inputSize, acorr);
-
-            // lag in samples, where the second peak occurs
-            currentChannel.apeak_pos = findSecondPeak(inputSize, acorr);
-            if (currentChannel.apeak_pos != -1 ) {
-                // there are 25.6 samples in one div
-                double lagTime = Device::getTdivTime(tdiv, currentChannel.apeak_pos) / 25.6;
-                currentChannel.apeak = 1/lagTime;
-                ArrToQVector(inputSize, acorr, currentChannel.acorr);
-            }
-
-            fftw_execute(plan);
-
-            fftToMagnitude(out, fftMag, inputSize/2);
-            currentChannel.fpeak_pos = findGlobalPeak(inputSize/2, fftMag);
-            if (currentChannel.fpeak_pos != -1) {
-                ArrToQVector(inputSize/2, fftMag, currentChannel.fft);
-                double fsamp = inputSize / ( 10 * Device::getTdivTime(tdiv, 1) );
-                currentChannel.fpeak = currentChannel.fpeak_pos * fsamp / inputSize;
-            }
-
-            fftw_destroy_plan(plan);
-
-            currentChannel.rms = ::rms(input[ch]);
-            currentChannel.avg = ::avg(input[ch]);
-        }
+void MeasurementTableModel::setData(const Measurement& meas) {
+    for (int i = 0; i < 2; i ++ ) {
+        const Measurement::ChannelData& ch = meas.getChannel((DeviceConstants::Channel_t) i);
+        items[i][Meas_RMS_div] = checkNaN(ch.rms_div);
+        items[i][Meas_RMS_Volt] = checkNaN(ch.rms_volt);
+        items[i][Meas_AVG_div] = checkNaN(ch.avg_div);
+        items[i][Meas_AVG_Volt] = checkNaN(ch.avg_volt);
+        //items[i][Meas_Freq_FFT] = checkNaN(ch.fpeak);
+        //items[i][Meas_Freq_ACORR] = checkNaN(ch.apeak);
+        items[i][Meas_Freq_Sin] = checkNaN(ch.speak);
     }
 
     const QModelIndex& i0 = index(0,0);
     const QModelIndex& i1 = index(rowCount(QModelIndex())-1, columnCount(QModelIndex())-1);
 
     emit dataChanged(i0,i1);
-}
-
-QVector<QPointF> MeasurementTableModel::getAutoCorr(DeviceConstants::Channel_t ch) {
-    return getChannel(ch).acorr;
-}
-int MeasurementTableModel::getAutoCorrMaxIdx(DeviceConstants::Channel_t ch) {
-    return getChannel(ch).apeak_pos;
-}
-
-QVector<QPointF> MeasurementTableModel::getFFT(DeviceConstants::Channel_t ch) {
-    return getChannel(ch).fft;
-}
-void MeasurementTableModel::setTdiv(DeviceConstants::TdivValues_t val) {
-    tdiv = val;
-}
-void MeasurementTableModel::setVdiv_Ch1(DeviceConstants::VdivValues_t val) {
-    channelData[0].vdiv = val;
-}
-void MeasurementTableModel::setVdiv_Ch2(DeviceConstants::VdivValues_t val) {
-    channelData[1].vdiv = val;
-}
-MeasurementTableModel::Data& MeasurementTableModel::getChannel(DeviceConstants::Channel_t ch) {
-    switch (ch) {
-    case DeviceConstants::ADC_ch1:
-        return channelData[0];
-    case DeviceConstants::ADC_ch2:
-        return channelData[1];
-    }
 }

@@ -5,6 +5,9 @@
 #include <qwt/qwt_plot.h>
 #include <qwt/qwt_plot_curve.h>
 #include <qwt/qwt_plot_grid.h>
+#include <qwt/qwt_plot_zoomer.h>
+#include <qwt/qwt_plot_magnifier.h>
+#include "../../shared/common.h"
 
 #include "modecontrol.h"
 
@@ -22,12 +25,17 @@ public:
     virtual ~GraphBase();
 
     void saveImage(QString filename);
-protected:
-    Ui::GraphBase *ui;
-    QwtPlot* plot();
 
+    static QColor getChannelColor(DeviceConstants::Channel_t);
 protected:
+    QwtPlot* plot() const;
+    virtual void setScale() = 0;
+private slots:
+    void zoomed(const QRectF&);
+private:
+    Ui::GraphBase *ui;
     QwtPlotGrid *plotGrid;
+    QwtPlotZoomer *zoomer;
 };
 
 #endif // GRAPHBASE_H

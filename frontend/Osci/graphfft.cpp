@@ -8,34 +8,33 @@ GraphFFT::GraphFFT(QWidget *parent) :
   , curveFFTCh1(new QwtPlotCurve("FFT Ch1"))
   , curveFFTCh2(new QwtPlotCurve("FFT Ch2"))
 {
-    ui->qwtPlot->setAxisAutoScale(QwtPlot::yLeft, false);
-    ui->qwtPlot->setAxisAutoScale(QwtPlot::yRight, false);
-    ui->qwtPlot->setAxisScale(QwtPlot::yLeft, -3, 3);
-    ui->qwtPlot->setAxisScale(QwtPlot::yRight, -3, 3);
-    ui->qwtPlot->setCanvasBackground(QBrush(QColor(55, 143, 94)));
+    plot()->setTitle(tr("FFT"));
+    curveFFTCh1->attach(plot());
+    curveFFTCh1->setPen(QPen(QBrush(GraphBase::getChannelColor(DeviceConstants::ADC_ch1)), 2));
+    curveFFTCh2->attach(plot());
+    curveFFTCh2->setPen(QPen(QBrush(GraphBase::getChannelColor(DeviceConstants::ADC_ch2)), 2));
 
-    curveFFTCh1->attach(ui->qwtPlot);
-    curveFFTCh1->setPen(QPen(QBrush(QColor(0,255,148)), 2));
-    curveFFTCh2->attach(ui->qwtPlot);
-    curveFFTCh2->setPen(QPen(QBrush(Qt::blue), 2));
+    setScale();
+}
 
-    ui->qwtPlot->setAxisAutoScale(QwtPlot::xBottom, true);
-    ui->qwtPlot->setAxisAutoScale(QwtPlot::yLeft, true);
+void GraphFFT::setScale() {
+    plot()->setAxisAutoScale(QwtPlot::xBottom, true);
+    plot()->setAxisAutoScale(QwtPlot::yLeft, true);
 }
 
 void GraphFFT::modeSelectionChanged(ModeControl::Modes_t mode ) {
     curveFFTCh1->setVisible(ModeControl::showsCh1(mode));
     curveFFTCh2->setVisible(ModeControl::showsCh2(mode));
-    ui->qwtPlot->replot();
+    plot()->replot();
 
 }
+void GraphFFT::setData(const Measurement& meas) {
 
-void GraphFFT::setData(const QVector<QPointF>& dataCh1, const QVector<QPointF>& dataCh2) {
+    curveFFTCh1->setSamples(meas.getChannel1().fft);
+    curveFFTCh2->setSamples(meas.getChannel2().fft);
 
-    curveFFTCh1->setSamples(dataCh1);
-    curveFFTCh2->setSamples(dataCh2);
     if (!isVisible()) return;
 
-    ui->qwtPlot->replot();
+    plot()->replot();
     saveImage("fft.png");
 }

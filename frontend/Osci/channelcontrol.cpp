@@ -41,11 +41,6 @@ void ChannelControl::vdivValueChanged(int value_) {
         emit vdivSelected(value);
 }
 
-
-bool ChannelControl::fitSin() {
-        return ui->checkBoxFitSin->isChecked();
-}
-
 void ChannelControl::setFitData(double a0, double a1, double a2) {
         //ui->labelFit->setText(QString("%1 * sin (%2 + %3*t)").arg(a0).arg(a1).arg(a2));
 }

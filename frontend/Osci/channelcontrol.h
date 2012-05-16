@@ -20,7 +20,6 @@ public:
         void setChannel(DeviceConstants::Channel_t c);
         void initialEmit();
         bool isActive();
-        bool fitSin();
         void setFitData(double a0, double a1, double a2);
 
 private slots:

@@ -15,7 +15,11 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QwtPlot" name="qwtPlot"/>
+    <widget class="QwtPlot" name="qwtPlot">
+     <property name="propertiesDocument" stdset="0">
+      <string comment="9"/>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

@@ -5,7 +5,7 @@ A cheap, simple, and fun-to-build diy USB oscilloscope
 
 ![Screenshot](https://github.com/mru00/SampleScope/raw/master/doc/Screenshot1.png "Screenshot")
 
-![PCB](https://github.com/mru00/SampleScope/blob/master/doc/P1100868.resized.jpg "PCB")
+![PCB](https://github.com/mru00/SampleScope/raw/master/doc/P1100868.resized.jpg "PCB")
 
 
 Schematics based on http://jonathanweaver.net/ppmscope.html
@@ -29,12 +29,14 @@ Hardware
 * simple analog part
  * input limiting & buffering
  * optional DC removal
- * programmable gain amplifier
+ * programmable gain amplifier (0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10 V/div)
  * level shifter
  * ADC
+ * no anti aliasing filter
 * trigger system
  * can trigger on both channel 1, channel 2, or free running
  * can trigger on rising or falling edge
+* time bases 'fastest' (~17u), 100u, 300u, 1m, 3m, 10m, 30m, 100m sec/div
 * input selection
  * sample single channel, two channel interleaved or two channel sequential
 
@@ -70,5 +72,6 @@ To do
 * upgrade MCU to PIC18F4550 (more ram -> more samples!)
 * put some effort into graphical frontend
 * cleanup code a little bit, get build environment better (link with HIDAPI)
+* anti aliasing filter
 
 Probably I won't do any of those items. ;)

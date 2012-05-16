@@ -31,7 +31,8 @@ SOURCES += main.cpp channelcontrol.cpp \
     abstracthardware.cpp \
     realhardware.cpp \
     dummyhardware.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    measurement.cpp
 
 HEADERS  += mainwindow.h channelcontrol.h \
     device.h \
@@ -55,7 +56,8 @@ HEADERS  += mainwindow.h channelcontrol.h \
     abstracthardware.h \
     realhardware.h \
     dummyhardware.h \
-    aboutdialog.h
+    aboutdialog.h \
+    measurement.h
 
 FORMS    += mainwindow.ui channelcontrol.ui \
     triggercontrol.ui \
@@ -66,3 +68,6 @@ FORMS    += mainwindow.ui channelcontrol.ui \
     measurementwidget.ui \
     calibdialog.ui \
     aboutdialog.ui
+
+RESOURCES += \
+    Resources.qrc

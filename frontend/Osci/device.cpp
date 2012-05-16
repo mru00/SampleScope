@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <limits>
 
 #include "device.h"
 #include "../../shared/common.h"
@@ -25,10 +26,6 @@ Device::Device(QObject *parent) :
         1549,// 10m
         4600,// 30m
         15000,// 100m
-
-        (187500-16)/9,
-        (625000-16)/9,
-        (1875000-16)/9,
     };
     unsigned short dacvals[] = {
         4095, // 0xfff
@@ -74,6 +71,8 @@ void Device::connect() {
     device->open();
     cout << (isConnected() ? "connection successful" : "connection failed") << endl;
     if (isConnected()) {
+
+        receiveInfo();
 
         wchar_t manu[100], prod[100];
         device->get_manufacturer_string(manu, 100);
@@ -123,13 +122,14 @@ void Device::comm(const DeviceConstants::opcodes_t command) {
         return;
     }
 
+    DeviceConstants::result_encoder_t *encoder = (DeviceConstants::result_encoder_t*) &buf[0];
+
     const unsigned char check = command + 1;
-    const unsigned char ack = buf[0];
-    if (ack != check) {
-        cout << "device sent unexpected answer, expected = " << check << " received = " << ack << endl;
+    if (encoder->ack != check) {
+        cout << "device sent unexpected answer, expected = " << check << " received = " << encoder->ack << endl;
         disConnect();
         //printf("sent: 0x%02x, received: 0x%02x\n", command, buf[0]);
-        emit fatal(QString(tr("Unexpected Answer from device: expected: %1, received:%1")).arg(check).arg(ack));
+        emit fatal(QString(tr("Unexpected Answer from device: expected: %1, received:%2")).arg(check).arg(encoder->ack));
         return;
     }
 }
@@ -159,8 +159,18 @@ double Device::getTdivTime(DeviceConstants::TdivValues_t tdiv, double val) {
         17.5e-6, 100e-6, 300e-6,
         1e-3, 3e-3, 10e-3, 30e-3, 100e-3, 300e-3, 1000e-3, 3000e-3
     };
+    const double calib[] = {
+        1.0201,
+        1.0217,
+        1.0151,
+        1.0035,
+        1.0133,
+        1.0031,
+        1.0178,
+        1.0411
+    };
     Q_ASSERT ( tdiv >= 0 && tdiv < ARRSIZE(mult) );
-    return val * mult[tdiv];
+    return val * mult[tdiv] / calib[tdiv];
 }
 QString Device::getVdivLabel(DeviceConstants::VdivValues_t vdiv) {
 
@@ -172,6 +182,7 @@ QString Device::getVdivLabel(DeviceConstants::VdivValues_t vdiv) {
 }
 
 double Device::getVdivVoltate(DeviceConstants::VdivValues_t vdiv, double val) {
+    if (val == numeric_limits<double>::quiet_NaN()) return val;
     const double mult[] = {
         10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05
     };
@@ -218,26 +229,20 @@ void Device::setTriggerLevel(const triggerLevel_t level) {
     transmitConfig();
 }
 
-void Device::selectChannel(const DeviceConstants::Channel_t ch) {
-    config.inputChannel = ch;
-    transmitConfig();
-}
-
 Device::sample_t Device::getADCSingle() {
     comm(DeviceConstants::OP_READ_SINGLE);
     return normalizeSample(buf[1]);
 }
 
-void Device::getADCBlock(QVector<QPointF>& result) {
+void Device::getADCBlock(DeviceConstants::Channel_t ch, QVector<QPointF>& result) {
 
-    DeviceConstants::opcodes_t ops[] = {
-        DeviceConstants::OP_SAMPLE_SINGLE,
-        DeviceConstants::OP_SAMPLE_DUMMY_TRI,
-        DeviceConstants::OP_SAMPLE_DUMMY_ZERO,
-        DeviceConstants::OP_SAMPLE_DUMMY_MID
-    };
+    MAKE_OPCODE_ENCODER(encoder, &buf[1]);
 
-    comm ( ops[dummy] );
+    encoder->opcode = DeviceConstants::OP_SAMPLE_SINGLE;
+    encoder->args.sample_single_args.inputChannel = ch;
+    encoder->args.sample_single_args.testSignal = dummy;
+
+    comm ( encoder->opcode );
 
     result.clear();
     // comm might have failed and closed the device
@@ -246,16 +251,16 @@ void Device::getADCBlock(QVector<QPointF>& result) {
 
 
     // 10 divs for 191 samples
-    const double timestretch = 10.0/(191.0+64);
+    const double timestretch = 10.0/(deviceInfo.bufferCount*deviceInfo.bufferSize - 1);
 
     for (size_t i = 1; i < 64; i++ ) {
         result.append(QPointF( timestretch * (i-1), normalizeSample(buf[i])));
     }
-    for (int j = 0; j < 3; j++ ) {
+    for (int j = 1; j < deviceInfo.bufferCount; j++ ) {
 
         device->read(buf, sizeof(buf)) ;
         for (size_t i = 0; i < 64; i++ ) {
-            result.append(QPointF(timestretch*(i + 63 + j*64), normalizeSample(buf[i])));
+            result.append(QPointF(timestretch*(i + j*64 - 1), normalizeSample(buf[i])));
         }
     }
     cout << "read data from ADC" << endl;
@@ -269,7 +274,7 @@ void Device::getADCInterleaved(QVector<QPointF>& ch1, QVector<QPointF>& ch2) {
     if (!isConnected()) return;
 
     // 10 divs for 191 samples
-    const double timestretch = 10.0/(191.0+64);
+    const double timestretch = 10.0/(deviceInfo.bufferCount*deviceInfo.bufferSize - 1);
 
     ch1.clear();
     ch2.clear();
@@ -279,11 +284,11 @@ void Device::getADCInterleaved(QVector<QPointF>& ch1, QVector<QPointF>& ch2) {
         if (i&1) ch2.append(point);
         else ch1.append(point);
     }
-    for (int j = 0; j < 3; j++ ) {
+    for (int j = 1; j < deviceInfo.bufferCount; j++ ) {
 
         device->read(buf, sizeof(buf)) ;
         for (size_t i = 0; i < 64; i++ ) {
-            const QPointF point(timestretch * (i/2 + 31 + j*32), normalizeSample(buf[i]));
+            const QPointF point(timestretch * (i/2 + j*32 - 2), normalizeSample(buf[i]));
             if (i&1) ch2.append(point);
             else ch1.append(point);
         }
@@ -311,27 +316,24 @@ void Device::selectTriggerSource(DeviceConstants::TriggerSource_t trigger_source
 
 void Device::selectTriggerMode(DeviceConstants::TriggerMode_t mode) {
     cout << "selecting trigger mode " << mode << endl;
-   config.triggerMode = mode;
-   transmitConfig();
+    config.triggerMode = mode;
+    transmitConfig();
 }
 
 void Device::transmitConfig() {
-    cout << "transmitting new config" << endl;
-    memcpy(&buf[2], &config, sizeof(DeviceConstants::osci_config_t));
+    MAKE_OPCODE_ENCODER(encoder, &buf[1]);
+    encoder->opcode = DeviceConstants::OP_SET_CONFIG;
+    encoder->args.set_config_args = config;
     comm(DeviceConstants::OP_SET_CONFIG);
+}
 
-    // if comm failed, an error has been reported; quit nagging
-    if (!isConnected()) return;
+void Device::receiveInfo() {
+    comm(DeviceConstants::OP_GET_INFO);
+    MAKE_RESULT_DECODER(encoder, &buf[0]);
+    deviceInfo = encoder->args.get_info_args;
 
-    DeviceConstants::osci_config_t newconf;
-    int sizefw = buf[1];
-    if (sizefw != sizeof(DeviceConstants::osci_config_t)) {
+    if (deviceInfo.sizeInfo != sizeof(DeviceConstants::device_info_t) ||
+            deviceInfo.sizeConfig != sizeof(DeviceConstants::osci_config_t) ) {
         emit fatal("wrong config size");
     }
-    memcpy(&newconf, &buf[2], sizeof(DeviceConstants::osci_config_t));
-    int cmp = memcmp(&config, &newconf, sizeof(DeviceConstants::osci_config_t));
-    if (cmp != 0 ) {
-        emit fatal("wrong answer on transmit config");
-    }
-
 }

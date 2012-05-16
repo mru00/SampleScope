@@ -12,6 +12,8 @@ public:
     void setData(const QVector<QPointF>& ch1, const QVector<QPointF>& ch2);
 signals:
 
+protected:
+    virtual void setScale();
 public slots:
     void modeSelectionChanged(ModeControl::Modes_t);
 private:

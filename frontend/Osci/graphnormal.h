@@ -3,6 +3,7 @@
 
 
 #include "graphbase.h"
+#include "measurement.h"
 
 
 
@@ -14,17 +15,19 @@ class GraphNormal : public GraphBase
 public:
     class Curve {
         public:
-        double p[3];
         QwtPlotCurve *data, *fittedSine, *rms, *avg;
         bool vis;
-        Curve(int num)
-            : data(new QwtPlotCurve(QString("Ch %1").arg(num)))
-            , fittedSine(new QwtPlotCurve(QString("Sin %1").arg(num)))
-            , rms(new QwtPlotCurve(QString("RMS %1").arg(num)))
-            , avg(new QwtPlotCurve(QString("AVG %1").arg(num)))
+        DeviceConstants::Channel_t ch;
+        Curve(DeviceConstants::Channel_t num)
+            : data(new QwtPlotCurve())
+            , fittedSine(new QwtPlotCurve())
+            , rms(new QwtPlotCurve())
+            , avg(new QwtPlotCurve())
             , vis(true)
+            , ch(num)
         {
-            p[0] = p[1] = p[2] = 1000.0;
+            data->setPen(QPen(QBrush(GraphBase::getChannelColor(ch)), 4));
+            fittedSine->setPen(QPen(QBrush(GraphBase::getChannelColor(ch).darker()), 2));
         }
         virtual ~Curve() {
             delete data;
@@ -46,15 +49,17 @@ public:
             this->vis = vis;
         }
         bool isVisible() { return vis; }
-        void setSamples(const QVector<QPointF>& data);
+        void setSamples(const Measurement::ChannelData& data);
     };
 
 public:
     explicit GraphNormal(QWidget *parent = 0);
     virtual ~GraphNormal();
 
-    void setData(const QVector<QPointF>& ch1, const QVector<QPointF>& ch2, const QVector<QPointF>& tr);
+    void setData(const Measurement&, const QVector<QPointF>& tr);
 
+protected:
+    virtual void setScale();
 signals:
 
 public slots:

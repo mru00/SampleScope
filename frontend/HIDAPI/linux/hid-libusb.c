@@ -1381,4 +1381,5 @@ uint16_t get_usb_code_for_current_locale(void)
 #ifdef __cplusplus
 }
 #endif
-          
+
+

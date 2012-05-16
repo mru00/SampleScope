@@ -5,14 +5,17 @@ GraphXY::GraphXY(QWidget *parent) :
     GraphBase(parent)
   , curveXY(new QwtPlotCurve("XY"))
 {
-    ui->qwtPlot->setAxisScale(QwtPlot::xBottom, -3, 3);
-    ui->qwtPlot->setAxisScale(QwtPlot::yLeft, -3, 3);
-    ui->qwtPlot->setCanvasBackground(QBrush(QColor(55, 143, 94)));
+    plot()->setTitle("XY");
     curveXY->setPen(QPen(QBrush(Qt::yellow), 2));
-    curveXY->attach(ui->qwtPlot);
+    curveXY->attach(plot());
+    setScale();
 }
 
 
+void GraphXY::setScale() {
+    plot()->setAxisScale(QwtPlot::xBottom, -3, 3);
+    plot()->setAxisScale(QwtPlot::yLeft, -3, 3);
+}
 
 void GraphXY::modeSelectionChanged(ModeControl::Modes_t mode) {
     switch(mode) {
@@ -25,7 +28,7 @@ void GraphXY::modeSelectionChanged(ModeControl::Modes_t mode) {
         curveXY->setVisible(true);
         break;
     }
-    ui->qwtPlot->replot();
+    plot()->replot();
 }
 void GraphXY::setData(const QVector<QPointF>& dataCh1, const QVector<QPointF>& dataCh2) {
 
@@ -36,6 +39,6 @@ void GraphXY::setData(const QVector<QPointF>& dataCh1, const QVector<QPointF>& d
     for (int i = 0; i < dataCh1.size(); i ++ )
         dataXY.append(QPointF(dataCh1.at(i).y(), dataCh2.at(i).y()));
     curveXY->setSamples(dataXY);
-    ui->qwtPlot->replot();
+    plot()->replot();
     saveImage("xy.png");
 }

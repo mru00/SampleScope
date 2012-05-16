@@ -63,11 +63,18 @@ private slots:
 
     void on_actionUse_software_emulation_triggered();
 
+    void on_actionDisconnect_triggered();
+
+    void on_actionConnect_triggered();
+
+    void on_actionAuto_connect_toggled(bool arg1);
+
 private:
     Ui::MainWindow *ui;
     QTimer updateTimer, sampleTimer;
     Device device;
 
+    Measurement meas;
     MeasurementTableModel model;
     ModeControl::Modes_t currentMode;
     CalibDialog calibDlg;

@@ -29,6 +29,7 @@ ModeControl::ModeControl(QWidget *parent) :
     const char* dummies[] = {
         "normal",
         "test tri",
+        "test tri 2",
         "test zero",
         "test mid"
     };

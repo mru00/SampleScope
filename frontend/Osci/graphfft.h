@@ -2,6 +2,7 @@
 #define GRAPHFFT_H
 
 #include "graphbase.h"
+#include "measurement.h"
 
 
 class GraphFFT : public GraphBase
@@ -10,7 +11,10 @@ class GraphFFT : public GraphBase
 public:
     explicit GraphFFT(QWidget *parent = 0);
 
-    void setData(const QVector<QPointF>& ch1, const QVector<QPointF>& ch2);
+    void setData(const Measurement&);
+
+protected:
+    virtual void setScale();
 signals:
 
 public slots:
