@@ -3,3 +3,9 @@ frontend/Osci/icons/tango-icon-theme-0.8.90
 firmware/Firmware/MPLAB.X/build/Main/debug
 firmware/Firmware/MPLAB.X/build/Main/production
 firmware/Firmware/MPLAB.X/dist/Main/debug
+*.swp
+frontend/Osci-build-desktop
+kicad/*.bak
+kicad/*.dsn
+*~
+
