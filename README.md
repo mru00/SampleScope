@@ -61,7 +61,8 @@ PC software written in C++ / Qt. OS independence by using libHIDAPI.
  * frequency
  * RMS
  * AVG Voltages
-
+* emulation mode
+ * emulates hardware, allows testing without the actual device
 
 To do
 -----
