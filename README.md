@@ -3,7 +3,7 @@ SampleScope
 
 A cheap, simple, and fun-to-build diy USB oscilloscope
 
-![Screenshot](/mru00/SampleScope/raw/master/doc/Screenshot1.png "Screenshot")
+![Screenshot](/mru00/SampleScope/raw/master/doc/Screenshot2.png "Screenshot")
 
 ![PCB](/mru00/SampleScope/raw/master/doc/P1100869.resized.jpg "PCB")
 
