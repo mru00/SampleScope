@@ -304,7 +304,7 @@ void UserInit(void) {
     ApplyOsciConfig();
 
     config.sampleDelay = 1;
-
+#if 0
     SampleFastestSingle();
     SampleDelayedSingle(6);
     SampleDelayedSingle(37);
@@ -313,6 +313,7 @@ void UserInit(void) {
     SampleDelayedSingle(1549);
     SampleDelayedSingle(4600);
     SampleDelayedSingle(15000);
+#endif
     //CallDelay();
     //    SampleFastestInterleaved();
 
