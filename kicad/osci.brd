@@ -1,4 +1,4 @@
-PCBNEW-BOARD Version 1 date Thu 10 May 2012 10:43:10 AM CEST
+PCBNEW-BOARD Version 1 date Thu 17 May 2012 09:04:35 PM CEST
 
 # Created by Pcbnew(2011-05-25)-stable
 
@@ -21,7 +21,7 @@ $EndGENERAL
 $SHEETDESCR
 Sheet A4 11700 8267
 Title "SampleScope"
-Date "10 may 2012"
+Date "17 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -60,7 +60,7 @@ PadDrill 320
 Pad2MaskClearance 100
 GridOrigin 26000 57500
 AuxiliaryAxisOrg 24500 58500
-PcbPlotParams (pcbplotparams (layerselection 270565377) (usegerberextensions true) (excludeedgelayer false) (linewidth 60) (plotframeref false) (viasonmask false) (mode 1) (useauxorigin false) (hpglpennumber 1) (hpglpenspeed 20) (hpglpendiameter 15) (hpglpenoverlay 0) (pscolor true) (psnegative false) (psa4output false) (plotreference true) (plotvalue true) (plotothertext true) (plotinvisibletext false) (padsonsilk true) (subtractmaskfromsilk false) (outputformat 1) (mirror false) (drillshape 1) (scaleselection 1) (outputdirectory ""))
+PcbPlotParams (pcbplotparams (layerselection 270565377) (usegerberextensions true) (excludeedgelayer false) (linewidth 60) (plotframeref false) (viasonmask false) (mode 1) (useauxorigin false) (hpglpennumber 1) (hpglpenspeed 20) (hpglpendiameter 15) (hpglpenoverlay 0) (pscolor true) (psnegative false) (psa4output false) (plotreference true) (plotvalue true) (plotothertext true) (plotinvisibletext false) (padsonsilk true) (subtractmaskfromsilk false) (outputformat 2) (mirror false) (drillshape 1) (scaleselection 1) (outputdirectory ""))
 $EndSETUP
 
 $EQUIPOT
