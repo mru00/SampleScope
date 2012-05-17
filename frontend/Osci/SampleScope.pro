@@ -4,11 +4,13 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui
 
 TARGET = SampleScope
 TEMPLATE = app
 
+QMAKE_CXXFLAGS += -I/usr/include/qwt/ -DOSCI_GUI
+QMAKE_LIBS += -lqwt -lusb-1.0 `pkg-config --libs fftw3`
 
 SOURCES += main.cpp channelcontrol.cpp \
         mainwindow.cpp \
@@ -17,7 +19,6 @@ SOURCES += main.cpp channelcontrol.cpp \
     timecontrol.cpp \
     lmmin.c \
     lm_eval.c \
-    ../HIDAPI/linux/hid-libusb.c \
     modecontrol.cpp \
     graphcontrol.cpp \
     graphbase.cpp \
@@ -32,7 +33,8 @@ SOURCES += main.cpp channelcontrol.cpp \
     realhardware.cpp \
     dummyhardware.cpp \
     aboutdialog.cpp \
-    measurement.cpp
+    measurement.cpp \
+    hid-libusb.c
 
 HEADERS  += mainwindow.h channelcontrol.h \
     device.h \
@@ -41,7 +43,6 @@ HEADERS  += mainwindow.h channelcontrol.h \
     timecontrol.h \
     lmmin.h \
     lm_eval.h \
-    ../HIDAPI/hidapi.h \
     modecontrol.h \
     graphcontrol.h \
     graphbase.h \
@@ -57,7 +58,8 @@ HEADERS  += mainwindow.h channelcontrol.h \
     realhardware.h \
     dummyhardware.h \
     aboutdialog.h \
-    measurement.h
+    measurement.h \
+    hidapi.h
 
 FORMS    += mainwindow.ui channelcontrol.ui \
     triggercontrol.ui \

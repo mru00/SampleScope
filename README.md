@@ -11,7 +11,7 @@ A cheap, simple, and fun-to-build diy USB oscilloscope
 Schematics based on http://jonathanweaver.net/ppmscope.html
 
 
-* usb oscilloscope
+* USB oscilloscope
 * two channels
 * almost all parts can be sampled directly from the manufacturer
 * almost no parts needed anyhow, some capacitors and resistors
@@ -39,13 +39,32 @@ Hardware
 * time bases 'fastest' (~17u), 100u, 300u, 1m, 3m, 10m, 30m, 100m sec/div
 * input selection
  * sample single channel, two channel interleaved or two channel sequential
+* uses dc-dc converter (xp power IQ0515) to supply analog circuitry
+* everything is powered from USB - no external supply required
 
+* IC List
+ * all parts can be sampled, at least as a student.
+ * MAX114 as ADC
+ * MAX532 as DAC: programmable gain amplifier and trigger voltage generation
+ * MAX942 as trigger comparator
+ * MAX4622 as AC/DC selector
+ * MAX6225, MAX6241, MAX6250 as voltage references
+ * TLE2082 as Op Amp
+ * PIC18F4455 as brain
  
+* PCB
+ * as simple as it gets
+ * analog parts are simple to wire
+ * digital connections are "flying wires", verowire
+
+
 Firmware
 --------
 
 Very simple firmware based on the Microchip Application Library USB example, 
 most parts written in C, sampling routines written in ASM.
+
+
 
 Frontend
 --------
@@ -57,21 +76,33 @@ PC software written in C++ / Qt. OS independence by using libHIDAPI.
  * XY plot
  * FFT
  * autocorrelation
-* Measures
+* Measurements
  * frequency
- * RMS
- * AVG Voltages
-* emulation mode
+ * RMS and average voltage
+* software emulation mode
  * emulates hardware, allows testing without the actual device
+
+* development
+ * uses HIDAPI https://github.com/signal11/hidapi
+ * libqt4
+ * libfftw3
+ * libqwt6
+ * libusb-1.0
 
 To do
 -----
 
-* build better PGA
+* build better PGA (the current one is the main bottleneck in bandwidth)
 * put more effort into PCB layout
+ * i fixed some errors "on-line" without rerouting the pcb
 * find cheaper DC-DC converter
 * put some effort into graphical frontend
+ * more measurements
+ * more switches and customization
+ * clean calibration ui, calibration wizards
 * cleanup code a little bit, get build environment better (link with HIDAPI)
-* anti aliasing filter
+* platform independence (HIDAPI, libusb)
+* anti aliasing filter (!!!)
+
 
 Probably I won't do any of those items. ;)

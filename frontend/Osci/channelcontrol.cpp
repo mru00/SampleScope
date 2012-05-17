@@ -40,7 +40,3 @@ void ChannelControl::vdivValueChanged(int value_) {
         ui->labelGain->setText(label);
         emit vdivSelected(value);
 }
-
-void ChannelControl::setFitData(double a0, double a1, double a2) {
-        //ui->labelFit->setText(QString("%1 * sin (%2 + %3*t)").arg(a0).arg(a1).arg(a2));
-}

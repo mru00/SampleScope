@@ -2,7 +2,7 @@
 #define REALHARDWARE_H
 
 #include "abstracthardware.h"
-#include "../HIDAPI/hidapi.h"
+#include "hidapi.h"
 
 
 /* Implements the interface to HIDAPI, therefore to the real device */

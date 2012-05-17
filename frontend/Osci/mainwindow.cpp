@@ -2,10 +2,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include <QSqlDatabase>
-#include <QSqlError>
-
-
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 

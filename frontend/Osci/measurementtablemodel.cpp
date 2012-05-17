@@ -22,6 +22,8 @@ QVariant MeasurementTableModel::data(const QModelIndex &index, int role) const {
         return items[index.column()][index.row()];
     }
     break;
+
+    // for reference, the rest of the enumeration:
     case Qt::DecorationRole:
     case Qt::EditRole:
     case Qt::ToolTipRole:
@@ -40,13 +42,15 @@ QVariant MeasurementTableModel::data(const QModelIndex &index, int role) const {
     }
     return QVariant::Invalid;
 }
-int MeasurementTableModel::rowCount(const QModelIndex &parent) const {
+
+int MeasurementTableModel::rowCount(const QModelIndex &/*parent*/) const {
     return Meas_END;
 }
 
-int MeasurementTableModel::columnCount(const QModelIndex &parent) const {
+int MeasurementTableModel::columnCount(const QModelIndex &/*parent*/) const {
     return 2;
 }
+
 QVariant MeasurementTableModel::headerData ( int section, Qt::Orientation orientation, int role) const {
     QVariant data = QVariant::Invalid;
 

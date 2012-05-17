@@ -21,7 +21,6 @@ GraphBase::GraphBase(QWidget *parent) :
     ui->qwtPlot->axisWidget(QwtPlot::yLeft)->setSpacing(500);
     plotGrid->attach(ui->qwtPlot);
     ui->qwtPlot->setAutoReplot(false);
-//    this->setScale();
 }
 
 GraphBase::~GraphBase()

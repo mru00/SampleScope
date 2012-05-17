@@ -1,6 +1,6 @@
 #include <QtGui/QApplication>
 #include "mainwindow.h"
-#include "../HIDAPI/hidapi.h"
+#include "hidapi.h"
 
 
 

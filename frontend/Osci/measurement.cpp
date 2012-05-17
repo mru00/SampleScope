@@ -97,7 +97,7 @@ static double avg(const QVector<QPointF>& data) {
     return sum;
 }
 
-void autocorrelation(
+static void autocorrelation(
     int   n, double const x[],   /*  in: [0...n-1] samples x   */
     int lag, double       ac[])  /* out: [0...lag-1] ac values */
 {
@@ -169,7 +169,7 @@ static int findSecondPeak2(int count, double values[]) {
 
 
 
-double smooth(double arr[], int n, int i)
+static double smooth(double arr[], int n, int i)
 {
         double l,r,smoo;
         l = (i - 1 < 0)?arr[0]:arr[i-1];
@@ -185,7 +185,7 @@ typedef double element;
 //     signal - input signal
 //     result - output signal
 //     N      - length of the signal
-void _medianfilter(const element* signal, element* result, int N)
+static void _medianfilter(const element* signal, element* result, int N)
 {
     const int winsize = 3;
    //   Move window through all elements of the signal
@@ -214,7 +214,7 @@ void _medianfilter(const element* signal, element* result, int N)
 }
 
 // http://stackoverflow.com/questions/3242910/algorithm-to-locate-local-maxima
-int findmax(double arr[], int n)
+static int findmax(double arr[], int n)
 {
     double filtered[n];
     _medianfilter(arr, filtered, n);
