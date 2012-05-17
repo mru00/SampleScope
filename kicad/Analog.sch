@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 10 May 2012 10:40:59 AM CEST
+EESchema Schematic File Version 2  date Thu 17 May 2012 08:33:02 PM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -37,7 +37,7 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 4 5
 Title "SampleScope"
-Date "10 may 2012"
+Date "17 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -45,6 +45,20 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Text Notes 6100 5500 0    60   ~ 0
+Level clamping
+Text Notes 2400 1150 0    60   ~ 0
+Level clamping
+Text Notes 7850 3900 0    60   ~ 0
+ADC
+Text Notes 4500 3650 0    60   ~ 0
+level shifter\n-12..+12V -> 0..5V
+Text Notes 9550 1250 0    60   ~ 0
+programmable gain amplifier
+Text Notes 5750 950  0    60   ~ 0
+AC / DC decoupler
+Text Notes 4050 1450 0    60   ~ 0
+Input Buffer
 Text GLabel 7800 3500 2    60   Output ~ 0
 TriggerCh2
 Wire Wire Line

@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 10 May 2012 10:40:59 AM CEST
+EESchema Schematic File Version 2  date Thu 17 May 2012 08:33:02 PM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -37,7 +37,7 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 3 5
 Title "SampleScope"
-Date "10 may 2012"
+Date "17 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -45,12 +45,16 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Text Notes 7400 3900 0    60   ~ 0
+Comparator
+Text Notes 3400 4250 0    60   ~ 0
+Threshold voltage
 $Comp
 L DIL8 P13
 U 1 1 4FAB7D53
 P 7600 3500
 F 0 "P13" H 7600 3750 60  0000 C CNN
-F 1 "DIL8" V 7600 3500 50  0000 C CNN
+F 1 "MAX942" V 7600 3500 50  0000 C CNN
 	1    7600 3500
 	1    0    0    -1  
 $EndComp

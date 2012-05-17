@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 10 May 2012 10:40:59 AM CEST
+EESchema Schematic File Version 2  date Thu 17 May 2012 08:33:02 PM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -37,7 +37,7 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 2 5
 Title "SampleScope"
-Date "10 may 2012"
+Date "17 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -45,6 +45,12 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Text Notes 6900 2800 0    60   ~ 0
+voltage references
+Text Notes 4150 4550 0    60   ~ 0
+pseudo element\nrepresents single point of \nconnection between AGND and DGND
+Text Notes 4550 2300 0    60   ~ 0
+DC DC converter
 Connection ~ 8250 3950
 Wire Wire Line
 	8250 3350 7700 3350
