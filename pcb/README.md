@@ -1,5 +1,5 @@
-kicad
-=====
+pcb
+===
 
 contains the schematics & pcb layout.
 
@@ -26,5 +26,12 @@ digital
 
 all digital connections are simple point-to-point connections
 with insolated wire (cf. http://en.wikipedia.org/wiki/Wiring_pencil)
+_.
+
+issues
+------
+
+* Analog bandwith is mostly limited by the PGA (MAX532) -> find a better solution
+* Inputs are wired terribly, huge crosstalk if one channel is left unconnected -> change layout
 
 
