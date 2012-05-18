@@ -5,7 +5,7 @@ firmware/Firmware/MPLAB.X/build/Main/production
 firmware/Firmware/MPLAB.X/dist/Main/debug
 *.swp
 frontend/Osci-build-desktop
-kicad/*.bak
-kicad/*.dsn
+pcb/*.bak
+pcb/*.dsn
 *~
 

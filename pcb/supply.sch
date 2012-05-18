@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 17 May 2012 08:33:02 PM CEST
+EESchema Schematic File Version 2  date Fri 18 May 2012 12:47:28 PM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -29,15 +29,13 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:max532
-LIBS:osci-cache
 EELAYER 25  0
 EELAYER END
 $Descr A4 11700 8267
 encoding utf-8
 Sheet 2 5
 Title "SampleScope"
-Date "17 may 2012"
+Date "18 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -45,13 +43,21 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Connection ~ 8150 4550
+Connection ~ 8150 3350
+Text HLabel 8250 4550 2    60   Output ~ 0
+Vref2.5
+Text HLabel 9050 3950 2    60   Output ~ 0
+Vref4.096
+Text HLabel 8250 3350 2    60   Output ~ 0
+Vref5.0
 Text Notes 6900 2800 0    60   ~ 0
 voltage references
 Text Notes 4150 4550 0    60   ~ 0
 pseudo element\nrepresents single point of \nconnection between AGND and DGND
 Text Notes 4550 2300 0    60   ~ 0
 DC DC converter
-Connection ~ 8250 3950
+Connection ~ 8150 3950
 Wire Wire Line
 	8250 3350 7700 3350
 Wire Wire Line
@@ -75,28 +81,28 @@ Wire Wire Line
 $Comp
 L CONN_1 P12
 U 1 1 4F91A9B0
-P 8250 4400
-F 0 "P12" H 8330 4400 40  0000 L CNN
-F 1 "Test.Vref.5.0" H 8250 4455 30  0001 C CNN
-	1    8250 4400
+P 8150 4400
+F 0 "P12" H 8230 4400 40  0000 L CNN
+F 1 "Test.Vref.5.0" H 8150 4455 30  0001 C CNN
+	1    8150 4400
 	0    -1   -1   0   
 $EndComp
 $Comp
 L CONN_1 P11
 U 1 1 4F91A9A7
-P 8250 3800
-F 0 "P11" H 8330 3800 40  0000 L CNN
-F 1 "Test.Vref.4.094" H 8250 3855 30  0001 C CNN
-	1    8250 3800
+P 8150 3800
+F 0 "P11" H 8230 3800 40  0000 L CNN
+F 1 "Test.Vref.4.094" H 8150 3855 30  0001 C CNN
+	1    8150 3800
 	0    -1   -1   0   
 $EndComp
 $Comp
 L CONN_1 P9
 U 1 1 4F91A9A0
-P 8250 3200
-F 0 "P9" H 8330 3200 40  0000 L CNN
-F 1 "Test.Vref.2.5" H 8250 3255 30  0001 C CNN
-	1    8250 3200
+P 8150 3200
+F 0 "P9" H 8230 3200 40  0000 L CNN
+F 1 "Test.Vref.2.5" H 8150 3255 30  0001 C CNN
+	1    8150 3200
 	0    -1   -1   0   
 $EndComp
 $Comp
@@ -108,12 +114,6 @@ F 1 "VAA" H 9050 3860 30  0000 C CNN
 	1    9050 3750
 	1    0    0    -1  
 $EndComp
-Text GLabel 7700 3350 2    60   Output ~ 0
-Vref5.0
-Text GLabel 7700 3950 2    60   Output ~ 0
-Vref4.096
-Text GLabel 7700 4550 2    60   Output ~ 0
-Vref2.5
 $Comp
 L AGND #PWR01
 U 1 1 4F8F5520

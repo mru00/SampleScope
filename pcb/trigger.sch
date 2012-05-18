@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 17 May 2012 08:33:02 PM CEST
+EESchema Schematic File Version 2  date Fri 18 May 2012 12:47:28 PM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -29,15 +29,13 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:max532
-LIBS:osci-cache
 EELAYER 25  0
 EELAYER END
 $Descr A4 11700 8267
 encoding utf-8
 Sheet 3 5
 Title "SampleScope"
-Date "17 may 2012"
+Date "18 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
@@ -91,7 +89,7 @@ Wire Wire Line
 Wire Wire Line
 	7950 3550 8350 3550
 Wire Wire Line
-	8350 4300 8350 3550
+	8350 3550 8350 4300
 Wire Wire Line
 	8350 4300 3400 4300
 Connection ~ 6900 4300
@@ -114,12 +112,12 @@ TriggerCh2
 Wire Wire Line
 	4150 5250 3650 5250
 Wire Wire Line
-	3650 4650 3650 5250
+	3650 5250 3650 4650
 Wire Wire Line
-	4150 4650 3650 4650
+	3650 4650 4150 4650
 Connection ~ 4050 4650
 Wire Wire Line
-	4050 5150 4050 5350
+	4050 5350 4050 5150
 Wire Wire Line
 	4050 5150 4150 5150
 Wire Wire Line

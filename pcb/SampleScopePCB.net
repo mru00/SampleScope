@@ -1,0 +1,888 @@
+# EESchema Netlist Version 1.1 created  Fri 18 May 2012 12:47:25 PM CEST
+(
+ ( /4F8F21C9/4F91A9B0 $noname  P12 Test.Vref.5.0 {Lib=CONN_1}
+  (    1 /Supply/Vref2.5 )
+ )
+ ( /4F8F21C9/4F91A9A7 $noname  P11 Test.Vref.4.094 {Lib=CONN_1}
+  (    1 VAA )
+ )
+ ( /4F8F21C9/4F91A9A0 $noname  P9 Test.Vref.2.5 {Lib=CONN_1}
+  (    1 /Supply/Vref5.0 )
+ )
+ ( /4F8F21C9/4F8F54D3 $noname  U13 MAX6250 {Lib=DIL8}
+  (    1 ? )
+  (    2 +12V )
+  (    3 ? )
+  (    4 AGND )
+  (    5 ? )
+  (    6 /Supply/Vref5.0 )
+  (    7 ? )
+  (    8 ? )
+ )
+ ( /4F8F21C9/4F8F54CF $noname  U3 MAX6241 {Lib=DIL8}
+  (    1 ? )
+  (    2 +12V )
+  (    3 ? )
+  (    4 AGND )
+  (    5 ? )
+  (    6 VAA )
+  (    7 ? )
+  (    8 ? )
+ )
+ ( /4F8F21C9/4F8F54CD $noname  U9 MAX6225 {Lib=DIL8}
+  (    1 ? )
+  (    2 +12V )
+  (    3 ? )
+  (    4 AGND )
+  (    5 ? )
+  (    6 /Supply/Vref2.5 )
+  (    7 ? )
+  (    8 ? )
+ )
+ ( /4F8F21C9/4F8F3445 $noname  P8 Virt_GND_Conn {Lib=CONN_2}
+  (    1 DGND )
+  (    2 AGND )
+ )
+ ( /4F8F21C9/4F8F3421 $noname  P7 IQ0515S {Lib=CONN_6}
+  (    1 VCC )
+  (    2 DGND )
+  (    3 ? )
+  (    4 -12V )
+  (    5 AGND )
+  (    6 +12V )
+ )
+ ( /4F8F1D5D/4FAB7D53 $noname  P13 MAX942 {Lib=DIL8}
+  (    1 ? )
+  (    2 TriggerLevel )
+  (    3 TriggerCh1 )
+  (    4 DGND )
+  (    5 TriggerCh2 )
+  (    6 TriggerLevel )
+  (    7 ? )
+  (    8 VCC )
+ )
+ ( /4F8F1D5D/4F8F2D36 $noname  U2 MAX532 {Lib=DIL16}
+  (    1 N-000076 )
+  (    2 VAA )
+  (    3 N-000076 )
+  (    4 AGND )
+  (    5 AGND )
+  (    6 TriggerLevel )
+  (    7 N-000076 )
+  (    8 TriggerLevel )
+  (    9 -12V )
+  (   10 DGND )
+  (   11 DAC.SCLK )
+  (   12 ? )
+  (   13 DAC.DIN )
+  (   14 DAC_Trigger.CS )
+  (   15 DGND )
+  (   16 +12V )
+ )
+ ( /4F8F1CE1/4F95B28B $noname  C10 4u7 {Lib=CP1}
+  (    1 VCC )
+  (    2 AGND )
+ )
+ ( /4F8F1CE1/4F95B246 $noname  C9 100n {Lib=C}
+  (    1 VCC )
+  (    2 AGND )
+ )
+ ( /4F8F1CE1/4F95B23E $noname  C8 100n {Lib=C}
+  (    1 VAA )
+  (    2 AGND )
+ )
+ ( /4F8F1CE1/4F8F5458 $noname  P4 Test.Ch2.PostOffset {Lib=CONN_1}
+  (    1 TriggerCh1 )
+ )
+ ( /4F8F1CE1/4F8F5452 $noname  P3 Test.Ch1.PostOffset {Lib=CONN_1}
+  (    1 TriggerCh2 )
+ )
+ ( /4F8F1CE1/4F8F5412 $noname  P6 Test.Ch2.PostACDC {Lib=CONN_1}
+  (    1 /Analog/Ch2.PostACDC )
+ )
+ ( /4F8F1CE1/4F8F540A $noname  P5 Test.Ch1.PostACDC {Lib=CONN_1}
+  (    1 /Analog/Ch1.PostACDC )
+ )
+ ( /4F8F1CE1/4F8F52AB $noname  P2 Test.Ch2.PostGain {Lib=CONN_1}
+  (    1 /Analog/Ch2_post_gain )
+ )
+ ( /4F8F1CE1/4F8F52A6 $noname  P1 Test.Ch1.PostGain {Lib=CONN_1}
+  (    1 /Analog/Ch1_post_gain )
+ )
+ ( /4F8F1CE1/4F8F4C38 $noname  W2 TEST {Lib=TEST}
+  (    1 AGND )
+  (    2 Ch2In )
+ )
+ ( /4F8F1CE1/4F8F4BCF $noname  W1 TEST {Lib=TEST}
+  (    1 AGND )
+  (    2 Ch1In )
+ )
+ ( /4F8F1CE1/4F8F3DF9 $noname  R12 100k {Lib=R}
+  (    1 N-000063 )
+  (    2 Ch2In )
+ )
+ ( /4F8F1CE1/4F8F3DDF $noname  R11 100k {Lib=R}
+  (    1 N-000069 )
+  (    2 Ch1In )
+ )
+ ( /4F8F1CE1/4F8F31A6 $noname  D7 DIODE {Lib=DIODE}
+  (    1 TriggerCh1 )
+  (    2 VCC )
+ )
+ ( /4F8F1CE1/4F8F319F $noname  D8 DIODE {Lib=DIODE}
+  (    1 AGND )
+  (    2 TriggerCh1 )
+ )
+ ( /4F8F1CE1/4F8F30DA $noname  R7 10k {Lib=R}
+  (    1 TriggerCh2 )
+  (    2 N-000071 )
+ )
+ ( /4F8F1CE1/4F8F30D6 $noname  R8 10k {Lib=R}
+  (    1 TriggerCh1 )
+  (    2 N-000054 )
+ )
+ ( /4F8F1CE1/4F8F3089 $noname  R6 10k {Lib=R}
+  (    1 N-000054 )
+  (    2 /Analog/Ch2_post_gain )
+ )
+ ( /4F8F1CE1/4F8F3084 $noname  R5 10k {Lib=R}
+  (    1 N-000071 )
+  (    2 /Analog/Ch1_post_gain )
+ )
+ ( /4F8F1CE1/4F8F2C16 $noname  RV4 10k {Lib=POT}
+  (    1 N-000052 )
+  (    2 N-000056 )
+  (    3 N-000056 )
+ )
+ ( /4F8F1CE1/4F8F2C12 $noname  RV3 10k {Lib=POT}
+  (    1 N-000051 )
+  (    2 N-000057 )
+  (    3 N-000057 )
+ )
+ ( /4F8F1CE1/4F8F2C05 $noname  R10 95k {Lib=R}
+  (    1 N-000052 )
+  (    2 /Analog/Ch2.PostACDC )
+ )
+ ( /4F8F1CE1/4F8F2C02 $noname  R9 95k {Lib=R}
+  (    1 N-000051 )
+  (    2 /Analog/Ch1.PostACDC )
+ )
+ ( /4F8F1CE1/4F8F2983 $noname  C1 C {Lib=C}
+  (    1 N-000047 )
+  (    2 N-000062 )
+ )
+ ( /4F8F1CE1/4F8F2979 $noname  C2 C {Lib=C}
+  (    1 N-000046 )
+  (    2 N-000045 )
+ )
+ ( /4F8F1CE1/4F8F2375 $noname  D6 DIODE {Lib=DIODE}
+  (    1 AGND )
+  (    2 TriggerCh2 )
+ )
+ ( /4F8F1CE1/4F8F2372 $noname  D5 DIODE {Lib=DIODE}
+  (    1 TriggerCh2 )
+  (    2 VCC )
+ )
+ ( /4F8F1CE1/4F8F2370 $noname  D4 DIODE {Lib=DIODE}
+  (    1 N-000064 )
+  (    2 N-000063 )
+ )
+ ( /4F8F1CE1/4F8F236E $noname  D3 DIODE {Lib=DIODE}
+  (    1 N-000063 )
+  (    2 N-000061 )
+ )
+ ( /4F8F1CE1/4F8F2366 $noname  D2 DIODE {Lib=DIODE}
+  (    1 N-000064 )
+  (    2 N-000069 )
+ )
+ ( /4F8F1CE1/4F8F2363 $noname  D1 DIODE {Lib=DIODE}
+  (    1 N-000069 )
+  (    2 N-000061 )
+ )
+ ( /4F8F1CE1/4F8F234B $noname  R4 100k {Lib=R}
+  (    1 N-000064 )
+  (    2 AGND )
+ )
+ ( /4F8F1CE1/4F8F2345 $noname  R1 33k {Lib=R}
+  (    1 -12V )
+  (    2 N-000064 )
+ )
+ ( /4F8F1CE1/4F8F233D $noname  R3 100k {Lib=R}
+  (    1 N-000061 )
+  (    2 AGND )
+ )
+ ( /4F8F1CE1/4F8F2333 $noname  R2 33k {Lib=R}
+  (    1 +12V )
+  (    2 N-000061 )
+ )
+ ( /4F8F1CE1/4F8F22ED $noname  U5 MAX114 {Lib=DIL24}
+  (    1 AGND )
+  (    2 TriggerLevel )
+  (    3 TriggerCh1 )
+  (    4 TriggerCh2 )
+  (    5 DGND )
+  (    6 D0 )
+  (    7 D1 )
+  (    8 D2 )
+  (    9 D3 )
+  (   10 ADC.RD )
+  (   11 ADC.INT )
+  (   12 DGND )
+  (   13 AGND )
+  (   14 VAA )
+  (   15 ? )
+  (   16 ADC.CS )
+  (   17 D4 )
+  (   18 D5 )
+  (   19 D6 )
+  (   20 D7 )
+  (   21 ADC.A1 )
+  (   22 ADC.A0 )
+  (   23 VCC )
+  (   24 VCC )
+ )
+ ( /4F8F1CE1/4F8F22DB $noname  U8 MAX4622 {Lib=DIL16}
+  (    1 /Analog/Ch1.PostACDC )
+  (    2 ? )
+  (    3 /Analog/Ch1.PostACDC )
+  (    4 N-000062 )
+  (    5 N-000045 )
+  (    6 /Analog/Ch2.PostACDC )
+  (    7 ? )
+  (    8 /Analog/Ch2.PostACDC )
+  (    9 N-000046 )
+  (   10 ACDC.Ch2 )
+  (   11 +12V )
+  (   12 VCC )
+  (   13 DGND )
+  (   14 -12V )
+  (   15 ACDC.Ch1 )
+  (   16 N-000047 )
+ )
+ ( /4F8F1CE1/4F8F22CD $noname  RV2 10k {Lib=POT}
+  (    1 VAA )
+  (    2 N-000058 )
+  (    3 AGND )
+ )
+ ( /4F8F1CE1/4F8F22CA $noname  RV1 10k {Lib=POT}
+  (    1 VAA )
+  (    2 N-000055 )
+  (    3 AGND )
+ )
+ ( /4F8F1CE1/4F8F22BF $noname  U1 MAX532 {Lib=DIL16}
+  (    1 N-000057 )
+  (    2 /Analog/Ch1_post_gain )
+  (    3 /Analog/Ch1_post_gain )
+  (    4 AGND )
+  (    5 AGND )
+  (    6 /Analog/Ch2_post_gain )
+  (    7 /Analog/Ch2_post_gain )
+  (    8 N-000056 )
+  (    9 -12V )
+  (   10 DGND )
+  (   11 DAC.SCLK )
+  (   12 ? )
+  (   13 DAC.DIN )
+  (   14 DAC_Gain.CS )
+  (   15 DGND )
+  (   16 +12V )
+ )
+ ( /4F8F1CE1/4F8F2242 $noname  U17 TLE2084 {Lib=DIL8}
+  (    1 TriggerCh2 )
+  (    2 N-000071 )
+  (    3 N-000055 )
+  (    4 -12V )
+  (    5 N-000058 )
+  (    6 N-000054 )
+  (    7 TriggerCh1 )
+  (    8 +12V )
+ )
+ ( /4F8F1CE1/4F8F223F $noname  U16 TLE2084 {Lib=DIL8}
+  (    1 N-000062 )
+  (    2 N-000062 )
+  (    3 N-000069 )
+  (    4 -12V )
+  (    5 N-000063 )
+  (    6 N-000045 )
+  (    7 N-000045 )
+  (    8 +12V )
+ )
+ ( /4F8F1CD3/4F9924E5 $noname  R17 120R {Lib=R}
+  (    1 N-000010 )
+  (    2 N-000006 )
+ )
+ ( /4F8F1CD3/4F9924DD $noname  D9 LED {Lib=LED}
+  (    1 N-000006 )
+  (    2 DGND )
+ )
+ ( /4F8F1CD3/4F953362 $noname  C7 100n {Lib=C}
+  (    1 VCC )
+  (    2 DGND )
+ )
+ ( /4F8F1CD3/4F95335D $noname  C6 100n {Lib=C}
+  (    1 VCC )
+  (    2 DGND )
+ )
+ ( /4F8F1CD3/4F953219 $noname  R16 10k {Lib=R}
+  (    1 VCC )
+  (    2 N-000008 )
+ )
+ ( /4F8F1CD3/4F91B246 $noname  C5 u220 {Lib=C}
+  (    1 N-000009 )
+  (    2 DGND )
+ )
+ ( /4F8F1CD3/4F8FFC2D $noname  P10 ICSP {Lib=CONN_6}
+  (    1 N-000008 )
+  (    2 VCC )
+  (    3 DGND )
+  (    4 N-000012 )
+  (    5 N-000007 )
+  (    6 N-000011 )
+ )
+ ( /4F8F1CD3/4F8F466E $noname  C4 22p {Lib=C}
+  (    1 N-000041 )
+  (    2 DGND )
+ )
+ ( /4F8F1CD3/4F8F4669 $noname  C3 22p {Lib=C}
+  (    1 N-000040 )
+  (    2 DGND )
+ )
+ ( /4F8F1CD3/4F8F3640 $noname  J1 USB_2 {Lib=USB_2}
+  (    1 VCC )
+  (    2 /MCU/USB_D- )
+  (    3 /MCU/USB_D+ )
+  (    4 DGND )
+ )
+ ( /4F8F1CD3/4F8F3620 $noname  X1 20MHz {Lib=CRYSTAL}
+  (    1 N-000041 )
+  (    2 N-000040 )
+ )
+ ( /4F8F1CD3/4F8F1D3A $noname  U6 PIC18F4450 {Lib=DIL40}
+  (    1 N-000008 )
+  (    2 ? )
+  (    3 DAC_Trigger.CS )
+  (    4 DAC_Gain.CS )
+  (    5 DAC.SCLK )
+  (    6 DAC.DIN )
+  (    7 ? )
+  (    8 ADC.A0 )
+  (    9 ADC.A1 )
+  (   10 ADC.CS )
+  (   11 VCC )
+  (   12 DGND )
+  (   13 N-000040 )
+  (   14 N-000041 )
+  (   15 ? )
+  (   16 ? )
+  (   17 N-000010 )
+  (   18 N-000009 )
+  (   19 D0 )
+  (   20 D1 )
+  (   21 D2 )
+  (   22 D3 )
+  (   23 /MCU/USB_D- )
+  (   24 /MCU/USB_D+ )
+  (   25 ? )
+  (   26 ? )
+  (   27 D4 )
+  (   28 D5 )
+  (   29 D6 )
+  (   30 D7 )
+  (   31 DGND )
+  (   32 VCC )
+  (   33 ? )
+  (   34 ADC.INT )
+  (   35 ADC.RD )
+  (   36 ACDC.Ch1 )
+  (   37 ACDC.Ch2 )
+  (   38 N-000011 )
+  (   39 N-000007 )
+  (   40 N-000012 )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C10
+ CP*
+ SM*
+$endlist
+$component C9
+ SM*
+ C?
+ C1-1
+$endlist
+$component C8
+ SM*
+ C?
+ C1-1
+$endlist
+$component R12
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R11
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component D7
+ D?
+ S*
+$endlist
+$component D8
+ D?
+ S*
+$endlist
+$component R7
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R8
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R6
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R5
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R10
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R9
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component C1
+ SM*
+ C?
+ C1-1
+$endlist
+$component C2
+ SM*
+ C?
+ C1-1
+$endlist
+$component D6
+ D?
+ S*
+$endlist
+$component D5
+ D?
+ S*
+$endlist
+$component D4
+ D?
+ S*
+$endlist
+$component D3
+ D?
+ S*
+$endlist
+$component D2
+ D?
+ S*
+$endlist
+$component D1
+ D?
+ S*
+$endlist
+$component R4
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R1
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R3
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R2
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R17
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component D9
+ LED-3MM
+ LED-5MM
+ LED-10MM
+ LED-0603
+ LED-0805
+ LED-1206
+ LEDV
+$endlist
+$component C7
+ SM*
+ C?
+ C1-1
+$endlist
+$component C6
+ SM*
+ C?
+ C1-1
+$endlist
+$component R16
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component C5
+ SM*
+ C?
+ C1-1
+$endlist
+$component C4
+ SM*
+ C?
+ C1-1
+$endlist
+$component C3
+ SM*
+ C?
+ C1-1
+$endlist
+$endfootprintlist
+}
+{ Pin List by Nets
+Net 1 "/Supply/Vref2.5" "Vref2.5"
+ U9 6
+ P12 1
+Net 2 "VAA" "VAA"
+ C8 1
+ P11 1
+ U2 2
+ U5 14
+ RV2 1
+ RV1 1
+ U3 6
+Net 3 "/Supply/Vref5.0" "Vref5.0"
+ U13 6
+ P9 1
+Net 4 "DGND" "DGND"
+ J1 4
+ C3 2
+ C4 2
+ U6 12
+ P8 1
+ P7 2
+ U6 31
+ U8 13
+ P13 4
+ U1 15
+ U5 5
+ U1 10
+ U5 12
+ U2 10
+ U2 15
+ P10 3
+ C7 2
+ D9 2
+ C5 2
+ C6 2
+Net 5 "VCC" "VCC"
+ P13 8
+ J1 1
+ C6 1
+ P10 2
+ R16 1
+ U6 32
+ U5 23
+ C9 1
+ C7 1
+ U8 12
+ U6 11
+ C10 1
+ D7 2
+ P7 1
+ U5 24
+ D5 2
+Net 6 "" ""
+ R17 2
+ D9 1
+Net 7 "" ""
+ P10 5
+ U6 39
+Net 8 "" ""
+ R16 2
+ P10 1
+ U6 1
+Net 9 "" ""
+ U6 18
+ C5 1
+Net 10 "" ""
+ U6 17
+ R17 1
+Net 11 "" ""
+ P10 6
+ U6 38
+Net 12 "" ""
+ U6 40
+ P10 4
+Net 13 "ADC.A1" "ADC.A1"
+ U6 9
+ U5 21
+Net 14 "D3" "D3"
+ U6 22
+ U5 9
+Net 15 "D2" "D2"
+ U5 8
+ U6 21
+Net 16 "D7" "D7"
+ U5 20
+ U6 30
+Net 17 "D1" "D1"
+ U5 7
+ U6 20
+Net 18 "ADC.CS" "ADC.CS"
+ U5 16
+ U6 10
+Net 19 "ADC.A0" "ADC.A0"
+ U6 8
+ U5 22
+Net 21 "DAC.DIN" "DAC.DIN"
+ U2 13
+ U6 6
+ U1 13
+Net 22 "DAC.SCLK" "DAC.SCLK"
+ U6 5
+ U1 11
+ U2 11
+Net 23 "DAC_Gain.CS" "DAC_Gain.CS"
+ U6 4
+ U1 14
+Net 24 "DAC_Trigger.CS" "DAC_Trigger.CS"
+ U2 14
+ U6 3
+Net 27 "D6" "D6"
+ U5 19
+ U6 29
+Net 28 "D0" "D0"
+ U5 6
+ U6 19
+Net 29 "D5" "D5"
+ U6 28
+ U5 18
+Net 30 "ACDC.Ch2" "ACDC.Ch2"
+ U6 37
+ U8 10
+Net 31 "D4" "D4"
+ U6 27
+ U5 17
+Net 32 "ACDC.Ch1" "ACDC.Ch1"
+ U8 15
+ U6 36
+Net 34 "ADC.RD" "ADC.RD"
+ U6 35
+ U5 10
+Net 37 "ADC.INT" "ADC.INT"
+ U5 11
+ U6 34
+Net 38 "/MCU/USB_D+" "USB_D+"
+ U6 24
+ J1 3
+Net 40 "" ""
+ U6 13
+ X1 2
+ C3 1
+Net 41 "" ""
+ X1 1
+ C4 1
+ U6 14
+Net 42 "/MCU/USB_D-" "USB_D-"
+ J1 2
+ U6 23
+Net 43 "+12V" "+12V"
+ R2 1
+ U13 2
+ P7 6
+ U8 11
+ U17 8
+ U16 8
+ U2 16
+ U1 16
+ U9 2
+ U3 2
+Net 45 "" ""
+ U16 6
+ C2 2
+ U16 7
+ U8 5
+Net 46 "" ""
+ C2 1
+ U8 9
+Net 47 "" ""
+ C1 1
+ U8 16
+Net 48 "-12V" "-12V"
+ P7 4
+ U2 9
+ U8 14
+ U16 4
+ U17 4
+ R1 1
+ U1 9
+Net 50 "TriggerCh1" "TriggerCh1"
+ D7 1
+ P4 1
+ P13 3
+ D8 2
+ U17 7
+ R8 1
+ U5 3
+Net 51 "" ""
+ R9 1
+ RV3 1
+Net 52 "" ""
+ RV4 1
+ R10 1
+Net 54 "" ""
+ R6 1
+ R8 2
+ U17 6
+Net 55 "" ""
+ U17 3
+ RV1 2
+Net 56 "" ""
+ U1 8
+ RV4 3
+ RV4 2
+Net 57 "" ""
+ RV3 2
+ U1 1
+ RV3 3
+Net 58 "" ""
+ U17 5
+ RV2 2
+Net 59 "TriggerLevel" "TriggerLevel"
+ U5 2
+ U2 8
+ U2 6
+ P13 2
+ P13 6
+Net 61 "" ""
+ R3 1
+ D3 2
+ D1 2
+ R2 2
+Net 62 "" ""
+ C1 2
+ U16 1
+ U16 2
+ U8 4
+Net 63 "" ""
+ R12 1
+ D4 2
+ D3 1
+ U16 5
+Net 64 "" ""
+ D4 1
+ D2 1
+ R4 1
+ R1 2
+Net 65 "/Analog/Ch1_post_gain" "Ch1_post_gain"
+ U1 2
+ R5 2
+ P1 1
+ U1 3
+Net 66 "/Analog/Ch1.PostACDC" "Ch1.PostACDC"
+ U8 3
+ R9 2
+ P5 1
+ U8 1
+Net 67 "/Analog/Ch2.PostACDC" "Ch2.PostACDC"
+ R10 2
+ P6 1
+ U8 6
+ U8 8
+Net 68 "Ch1In" "Ch1In"
+ R11 2
+ W1 2
+Net 69 "" ""
+ U16 3
+ D1 1
+ R11 1
+ D2 2
+Net 70 "Ch2In" "Ch2In"
+ W2 2
+ R12 2
+Net 71 "" ""
+ U17 2
+ R5 1
+ R7 2
+Net 72 "/Analog/Ch2_post_gain" "Ch2_post_gain"
+ P2 1
+ U1 6
+ U1 7
+ R6 2
+Net 73 "AGND" "AGND"
+ U2 4
+ U2 5
+ U13 4
+ U9 4
+ U3 4
+ P8 2
+ P7 5
+ C9 2
+ W2 1
+ W1 1
+ D8 1
+ C10 2
+ D6 1
+ RV2 3
+ RV1 3
+ U5 1
+ R3 2
+ R4 2
+ U1 4
+ U1 5
+ U5 13
+ C8 2
+Net 74 "TriggerCh2" "TriggerCh2"
+ D5 1
+ U5 4
+ U17 1
+ R7 1
+ P3 1
+ D6 2
+ P13 5
+Net 76 "" ""
+ U2 3
+ U2 7
+ U2 1
+}
+#End

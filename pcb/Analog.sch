@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Thu 17 May 2012 08:33:02 PM CEST
+EESchema Schematic File Version 2  date Fri 18 May 2012 12:47:28 PM CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -29,15 +29,13 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:max532
-LIBS:osci-cache
 EELAYER 25  0
 EELAYER END
 $Descr A4 11700 8267
 encoding utf-8
 Sheet 4 5
 Title "SampleScope"
-Date "17 may 2012"
+Date "18 may 2012"
 Rev "1"
 Comp "mru"
 Comment1 ""
