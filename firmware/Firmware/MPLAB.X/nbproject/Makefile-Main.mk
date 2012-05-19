@@ -41,11 +41,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/713068069/usb_device.o ${OBJECTDIR}/_ext/1702484533/usb_function_hid.o ${OBJECTDIR}/_ext/1472/main.o ${OBJECTDIR}/_ext/1472/usb_descriptors.o ${OBJECTDIR}/_ext/1472/Led.o ${OBJECTDIR}/_ext/1472/ISR.o ${OBJECTDIR}/_ext/1472/Delay.o ${OBJECTDIR}/_ext/1472/SampleDelayedInterleaved.o ${OBJECTDIR}/_ext/1472/SampleDelayedSingle.o ${OBJECTDIR}/_ext/1472/SampleFastestInterleaved.o ${OBJECTDIR}/_ext/1472/SampleFastestSingle.o ${OBJECTDIR}/_ext/1472/usb_functions.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/713068069/usb_device.o.d ${OBJECTDIR}/_ext/1702484533/usb_function_hid.o.d ${OBJECTDIR}/_ext/1472/main.o.d ${OBJECTDIR}/_ext/1472/usb_descriptors.o.d ${OBJECTDIR}/_ext/1472/Led.o.d ${OBJECTDIR}/_ext/1472/ISR.o.d ${OBJECTDIR}/_ext/1472/Delay.o.d ${OBJECTDIR}/_ext/1472/SampleDelayedInterleaved.o.d ${OBJECTDIR}/_ext/1472/SampleDelayedSingle.o.d ${OBJECTDIR}/_ext/1472/SampleFastestInterleaved.o.d ${OBJECTDIR}/_ext/1472/SampleFastestSingle.o.d ${OBJECTDIR}/_ext/1472/usb_functions.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/713068069/usb_device.o ${OBJECTDIR}/_ext/1702484533/usb_function_hid.o ${OBJECTDIR}/_ext/1472/main.o ${OBJECTDIR}/_ext/1472/usb_descriptors.o ${OBJECTDIR}/_ext/1472/Led.o ${OBJECTDIR}/_ext/1472/ISR.o ${OBJECTDIR}/_ext/1472/Delay.o ${OBJECTDIR}/_ext/1472/SampleDelayedInterleaved.o ${OBJECTDIR}/_ext/1472/SampleDelayedSingle.o ${OBJECTDIR}/_ext/1472/SampleFastestInterleaved.o ${OBJECTDIR}/_ext/1472/SampleFastestSingle.o ${OBJECTDIR}/_ext/1472/usb_functions.o ${OBJECTDIR}/_ext/1472/SampleScope.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/713068069/usb_device.o.d ${OBJECTDIR}/_ext/1702484533/usb_function_hid.o.d ${OBJECTDIR}/_ext/1472/main.o.d ${OBJECTDIR}/_ext/1472/usb_descriptors.o.d ${OBJECTDIR}/_ext/1472/Led.o.d ${OBJECTDIR}/_ext/1472/ISR.o.d ${OBJECTDIR}/_ext/1472/Delay.o.d ${OBJECTDIR}/_ext/1472/SampleDelayedInterleaved.o.d ${OBJECTDIR}/_ext/1472/SampleDelayedSingle.o.d ${OBJECTDIR}/_ext/1472/SampleFastestInterleaved.o.d ${OBJECTDIR}/_ext/1472/SampleFastestSingle.o.d ${OBJECTDIR}/_ext/1472/usb_functions.o.d ${OBJECTDIR}/_ext/1472/SampleScope.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/713068069/usb_device.o ${OBJECTDIR}/_ext/1702484533/usb_function_hid.o ${OBJECTDIR}/_ext/1472/main.o ${OBJECTDIR}/_ext/1472/usb_descriptors.o ${OBJECTDIR}/_ext/1472/Led.o ${OBJECTDIR}/_ext/1472/ISR.o ${OBJECTDIR}/_ext/1472/Delay.o ${OBJECTDIR}/_ext/1472/SampleDelayedInterleaved.o ${OBJECTDIR}/_ext/1472/SampleDelayedSingle.o ${OBJECTDIR}/_ext/1472/SampleFastestInterleaved.o ${OBJECTDIR}/_ext/1472/SampleFastestSingle.o ${OBJECTDIR}/_ext/1472/usb_functions.o
+OBJECTFILES=${OBJECTDIR}/_ext/713068069/usb_device.o ${OBJECTDIR}/_ext/1702484533/usb_function_hid.o ${OBJECTDIR}/_ext/1472/main.o ${OBJECTDIR}/_ext/1472/usb_descriptors.o ${OBJECTDIR}/_ext/1472/Led.o ${OBJECTDIR}/_ext/1472/ISR.o ${OBJECTDIR}/_ext/1472/Delay.o ${OBJECTDIR}/_ext/1472/SampleDelayedInterleaved.o ${OBJECTDIR}/_ext/1472/SampleDelayedSingle.o ${OBJECTDIR}/_ext/1472/SampleFastestInterleaved.o ${OBJECTDIR}/_ext/1472/SampleFastestSingle.o ${OBJECTDIR}/_ext/1472/usb_functions.o ${OBJECTDIR}/_ext/1472/SampleScope.o
 
 
 CFLAGS=
@@ -184,6 +184,12 @@ ${OBJECTDIR}/_ext/1472/usb_functions.o: ../usb_functions.c  nbproject/Makefile-$
 	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I".." -I"../../Microchip/Include"  -I ${MP_CC_DIR}/../h  -fo ${OBJECTDIR}/_ext/1472/usb_functions.o   ../usb_functions.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/_ext/1472/usb_functions.o 
 	
+${OBJECTDIR}/_ext/1472/SampleScope.o: ../SampleScope.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/_ext/1472 
+	@${RM} ${OBJECTDIR}/_ext/1472/SampleScope.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I".." -I"../../Microchip/Include"  -I ${MP_CC_DIR}/../h  -fo ${OBJECTDIR}/_ext/1472/SampleScope.o   ../SampleScope.c 
+	@${DEP_GEN} -d ${OBJECTDIR}/_ext/1472/SampleScope.o 
+	
 else
 ${OBJECTDIR}/_ext/713068069/usb_device.o: ../../Microchip/USB/usb_device.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/_ext/713068069 
@@ -220,6 +226,12 @@ ${OBJECTDIR}/_ext/1472/usb_functions.o: ../usb_functions.c  nbproject/Makefile-$
 	@${RM} ${OBJECTDIR}/_ext/1472/usb_functions.o.d 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I".." -I"../../Microchip/Include"  -I ${MP_CC_DIR}/../h  -fo ${OBJECTDIR}/_ext/1472/usb_functions.o   ../usb_functions.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/_ext/1472/usb_functions.o 
+	
+${OBJECTDIR}/_ext/1472/SampleScope.o: ../SampleScope.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/_ext/1472 
+	@${RM} ${OBJECTDIR}/_ext/1472/SampleScope.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I".." -I"../../Microchip/Include"  -I ${MP_CC_DIR}/../h  -fo ${OBJECTDIR}/_ext/1472/SampleScope.o   ../SampleScope.c 
+	@${DEP_GEN} -d ${OBJECTDIR}/_ext/1472/SampleScope.o 
 	
 endif
 

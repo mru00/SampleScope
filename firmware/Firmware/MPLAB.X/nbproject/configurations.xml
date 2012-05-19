@@ -21,8 +21,8 @@
       </logicalFolder>
       <itemPath>../HardwareProfile.h</itemPath>
       <itemPath>../usb_config.h</itemPath>
-      <itemPath>../Common_xx.s</itemPath>
       <itemPath>../config_bits.h</itemPath>
+      <itemPath>../Common.s</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="Library Files"
@@ -54,6 +54,7 @@
       <itemPath>../SampleFastestInterleaved.asm</itemPath>
       <itemPath>../SampleFastestSingle.asm</itemPath>
       <itemPath>../usb_functions.c</itemPath>
+      <itemPath>../SampleScope.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -98,7 +99,7 @@
         <C18LanguageToolchain>
         </C18LanguageToolchain>
       </item>
-      <item path="../Common_xx.s" ex="true" overriding="false">
+      <item path="../Common.s" ex="true" overriding="false">
         <C18>
         </C18>
         <C18-AS>
@@ -158,8 +159,8 @@
         <property key="stack-analysis-mcc18" value="false"/>
         <property key="stack-analysis-mplink" value="false"/>
       </C18LanguageToolchain>
-      <Simulator>
-      </Simulator>
+      <PICkit3PlatformTool>
+      </PICkit3PlatformTool>
     </conf>
   </confs>
 </configurationDescriptor>
