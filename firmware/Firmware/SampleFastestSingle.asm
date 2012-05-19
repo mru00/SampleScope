@@ -21,10 +21,6 @@
 
 #include Common.s
 
-;    extern ToSendDataBuffer
-;    extern ADC_DATA1
-;    extern ADC_DATA2
-
     global SampleFastestSingle
 
 

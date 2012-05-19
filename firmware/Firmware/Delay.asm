@@ -15,13 +15,7 @@
 ;along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
-
-
 #include Common.s
-
-
 
     global Delay
     global DelayLSB
@@ -33,18 +27,21 @@
 DelayLSB RES 1
 DelayMSB RES 1
 
-
-
-
     code
 
 
 Delay
+
+; since i do a 'decfsz' on the counter, i need to establish the initial condition
+; for MSB or LSB = 0.
+; so i first increment it.
+;
+; this should be done in a better way, because the minimum delay time is too
+; big, it is not possible to wait "really short"
+
     incf DelayLSB,F
     incf DelayMSB,F
 loop
-    ;nop
-    ;nop
     decfsz DelayLSB,F
     goto loop
     decfsz DelayMSB,F

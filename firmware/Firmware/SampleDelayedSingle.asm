@@ -16,11 +16,7 @@
 
 
 
-
-
-
 #include Common.s
-
 
     extern DelayLSB
     extern DelayMSB
@@ -34,8 +30,6 @@
 cnt RES 1
 del_msb RES 1
 del_lsb RES 1
-
-
 
 
     code
@@ -96,7 +90,7 @@ CallDelay
 SampleDelayedSingle
 
 
-    ; get parameters from stack
+    ; get delay parameters from stack
     MOVLW 0xff
     movff PLUSW1, del_msb
     MOVLW 0xfe

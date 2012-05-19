@@ -53,8 +53,6 @@
 #include "config_bits.h"
 
 
-//#define RX_SIZE 64
-
 /** VARIABLES ******************************************************/
 #pragma udata USB_VARIABLES=0x480
 unsigned char ReceivedData[64];
