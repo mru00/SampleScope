@@ -38,3 +38,7 @@ At some point, hid-libusb.c was renamed to hid.c and moved
 to a separate directory, libusb/hid.c. I sticked with the original
 filename for no particular reason.
 
+lmfit
+-----
+
+The software uses lmfit, http://joachimwuttke.de/lmfit/
